@@ -1,0 +1,13 @@
+{
+  "name": "tc-checklist-tests",
+  "private": true,
+  "description": "Local checks for TC Checklist. Runs against the Firebase emulators with made-up data, never production. Not deployed (see .vercelignore).",
+  "scripts": {
+    "test": "node run.mjs"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "5.0.2",
+    "firebase": "12.15.0",
+    "firebase-tools": "15.34.2"
+  }
+}
