@@ -2,7 +2,7 @@
 // v1 served the page from its cache forever, so some devices never saw new versions. v2 always asks the server first
 // and only falls back to the saved copy when offline. It deletes every older cache when it takes over.
 const CACHE_NAME = 'tchb-checklist-cache-v2';
-const SHELL = ['./', './index.html', './manifest.json', './logo.svg'];
+const SHELL = ['./', './index.html', './manifest.json', './logo-light.png', './logo-dark.png'];
 
 self.addEventListener('install', event => {
   self.skipWaiting();

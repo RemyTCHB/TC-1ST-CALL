@@ -15,6 +15,8 @@ const require = createRequire(import.meta.url);
 const HERE = dirname(fileURLToPath(import.meta.url)), ROOT = join(HERE, '..'), OUT = join(HERE, 'out');
 mkdirSync(OUT, { recursive: true });
 const { chromium } = require(require.resolve('playwright', { paths: [process.cwd(), '/opt/node_modules', '/usr/lib/node_modules', '/usr/local/lib/node_modules'] }));
+// The last version of the original app (before the hub-design revamp): the frozen contract is checked against it.
+const ORIGINAL = '8b7a613';
 const PROJECT = 'demo-tc-checklist', BASE = ['artifacts', 'tchb-checklist-live', 'public', 'data'];
 const CL = id => [...BASE, 'checklists', id].join('/');
 const safeId = a => encodeURIComponent(a).replace(/\./g, '%2E');
@@ -25,11 +27,10 @@ async function check(name, fn) {
   catch (e) { failed++; console.log('  FAIL  ' + name + '\n        ' + String(e && e.message || e).split('\n').slice(0, 6).join('\n        ')); }
 }
 
-// ---------------------------------------------------------------- the original page's question map (from main)
+// ---------------------------------------------------------------- the original page's question map (commit 8b7a613)
 function originalMap() {
   let html;
-  try { html = execSync('git show origin/main:index.html', { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }); }
-  catch (e) { html = execSync('git show main:index.html', { cwd: ROOT, encoding: 'utf8' }); }
+  html = execSync(`git show ${ORIGINAL}:index.html`, { cwd: ROOT, encoding: 'utf8' });
   const main = html.slice(html.indexOf('id="checklist-container"'), html.indexOf('</main>'));
   const re = /<h2 class="text-sm[^>]*>([^<]+)<\/h2>|<label class="check-container( nested-(\d))?">[\s\S]*?<span class="check-text">([\s\S]*?)<\/span>|<div class="absolute left-3[^>]*>(HOI|Taxes)<\/div>/g;
   const out = []; let c = 0, a = 0, m;
@@ -297,7 +298,7 @@ for (const theme of ['light', 'dark']) for (const [w, h, size] of [[1280, 900, '
     await p.click('#status-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('5-status-menu') }); await p.keyboard.press('Escape');
     await p.click('#active-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('6-active-users') }); await p.keyboard.press('Escape');
     await p.click('#delete-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('7-delete-confirm') }); await p.click('[data-m-cancel]');
-    await p.click('a.link-btn'); await p.click('[data-tab="closed"]'); await p.click('.prop-card .prop-title'); await p.waitForSelector('#locked-note:not([hidden])');
+    await p.click('a.link-btn'); await p.click('[data-tab="closed"]'); await p.click('.prop-card .prop-title'); await p.waitForSelector('#locked-note:not([hidden])'); await p.waitForTimeout(500);
     await p.screenshot({ path: name('8-closed') });
     await p.click('a.link-btn'); await p.click('#new-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('9-new-property') }); await p.click('[data-m-cancel]');
     const errs = S.errors.filter(e => !/ERR_FAILED|net::|Failed to load resource/.test(e)); assert.deepEqual(errs, []);
@@ -320,7 +321,7 @@ await A.context.close(); await B.context.close(); await browser.close(); await e
 console.log('\nApp updates (service worker)');
 async function swSite(port) {
   const dir = join(OUT, 'sw-site-' + port); mkdirSync(dir, { recursive: true });
-  const oldSw = execSync('git show origin/main:service_worker.js', { cwd: ROOT, encoding: 'utf8' }).replace(/'https:\/\/raw[^']*',?\s*/g, '');
+  const oldSw = execSync(`git show ${ORIGINAL}:service_worker.js`, { cwd: ROOT, encoding: 'utf8' }).replace(/'https:\/\/raw[^']*',?\s*/g, '');
   // the old page only registers; the new one also checks for a newer worker straight away, as index.html now does
   const oldPage = v => `<!doctype html><title>${v}</title><body>${v}<script>navigator.serviceWorker.register('./service_worker.js')</script>`;
   const newPage = v => `<!doctype html><title>${v}</title><body>${v}<script>navigator.serviceWorker.register('./service_worker.js').then(r => r.update())</script>`;
