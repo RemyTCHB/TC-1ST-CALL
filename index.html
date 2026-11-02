@@ -1,1454 +1,1242 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TC Checklist</title>
-    
-    <!-- PWA Manifest & Icons -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/RemyTCHB/TCHB-TC-1ST-CALL/baa206062f18aaef846fc07d8b88659a99ce54e0/icon.png">
-    <meta name="theme-color" content="#0b0f19">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <!-- Google Fonts & Tailwind -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-                    colors: {
-                        brand: { 
-                            purple: '#4f46e5', 
-                            crimson: '#dc2626', 
-                            emerald: '#10b981', 
-                            gold: '#f59e0b', 
-                            cyan: '#06b6d4', 
-                            bgDark: '#0b0f19', 
-                            cardBg: '#111827' 
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <style>
-        body { background-color: #0b0f19; color: #f3f4f6; overflow-x: hidden; overflow-y: scroll; }
-        body, a, button, input, select, textarea, [onclick], .cursor-pointer, .cursor-not-allowed, label { cursor: none !important; }
-        
-        @media (max-width: 768px) {
-            body, a, button, input, select, textarea, [onclick], label { cursor: auto !important; }
-            #cursor-dot, #cursor-ring, #mouseGlow { display: none !important; }
-        }
-        
-        /* Cursor & Glow Effects */
-        #mouseGlow {
-            position: fixed; left: 0; top: 0; pointer-events: none; z-index: 1;
-            width: 220px; height: 220px;
-            transform: translate(calc(var(--mouse-x, 50vw) - 110px), calc(var(--mouse-y, 50vh) - 110px));
-            opacity: 0; transition: opacity 0.5s ease; mix-blend-mode: screen;
-        }
-        #mouseGlow::before {
-            content: ""; position: absolute; inset: 0; border-radius: 50%;
-            background: radial-gradient(circle at center, transparent 15%, rgba(16, 185, 129, 0.25) 35%, rgba(79, 70, 229, 0.25) 60%, rgba(220, 38, 38, 0.25) 85%, transparent 100%);
-            filter: blur(16px); opacity: 0.7; animation: color-cycle 5s linear infinite;
-        }
-        @keyframes color-cycle { 0% { filter: blur(16px) hue-rotate(0deg); } 100% { filter: blur(16px) hue-rotate(360deg); } }
-        
-        #cursor-dot { position: fixed; top: 0; left: 0; width: 6px; height: 6px; background: white; border-radius: 50%; pointer-events: none; z-index: 999999; transform: translate(-50%, -50%); transition: transform 0.15s ease-out, background-color 0.2s; opacity: 0; }
-        #cursor-ring { position: fixed; top: 0; left: 0; width: 36px; height: 36px; border: 1.5px solid rgba(79, 70, 229, 0.6); border-radius: 50%; pointer-events: none; z-index: 999998; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, background-color 0.2s, border-color 0.2s; opacity: 0; }
-        
-        body.mouse-active #cursor-dot, body.mouse-active #cursor-ring { opacity: 1; }
-        body.cursor-hover #cursor-ring { width: 56px; height: 56px; background-color: rgba(220, 38, 38, 0.1); border-color: rgba(220, 38, 38, 0.8); }
-        body.cursor-hover #cursor-dot { transform: translate(-50%, -50%) scale(1.5); background: #10b981; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TC Checklist</title>
+<meta name="description" content="Total Cash Home Buyers - TC First Call Checklist">
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/RemyTCHB/TCHB-TC-1ST-CALL/baa206062f18aaef846fc07d8b88659a99ce54e0/icon.png">
+<meta name="theme-color" content="#4d458a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;1,6..12,400&display=swap" rel="stylesheet">
+<script>
+  // Theme before the first paint (no flash): the saved choice, else the device setting.
+  try { var t = localStorage.getItem('tchb-checklist-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.dataset.theme = t; } catch (e) { document.documentElement.dataset.theme = 'light'; }
+</script>
+<style>
+/* The Universal Team Hub's design (RemyTCHB/HUB), carried over from the Title Commitment Agent's stylesheet:
+   TCHB palette, Baloo 2 + Nunito Sans, radii, shadows and glass, light and dark. */
+:root {
+  --tchb-indigo-900: #2c2752; --tchb-indigo-700: #4d458a; --tchb-indigo-500: #625aa5;
+  --tchb-indigo-100: #eae9f4; --tchb-indigo-050: #f5f4fa;
+  --tchb-red-700: #992849; --tchb-red-500: #bd2239; --tchb-red-400: #e0212b; --tchb-red-050: #fbf0f2;
+  --tchb-green-600: #0d7a3b; --tchb-green-500: #109648; --tchb-green-050: #eaf7ef;
+  --tchb-gold-600: #a66a00; --tchb-gold-050: #fff4dc;
+  --tchb-white: #ffffff; --tchb-gray-050: #f7f7f9; --tchb-gray-100: #eeedf2; --tchb-gray-300: #c9c7d4;
+  --tchb-gray-500: #767388; --tchb-gray-700: #47445a; --tchb-gray-900: #211e33;
+  --tchb-gradient-brand: linear-gradient(160deg, #bd2239 0%, #7d3468 45%, #4d458a 100%);
 
-        .gate-unlocked #auth-overlay { display: none !important; }
+  --surface-page: var(--tchb-white); --surface-subtle: var(--tchb-gray-050); --surface-card: var(--tchb-white);
+  --surface-accent-tint: var(--tchb-indigo-050);
+  --text-heading: var(--tchb-indigo-700); --text-body: var(--tchb-gray-700); --text-muted: var(--tchb-gray-500);
+  --action-primary: var(--tchb-red-500); --action-primary-hover: var(--tchb-red-700);
+  --action-secondary: var(--tchb-indigo-700); --avatar-bg: var(--tchb-indigo-700);
+  --border-default: var(--tchb-gray-100); --border-strong: var(--tchb-gray-300);
+  --focus-ring: 0 0 0 3px rgba(98, 90, 165, 0.35);
+  --status-success: var(--tchb-green-600); --status-error: var(--tchb-red-400);
+  --logo-ink: #403978; --logo-ink-a: #3C3573; --logo-ink-b: #50488E;
 
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); } 20%, 40%, 60%, 80% { transform: translateX(6px); } }
-        .shake-element { animation: shake 0.4s ease-in-out; }
+  --font-display: 'Baloo 2', 'Nunito Sans', system-ui, sans-serif;
+  --font-body: 'Nunito Sans', system-ui, -apple-system, sans-serif;
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-xl: 24px; --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgba(34, 29, 84, 0.06), 0 4px 16px rgba(34, 29, 84, 0.08);
+  --shadow-raised: 0 2px 4px rgba(34, 29, 84, 0.08), 0 12px 32px rgba(34, 29, 84, 0.14);
+  --shadow-button: 0 1px 2px rgba(34, 29, 84, 0.12);
+  --ease-out: cubic-bezier(0.2, 0.8, 0.3, 1);
 
-        @keyframes jelly-pop {
-          0% { transform: scale(1) rotate(0deg); }
-          40% { transform: scale(0.7) rotate(-15deg); }
-          70% { transform: scale(1.15) rotate(15deg); }
-          100% { transform: scale(1) rotate(0deg); }
-        }
-        .animate-jelly-pop { animation: jelly-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.2) 100%);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(17, 29, 44, 0.06),
+    0 1px 2px rgba(34, 29, 84, 0.10), 0 4px 14px rgba(34, 29, 84, 0.10);
+  --glass-hover: rgba(77, 69, 138, 0.07); --glass-divider: rgba(17, 29, 44, 0.08);
+  --menu-bg: rgba(255, 255, 255, 0.62);
+  --menu-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.35) 100%);
+  --menu-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 2px 4px rgba(34, 29, 84, 0.08), 0 16px 40px rgba(34, 29, 84, 0.18);
+  --header-bg: color-mix(in srgb, var(--surface-card) 78%, transparent);
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  --surface-page: #1c1a2e; --surface-card: #1f1d33; --surface-subtle: #141323; --surface-accent-tint: #2a2747;
+  --tchb-gray-050: #191729; --tchb-gray-100: #2a2740; --tchb-gray-300: #4a4662; --tchb-gray-500: #9a97ad;
+  --tchb-gray-700: #d4d2e3; --tchb-gray-900: #f1f0f7;
+  --text-body: #e4e2ee; --text-muted: #a3a0b8; --text-heading: #c2bdf0;
+  --border-default: #2f2c47; --border-strong: #4a4664;
+  --tchb-indigo-900: #0f0e1c; --tchb-indigo-700: #c2bdf0; --tchb-indigo-500: #8f87dd; --tchb-indigo-100: #36325c;
+  --tchb-indigo-050: #2a2747;
+  --tchb-red-700: #b52a44; --tchb-red-500: #ef5a6f; --tchb-red-400: #ff5a5f; --tchb-red-050: #3a1f2b;
+  --tchb-green-600: #4fd98a; --tchb-green-500: #1fae5b; --tchb-green-050: #163224;
+  --tchb-gold-600: #f2c15a; --tchb-gold-050: #3a2f17;
+  --action-primary: #d8334c; --action-primary-hover: #b52a44; --action-secondary: #756dc4; --avatar-bg: #625aa5;
+  --status-success: #4fd98a; --status-error: #ff5a5f; --focus-ring: 0 0 0 3px rgba(143, 135, 221, 0.45);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.28);
+  --shadow-raised: 0 2px 4px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.45);
+  --shadow-button: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.02) 100%);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 14px rgba(0, 0, 0, 0.3);
+  --glass-hover: rgba(255, 255, 255, 0.10); --glass-divider: rgba(255, 255, 255, 0.10);
+  --menu-bg: rgba(30, 28, 50, 0.82);
+  --menu-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.02) 100%);
+  --menu-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 40px rgba(0, 0, 0, 0.5);
+  --logo-ink: #e4e2ee; --logo-ink-a: #c2bdf0; --logo-ink-b: #d8d4f7;
+  color-scheme: dark;
+}
 
-        .glass-card {
-            background: rgba(17, 24, 39, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-        }
-        
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #0b0f19; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+/* ---------------------------------------------------------------- base */
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body { font-family: var(--font-body); color: var(--text-body); background: var(--surface-subtle);
+  -webkit-font-smoothing: antialiased; min-height: 100vh; overflow-x: hidden; }
+h1, h2, h3 { font-family: var(--font-display); color: var(--text-heading); line-height: 1.25; margin: 0; }
+a { color: var(--tchb-indigo-700); }
+button { font: inherit; }
+input, textarea { font: inherit; color: var(--text-body); }
+input::placeholder, textarea::placeholder { color: var(--tchb-gray-500); }
+:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+[hidden] { display: none !important; }
+svg.i { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+svg.i.sm { width: 15px; height: 15px; }
+svg.i.lg { width: 22px; height: 22px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
-        .check-container {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 0.5rem;
-            cursor: pointer;
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
-        }
-        .check-container:hover {
-            background-color: rgba(30, 41, 59, 0.5);
-            border-color: rgba(51, 65, 85, 0.5);
-        }
-        .check-container input[type="checkbox"] {
-            position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0;
-        }
-        .checkmark {
-            margin-top: 0.2rem; height: 1.5rem; width: 1.5rem;
-            background-color: rgba(15, 23, 42, 0.8);
-            border: 2px solid #4b5563;
-            border-radius: 0.375rem;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; transition: all 0.2s ease;
-        }
-        .check-container:hover input ~ .checkmark { border-color: #6b7280; }
-        .check-container input:checked ~ .checkmark { background-color: #dc2626; border-color: #dc2626; box-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
-        .checkmark:after {
-            content: ""; display: none; width: 0.4rem; height: 0.8rem;
-            border: solid white; border-width: 0 2px 2px 0;
-            transform: rotate(45deg); margin-bottom: 0.15rem;
-        }
-        .check-container input:checked ~ .checkmark:after { display: block; }
-        .check-text {
-            margin-left: 1rem; color: #e2e8f0; font-size: 1.05rem;
-            line-height: 1.5; font-weight: 500; transition: all 0.2s ease;
-        }
-        .check-container input:checked ~ .check-text {
-            color: #64748b; text-decoration: line-through;
-        }
-        
-        .nested-1 { margin-left: 2.5rem; }
-        .nested-2 { margin-left: 5rem; }
-        
-        .accordion-content {
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-in-out;
-            max-height: 0; opacity: 0; overflow: hidden;
-        }
-        .accordion-content.open { max-height: 3500px; opacity: 1; }
-        html { scroll-behavior: smooth; }
+/* logo: the brand colours, with the indigo lettering lightened in dark */
+.logo-mark { display: block; height: 100%; width: auto; }
+.logo-mark svg { height: 100%; width: auto; display: block; }
+.logo-mark [fill="#403978"] { fill: var(--logo-ink); }
+.logo-mark [stop-color="#3C3573"] { stop-color: var(--logo-ink-a); }
+.logo-mark [stop-color="#50488E"] { stop-color: var(--logo-ink-b); }
 
-        @media print {
-            body { background-color: white !important; color: black !important; }
-            .no-print { display: none !important; }
-            .no-print-section { display: none !important; }
-            .accordion-content { max-height: none !important; opacity: 1 !important; display: block !important; padding: 1rem 0 !important; }
-            .accordion-header i { display: none !important; }
-            .accordion-header { break-after: avoid; background-color: #f1f5f9 !important; color: black !important; border: 1px solid #cbd5e1; }
-            .glass-card { background: white !important; box-shadow: none !important; border: 1px solid #cbd5e1 !important; margin-bottom: 1rem !important; }
-            .check-container { padding: 0.25rem 0 !important; margin-bottom: 0 !important; }
-            .check-text { color: black !important; }
-            input[type="text"], input[type="url"], .question-answer { border: none !important; padding: 0 !important; font-weight: bold; color: black !important; background: transparent !important; }
-            .question-wrapper { margin-bottom: 0.5rem !important; border-bottom: 1px dashed #cbd5e1; }
-            .question-wrapper a { display: none !important; }
-            #gridCanvas { display: none !important; }
-        }
-    </style>
+/* ---------------------------------------------------------------- loading + sign-in */
+.splash { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 18px; background: var(--surface-subtle); transition: opacity 240ms var(--ease-out); }
+.splash .logo-mark { height: 72px; }
+.splash h1 { font-size: 26px; font-weight: 800; }
+.splash p { margin: 0; color: var(--text-muted); font-family: var(--font-display); font-weight: 700; display: flex; gap: 10px; align-items: center; }
+.splash.out { opacity: 0; pointer-events: none; }
+.gate-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.gate { max-width: 460px; width: 100%; padding: 40px 32px; display: flex; flex-direction: column; gap: 16px;
+  align-items: center; text-align: center; box-shadow: var(--shadow-raised); }
+.gate .logo-mark { height: 64px; }
+.gate h2 { font-weight: 800; font-size: 28px; }
+.gate p { margin: 0; font-size: 15px; color: var(--text-muted); }
+.gate .btn { width: 100%; }
+.gate .err { color: var(--status-error); font-weight: 700; font-size: 14px; }
+
+/* ---------------------------------------------------------------- header (hub layout) */
+.header { position: sticky; top: 0; z-index: 40; background: var(--header-bg);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-default); }
+.header-row { max-width: 1280px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; gap: 14px; }
+.brand { display: flex; align-items: center; gap: 14px; text-decoration: none; min-width: 0; }
+.brand .logo-mark { height: 46px; }
+.brand .app-name { font-family: var(--font-display); font-weight: 800; font-size: 20px; color: var(--tchb-indigo-700);
+  white-space: nowrap; padding-left: 14px; border-left: 1px solid var(--border-strong); line-height: 1.1; }
+.header .spacer { flex: 1; }
+.clock { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.clock b { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--tchb-indigo-700); white-space: nowrap; }
+.clock span { font-size: 12px; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+.save-badge { display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 999px; padding: 6px 12px;
+  font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase;
+  white-space: nowrap; background: var(--tchb-gray-100); color: var(--text-muted); cursor: default; }
+.save-badge .dot { width: 7px; height: 7px; border-radius: 999px; background: currentColor; }
+.save-badge.saving { background: var(--tchb-indigo-050); color: var(--tchb-indigo-700); }
+.save-badge.saved { background: var(--tchb-green-050); color: var(--tchb-green-600); }
+.save-badge.error { background: var(--tchb-red-050); color: var(--tchb-red-500); cursor: pointer; }
+.pill-btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 999px;
+  cursor: pointer; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--tchb-indigo-700); white-space: nowrap; }
+.pill-btn .count { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; display: inline-flex; align-items: center;
+  justify-content: center; background: var(--tchb-indigo-050); font-size: 13px; }
+.glass { background-color: var(--glass-bg); background-image: var(--glass-sheen);
+  backdrop-filter: blur(12px) saturate(160%); -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); }
+.avatar { width: 40px; height: 40px; flex: none; border-radius: 999px; cursor: pointer; border: 2px solid var(--surface-card);
+  background: var(--avatar-bg); color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  display: inline-flex; align-items: center; justify-content: center; box-shadow: var(--shadow-button); padding: 0;
+  position: relative; overflow: hidden; }
+.avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.avatar.sm { width: 28px; height: 28px; font-size: 11px; border-width: 1px; cursor: default; }
+
+/* segmented pill groups: theme switch (glass) and tabs (gray track) */
+.seg { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--tchb-gray-100); max-width: 100%;
+  overflow-x: auto; scrollbar-width: none; }
+.seg::-webkit-scrollbar { display: none; }
+.seg.glass { gap: 2px; background-color: var(--glass-bg); }
+.seg button { border: none; cursor: pointer; flex: none; padding: 8px 16px; border-radius: 999px; background: transparent;
+  font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: 0.02em; color: var(--tchb-indigo-700);
+  display: flex; align-items: center; gap: 8px; white-space: nowrap; transition: background 160ms var(--ease-out); }
+.seg button .n { font-family: var(--font-body); font-weight: 700; font-size: 12px; opacity: 0.7; }
+.seg button[aria-pressed='true'] { background: var(--surface-card); box-shadow: var(--shadow-button); }
+.seg.theme button { padding: 7px 10px; }
+
+/* ---------------------------------------------------------------- page */
+.main { max-width: 1280px; margin: 0 auto; padding: 32px 24px 96px; display: flex; flex-direction: column; gap: 20px; }
+.hero { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; }
+.hero-text { display: flex; flex-direction: column; gap: 6px; flex: 1 1 420px; min-width: 0; }
+.eyebrow-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.eyebrow { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--tchb-red-500); white-space: nowrap; }
+h1.title { font-weight: 800; font-size: 40px; line-height: 1.15; color: var(--tchb-indigo-700); overflow-wrap: anywhere; }
+.lede { margin: 0; font-size: 16px; color: var(--text-muted); }
+.card { background: var(--surface-card); border: 1px solid var(--border-default); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); }
+.btn { border: 1px solid transparent; cursor: pointer; border-radius: var(--radius-md); padding: 11px 20px;
+  font-family: var(--font-display); font-weight: 700; font-size: 15px; display: inline-flex; align-items: center;
+  justify-content: center; gap: 8px; white-space: nowrap; transition: background 160ms var(--ease-out), transform 120ms var(--ease-out);
+  text-decoration: none; color: inherit; background: transparent; }
+.btn:active { transform: scale(0.98); }
+.btn[disabled] { opacity: 0.5; cursor: default; }
+.btn.primary { background: var(--action-primary); color: #fff; box-shadow: var(--shadow-button); }
+.btn.primary:hover:not([disabled]) { background: var(--action-primary-hover); }
+.btn.secondary { background: var(--action-secondary); color: #fff; box-shadow: var(--shadow-button); }
+:root[data-theme='dark'] .btn.secondary { color: #fff; }
+.btn.outline { background: var(--surface-card); color: var(--tchb-indigo-700); border-color: var(--border-strong); border-radius: 999px; }
+.btn.outline:hover { background: var(--surface-accent-tint); }
+.btn.ghost { color: var(--tchb-indigo-700); border-radius: 999px; }
+.btn.ghost:hover { background: var(--glass-hover); }
+.btn.danger { color: var(--tchb-red-500); }
+.btn.danger:hover { background: var(--tchb-red-050); }
+.btn.sm { padding: 8px 14px; font-size: 14px; }
+.link-btn { border: none; background: none; cursor: pointer; font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  color: var(--tchb-indigo-700); padding: 8px 12px 8px 6px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px;
+  align-self: flex-start; text-decoration: none; }
+.link-btn:hover { background: var(--glass-hover); }
+.input { width: 100%; padding: 11px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-strong);
+  background: var(--surface-card); font-size: 16px; min-width: 0; }
+.input:focus { outline: none; border-color: var(--tchb-indigo-500); box-shadow: var(--focus-ring); }
+.input:disabled, .input[readonly] { background: var(--surface-subtle); }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field > span { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--tchb-indigo-700); }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-family: var(--font-display);
+  font-weight: 700; font-size: 12px; letter-spacing: 0.04em; background: var(--tchb-indigo-050); color: var(--tchb-indigo-700); white-space: nowrap; }
+.chip.green { background: var(--tchb-green-050); color: var(--tchb-green-600); }
+/* status tags: boxed, uppercase, with an icon (the hub's origin tags) */
+.tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: var(--radius-sm); border: 1px solid currentColor;
+  font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; line-height: 1.4; }
+.tag svg.i { width: 12px; height: 12px; }
+.tag.s-open { color: var(--tchb-indigo-700); background: var(--tchb-indigo-050); }
+.tag.s-closed { color: var(--tchb-green-600); background: var(--tchb-green-050); }
+.tag.s-cancelled { color: var(--text-muted); background: var(--tchb-gray-100); }
+.meta { font-size: 13px; color: var(--text-muted); overflow-wrap: anywhere; }
+.meta b { color: var(--text-body); font-weight: 700; }
+.progress { height: 6px; border-radius: 999px; background: var(--tchb-gray-100); overflow: hidden; flex: 1; min-width: 60px; }
+.progress > i { display: block; height: 100%; border-radius: 999px; background: var(--tchb-gradient-brand); transition: width 400ms var(--ease-out); }
+.progress.full > i { background: var(--tchb-green-500); }
+.note { padding: 12px 16px; border-radius: var(--radius-md); font-size: 14px; background: var(--surface-accent-tint); color: var(--text-body);
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.note .grow { flex: 1 1 240px; }
+.note.gold { background: var(--tchb-gold-050); color: var(--tchb-gold-600); font-weight: 600; }
+.empty { border: 2px dashed var(--border-strong); border-radius: var(--radius-lg); padding: 48px 24px; text-align: center; }
+.empty h3 { font-size: 20px; margin-bottom: 6px; }
+.empty p { margin: 0; color: var(--text-muted); }
+
+/* ---------------------------------------------------------------- properties home */
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.search { position: relative; flex: 1 1 280px; min-width: 0; }
+.search svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+.search input { padding-left: 42px; border-radius: 999px; }
+.list { display: flex; flex-direction: column; gap: 12px; }
+.prop-card { padding: 16px 18px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: transform 120ms var(--ease-out), box-shadow 160ms var(--ease-out); }
+.prop-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-raised); }
+.prop-card .grow { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.prop-title { font-family: var(--font-display); font-weight: 700; font-size: 18px; line-height: 1.3; color: var(--tchb-indigo-700); overflow-wrap: anywhere; }
+.tag-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.prog-row { display: flex; align-items: center; gap: 10px; max-width: 420px; }
+.prog-row span { font-size: 13px; font-weight: 700; color: var(--text-muted); white-space: nowrap; }
+.hit { font-size: 13px; color: var(--text-muted); overflow-wrap: anywhere; }
+.hit mark { background: var(--tchb-gold-050); color: inherit; border-radius: 3px; padding: 0 2px; }
+.prop-card .side { flex: none; display: flex; align-items: center; gap: 8px; }
+
+/* ---------------------------------------------------------------- checklist */
+.prop-head { padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; }
+.prop-head h1.title { font-size: 32px; }
+.crm-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+.crm-row .field { flex: 1 1 320px; }
+.actions-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; border-top: 1px solid var(--border-default); padding-top: 12px; }
+.actions-row .spacer { flex: 1; }
+.overall { display: flex; align-items: center; gap: 12px; }
+.overall b { font-family: var(--font-display); font-weight: 800; font-size: 15px; color: var(--tchb-indigo-700); white-space: nowrap; }
+.sec { overflow: hidden; }
+.sec-head { width: 100%; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; gap: 14px;
+  padding: 16px 20px; text-align: left; color: inherit; }
+.sec-head:hover { background: var(--glass-hover); }
+.sec-icon { width: 40px; height: 40px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  background: var(--surface-accent-tint); color: var(--tchb-indigo-700); }
+.sec-head h2 { flex: 1; font-size: 19px; font-weight: 800; min-width: 0; }
+.sec-head .chev { color: var(--text-muted); transition: transform 200ms var(--ease-out); }
+.sec[data-open='true'] .sec-head .chev { transform: rotate(180deg); }
+.sec-body { display: none; padding: 4px 20px 18px; border-top: 1px solid var(--border-default); }
+.sec[data-open='true'] .sec-body { display: block; }
+.q { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-default); }
+.q:last-child { border-bottom: none; }
+.q.n1 { margin-left: 32px; }
+.q.n2 { margin-left: 64px; }
+.check { width: 28px; height: 28px; flex: none; border-radius: 8px; border: 2px solid var(--border-strong); background: var(--surface-card);
+  cursor: pointer; display: flex; align-items: center; justify-content: center; color: #fff; padding: 0; margin-top: 1px; }
+.check svg { opacity: 0; width: 16px; height: 16px; stroke-width: 3; }
+.check[aria-checked='true'] { background: var(--tchb-green-500); border-color: var(--tchb-green-500); }
+.check[aria-checked='true'] svg { opacity: 1; }
+.check:disabled { cursor: default; }
+.q-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.q-text { font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1.35; color: var(--tchb-indigo-700); cursor: pointer; overflow-wrap: anywhere; }
+.q.done .q-text { color: var(--text-muted); text-decoration: line-through; text-decoration-color: var(--border-strong); }
+.ans-wrap { position: relative; }
+textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px; line-height: 1.45; padding-right: 44px; font-size: 15px; }
+.ans-link { position: absolute; right: 6px; top: 6px; width: 32px; height: 32px; border-radius: 999px; display: flex; align-items: center;
+  justify-content: center; color: var(--tchb-indigo-700); }
+.ans-link:hover { background: var(--glass-hover); }
+.escrow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.escrow label { position: relative; display: block; }
+.escrow label span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-family: var(--font-display);
+  font-weight: 700; font-size: 13px; color: var(--text-muted); pointer-events: none; }
+.escrow input { padding-left: 64px; font-size: 15px; }
+.sec-note { margin: 14px 0 4px; }
+body.locked .q-text { cursor: default; }
+
+/* ---------------------------------------------------------------- menus, popovers, modals, toasts */
+.scrim { position: fixed; inset: 0; z-index: 50; }
+.menu { position: fixed; z-index: 51; min-width: 220px; max-width: calc(100vw - 16px); max-height: min(440px, calc(100vh - 16px)); overflow-y: auto;
+  padding: 6px; border-radius: 14px; display: flex; flex-direction: column; gap: 2px; background-color: var(--menu-bg); background-image: var(--menu-sheen);
+  backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid var(--glass-border); box-shadow: var(--menu-shadow); }
+.menu.pop { width: 340px; }
+.menu > button, .menu > a { display: flex; align-items: center; gap: 10px; width: 100%; border: none; cursor: pointer; text-align: left; padding: 9px 12px;
+  border-radius: 9px; font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--tchb-indigo-700); background: transparent; text-decoration: none; }
+.menu > button:hover, .menu > a:hover { background: var(--glass-hover); }
+.menu > button.danger { color: var(--tchb-red-500); }
+.menu hr { border: none; border-top: 1px solid var(--glass-divider); margin: 4px 6px; width: auto; }
+.menu .label { padding: 8px 12px 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-display); }
+.menu .row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 9px; }
+.menu .row .who { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.menu .row .who b { font-family: var(--font-display); font-size: 14px; color: var(--text-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.menu .row .who span { font-size: 12px; color: var(--text-muted); overflow-wrap: anywhere; }
+.menu .row .dev { display: flex; gap: 6px; color: var(--tchb-gray-300); }
+.menu .row .dev .on { color: var(--tchb-green-600); }
+.menu .muted { padding: 10px 12px; font-size: 13px; color: var(--text-muted); }
+.modal-scrim { position: fixed; inset: 0; z-index: 60; background: rgba(20, 18, 40, 0.38); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal { width: 100%; max-width: 520px; max-height: calc(100vh - 32px); overflow-y: auto; padding: 26px; display: flex; flex-direction: column; gap: 14px;
+  background: var(--surface-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-raised); border: 1px solid var(--border-default); }
+.modal h2 { font-size: 24px; font-weight: 800; }
+.modal p { margin: 0; color: var(--text-body); }
+.modal .hint { font-size: 13px; color: var(--text-muted); }
+.modal .err { font-size: 13px; color: var(--status-error); font-weight: 700; }
+.modal .actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.switch-row { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+.switch { position: relative; width: 44px; height: 26px; flex: none; border-radius: 999px; border: none; cursor: pointer; background: var(--tchb-gray-300); padding: 0; }
+.switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 999px; background: #fff; box-shadow: var(--shadow-button); transition: transform 160ms var(--ease-out); }
+.switch[aria-checked='true'] { background: var(--tchb-indigo-500); }
+.switch[aria-checked='true']::after { transform: translateX(18px); }
+.toasts { position: fixed; z-index: 80; left: 50%; bottom: 24px; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; align-items: center; width: max-content; max-width: calc(100vw - 32px); }
+.toast { padding: 12px 18px; border-radius: 999px; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: #fff;
+  background: var(--tchb-indigo-700); box-shadow: var(--shadow-raised); display: flex; align-items: center; gap: 12px; }
+:root[data-theme='dark'] .toast { background: #756dc4; }
+.toast.err { background: var(--status-error); }
+.toast button { border: none; background: rgba(255, 255, 255, 0.2); color: #fff; border-radius: 999px; padding: 4px 12px; cursor: pointer; font-weight: 700; }
+.spin { width: 16px; height: 16px; border-radius: 999px; border: 2px solid currentColor; border-right-color: transparent; animation: spin 0.8s linear infinite; flex: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.log-row { display: flex; gap: 10px; padding: 8px 12px; align-items: flex-start; }
+.log-row .who { flex: 1; min-width: 0; font-size: 13px; color: var(--text-muted); }
+.log-row .who b { display: block; font-family: var(--font-display); font-size: 14px; color: var(--text-body); }
+
+/* ---------------------------------------------------------------- phones */
+@media (max-width: 760px) {
+  .header-row { padding: 10px 16px; gap: 8px 10px; flex-wrap: wrap; }
+  .brand { flex: 1 1 auto; gap: 10px; }
+  .brand .logo-mark { height: 34px; }
+  .brand .app-name { font-size: 16px; padding-left: 10px; }
+  .header .spacer { display: none; }
+  .clock { order: 5; align-items: flex-start; flex: 1 1 auto; }
+  .clock b { font-size: 13px; }
+  .clock span { font-size: 11px; }
+  .save-badge { order: 6; }
+  #active-btn { order: 7; }
+  .pill-btn { height: 34px; padding: 0 10px; font-size: 13px; }
+  .pill-btn .lbl { display: none; }
+  .main { padding: 20px 16px 80px; gap: 16px; }
+  h1.title { font-size: 30px; }
+  .prop-head { padding: 18px 16px; }
+  .prop-head h1.title { font-size: 24px; }
+  .hero .btn { width: 100%; }
+  .toolbar .seg { flex: 1 1 100%; }
+  .toolbar .seg button { flex: 1 1 auto; justify-content: center; padding: 8px 6px; }
+  .prop-card { flex-wrap: wrap; gap: 10px; }
+  .prop-card .side { width: 100%; }
+  .prop-card .side .btn { flex: 1; }
+  .sec-head { padding: 14px 14px; gap: 10px; }
+  .sec-icon { width: 34px; height: 34px; border-radius: 10px; }
+  .sec-head h2 { font-size: 16px; }
+  .sec-body { padding: 2px 14px 14px; }
+  .q.n1 { margin-left: 16px; }
+  .q.n2 { margin-left: 32px; }
+  .q-text { font-size: 15px; }
+  textarea.ans, .escrow input { font-size: 16px; }
+  .escrow { grid-template-columns: 1fr; }
+  .actions-row .btn { padding: 8px 10px; }
+  .actions-row .spacer { display: none; }
+  .menu, .menu.pop { left: 8px !important; right: 8px !important; top: auto !important; bottom: 8px !important; width: auto; max-height: 70vh; }
+  .modal { padding: 20px; }
+  .toasts { bottom: 16px; }
+}
+
+/* ---------------------------------------------------------------- print / PDF: every answer in full */
+#print-sheet { display: none; }
+@media print {
+  @page { margin: 14mm 12mm; }
+  :root, :root[data-theme='dark'] { color-scheme: light; --logo-ink: #403978; --logo-ink-a: #3C3573; --logo-ink-b: #50488E; }
+  body { background: #fff !important; color: #111 !important; }
+  body > *:not(#print-sheet) { display: none !important; }
+  #print-sheet { display: block !important; font-family: var(--font-body); color: #111; font-size: 11.5pt; }
+  .ps-head { display: flex; align-items: center; gap: 16px; border-bottom: 2px solid #4d458a; padding-bottom: 10px; margin-bottom: 12px; }
+  .ps-head .logo-mark { height: 40px; }
+  .ps-head .logo-mark [fill], .ps-head .logo-mark [stop-color] { }
+  .ps-head h1 { font-family: var(--font-display); font-size: 18pt; color: #4d458a; margin: 0; }
+  .ps-kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin-bottom: 14px; }
+  .ps-kv dt { font-weight: 800; color: #4d458a; }
+  .ps-kv dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
+  .ps-sec { margin-top: 12px; }
+  .ps-sec h2 { font-family: var(--font-display); font-size: 13pt; color: #fff; background: #4d458a; padding: 4px 10px; border-radius: 4px; margin: 0 0 6px; break-after: avoid; }
+  .ps-q { display: flex; gap: 8px; padding: 5px 0; border-bottom: 1px dashed #c9c7d4; break-inside: avoid; }
+  .ps-q.n1 { margin-left: 18px; } .ps-q.n2 { margin-left: 36px; }
+  .ps-box { width: 12px; height: 12px; flex: none; border: 1.5px solid #47445a; border-radius: 2px; margin-top: 3px; position: relative; }
+  .ps-box.on { background: #109648; border-color: #109648; }
+  .ps-box.on::after { content: ''; position: absolute; left: 3px; top: 0; width: 3px; height: 7px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .ps-q .t { font-weight: 700; }
+  .ps-q .a { margin-top: 2px; white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
+  .ps-q .a.empty { color: #9a97ad; font-style: italic; }
+  .ps-note { font-weight: 700; margin: 4px 0; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
 </head>
-<body class="font-sans antialiased relative selection:bg-brand-crimson selection:text-white pb-20">
+<body>
 
-    <!-- CURSOR OVERLAYS -->
-    <div id="mouseGlow"></div>
-    <div id="cursor-dot"></div>
-    <div id="cursor-ring"></div>
+<!-- Loading screen: logo, app name, "Loading..." then "Almost ready..." -->
+<div id="splash" class="splash">
+  <span class="logo-mark" data-logo></span>
+  <h1>TC Checklist</h1>
+  <p><span class="spin"></span><span id="splash-msg">Loading…</span></p>
+</div>
 
-    <!-- CANVAS BACKGROUND -->
-    <canvas id="gridCanvas" class="fixed inset-0 w-full h-full -z-10" style="pointer-events: none;"></canvas>
+<!-- Sign-in -->
+<div id="gate" class="gate-wrap" hidden>
+  <div class="card gate">
+    <span class="logo-mark" data-logo></span>
+    <div class="eyebrow">TC First Call</div>
+    <h2>TC Checklist</h2>
+    <p>Sign in with your Total Cash Home Buyers Google account.</p>
+    <button id="google-login-btn" class="btn primary" type="button">Sign In With Google</button>
+    <p id="auth-error" class="err" hidden></p>
+  </div>
+</div>
 
-    <!-- SECURE GATE MODAL (Auth) -->
-    <div id="auth-overlay" class="fixed inset-0 bg-black/95 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-4 transition-opacity duration-300">
-        <div id="gateModalBox" class="bg-[#0f0f1f] border border-brand-purple/30 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.8)] w-[95%] sm:w-full max-w-md p-6 sm:p-8 text-center relative overflow-hidden">
-            <div class="absolute -right-20 -top-20 w-48 h-48 bg-brand-purple/10 rounded-full blur-3xl pointer-events-none"></div>
-            <img src="https://raw.githubusercontent.com/RemyTCHB/TCHB-INVESTOR-NETWORK-PORTAL/main/logo.svg" alt="TCHB Logo" class="h-16 sm:h-20 mx-auto mb-6 relative z-10 opacity-90" onerror="this.src='https://placehold.co/180x60/241a45/ffffff?text=TCHB+LOGO'">
-            
-            <div class="mx-auto w-14 h-14 rounded-full bg-brand-purple/10 flex items-center justify-center border border-brand-purple/20 mb-4 relative z-10" id="gateLockIconContainer">
-                <svg id="gateLockIcon" class="w-6 h-6 text-brand-purple transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-            </div>
-            
-            <h2 class="text-xl font-bold text-white mb-2 relative z-10 uppercase tracking-widest">TC CHECKLIST</h2>
-            <p class="text-gray-400 mb-6 font-medium text-xs relative z-10">Authorized Personnel Login Required</p>
-            
-            <button id="google-login-btn" onclick="window.signInWithGoogle()" class="w-full bg-white hover:bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] relative z-10 cursor-pointer">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-3" alt="Google">
-                Sign in with Google
-            </button>
-            <p id="auth-error" class="text-brand-crimson text-xs font-semibold mt-4 hidden leading-relaxed relative z-10"></p>
-        </div>
+<!-- App -->
+<div id="app" hidden>
+  <header class="header">
+    <div class="header-row">
+      <a class="brand" href="#/" aria-label="TC Checklist home"><span class="logo-mark" data-logo></span><span class="app-name">TC Checklist</span></a>
+      <div class="spacer"></div>
+      <div class="clock" aria-label="Eastern time"><b id="clock-a">&nbsp;</b><span id="clock-b">&nbsp;</span></div>
+      <button id="save-badge" class="save-badge" type="button" title=""><span class="dot"></span><span id="save-text">All Saved</span></button>
+      <button id="active-btn" class="pill-btn glass" type="button" aria-haspopup="true"><svg class="i sm"><use href="#i-users"/></svg><span class="lbl">Active</span><span class="count" id="active-count">0</span></button>
+      <div class="seg glass theme" role="group" aria-label="Theme">
+        <button type="button" data-theme-btn="light" aria-label="Light theme"><svg class="i sm"><use href="#i-sun"/></svg></button>
+        <button type="button" data-theme-btn="dark" aria-label="Dark theme"><svg class="i sm"><use href="#i-moon"/></svg></button>
+      </div>
+      <button id="avatar-btn" class="avatar" type="button" aria-haspopup="true" aria-label="Your account"></button>
     </div>
+  </header>
 
-    <!-- HEADER -->
-    <header class="bg-[#0b0f19]/90 backdrop-blur-xl shadow-lg sticky top-0 md:top-2 z-50 border border-gray-800/80 md:rounded-2xl md:mx-4 md:mt-2 no-print transition-all duration-300">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-start">
-                <img src="https://raw.githubusercontent.com/RemyTCHB/TCHB-INVESTOR-NETWORK-PORTAL/main/logo.svg" alt="TCHB" class="h-10 object-contain drop-shadow-md">
-                
-                <div class="h-8 w-px bg-gray-700/80 shrink-0 hidden sm:block mx-2"></div>
-                
-                <h1 class="text-lg font-bold text-white tracking-widest uppercase hidden sm:block">TC Checklist</h1>
-
-                <div class="h-8 w-px bg-gray-700/80 shrink-0 hidden sm:block mx-2"></div>
-
-                <!-- Active Users Pill -->
-                <div class="relative shrink-0">
-                    <button onclick="window.toggleActiveUsers(event)" class="flex items-center gap-2 bg-gray-800/60 border border-gray-700/60 hover:bg-gray-700/60 rounded-lg px-3 h-9 cursor-pointer transition-colors shadow-sm">
-                        <i class="fa-solid fa-users text-brand-emerald text-[10px]"></i>
-                        <span class="text-[10px] font-bold text-gray-300 uppercase tracking-wider hidden md:inline">Active</span>
-                        <span id="activeUserCountBtn" class="bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/30 px-1.5 py-0.5 rounded text-[10px] font-black leading-none">0</span>
-                    </button>
-                    <div id="activeUsersDropdown" class="absolute left-0 sm:left-auto sm:right-0 top-full mt-3 w-48 bg-[#0f1423] border border-gray-700 rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.15)] hidden flex-col z-[100] overflow-hidden text-left">
-                        <div class="bg-gray-800/80 px-3 py-2 border-b border-gray-700 text-[10px] font-bold text-gray-400 uppercase tracking-wider flex justify-between items-center">
-                            <span>Personnel Online</span>
-                            <span id="activeUserCount" class="text-brand-emerald">0</span>
-                        </div>
-                        <div id="activeUsersList" class="flex flex-col max-h-48 overflow-y-auto p-1.5 gap-1 custom-scrollbar">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <div class="flex flex-col items-end mr-2">
-                    <p class="text-xs font-bold text-brand-purple uppercase tracking-widest">TC First Call</p>
-                    <div class="flex items-center mt-0.5">
-                        <span class="flex h-2 w-2 relative mr-1.5" id="sync-ping">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-emerald opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-emerald"></span>
-                        </span>
-                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Cloud Sync</p>
-                    </div>
-                </div>
-
-                <button onclick="window.logOut()" class="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-800/60 border border-gray-700/60 text-gray-400 hover:text-brand-crimson hover:bg-brand-crimson/10 hover:border-brand-crimson/30 transition-all cursor-pointer shadow-sm shrink-0" title="Sign Out">
-                    <i class="fa-solid fa-arrow-right-from-bracket text-[12px]"></i>
-                </button>
-            </div>
+  <main class="main">
+    <!-- Properties home -->
+    <section id="view-home" class="list" hidden>
+      <div class="hero">
+        <div class="hero-text">
+          <div class="eyebrow">TC First Call</div>
+          <h1 class="title">Properties</h1>
+          <p class="lede">Every first-call checklist, live for the whole team.</p>
         </div>
-    </header>
-
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 relative z-10">
-        
-        <!-- Property Context / Session Manager -->
-        <div class="glass-card rounded-2xl border border-gray-800 p-5 sm:p-6 mb-8 relative overflow-hidden">
-            <div class="absolute -right-20 -top-20 w-48 h-48 bg-brand-cyan/5 rounded-full blur-3xl pointer-events-none"></div>
-            
-            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-5 relative z-10">
-                <h2 class="text-lg font-bold text-white flex items-center tracking-wide">
-                    <i class="fa-solid fa-map-pin mr-2 text-brand-emerald"></i> Property Context
-                </h2>
-                <div class="flex items-center gap-3 no-print">
-                    <span id="save-status" class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 bg-gray-800/50 border border-gray-700 text-gray-400 rounded transition-colors shadow-sm">Waiting for address...</span>
-                    <button onclick="openManageModal()" class="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 bg-brand-purple/20 border border-brand-purple/50 text-brand-purple rounded hover:bg-brand-purple hover:text-white transition-colors flex items-center shadow-sm cursor-pointer">
-                        <i class="fa-solid fa-cloud mr-1.5"></i> Load Cloud Save
-                    </button>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 relative z-10">
-                <div>
-                    <label for="property-address" class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Property Address</label>
-                    <input type="text" id="property-address" list="saved-addresses" placeholder="e.g. 123 Main St, Miami FL..." class="w-full bg-gray-950/80 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-brand-emerald focus:ring-1 focus:ring-brand-emerald transition-colors placeholder-gray-600 shadow-inner">
-                    <datalist id="saved-addresses"></datalist>
-                </div>
-                <div>
-                    <label for="crm-link" class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">CRM Lead Link</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fa-solid fa-link text-gray-500"></i>
-                        </div>
-                        <input type="url" id="crm-link" placeholder="https://app.gohighlevel.com/..." class="w-full bg-gray-950/80 border border-gray-700 rounded-lg pl-10 p-3 text-white focus:outline-none focus:border-brand-emerald focus:ring-1 focus:ring-brand-emerald transition-colors placeholder-gray-600 shadow-inner">
-                    </div>
-                </div>
-            </div>
+        <button id="new-btn" class="btn primary" type="button"><svg class="i"><use href="#i-plus"/></svg>New Property</button>
+      </div>
+      <div id="draft-note" class="note gold" hidden>
+        <svg class="i"><use href="#i-alert"/></svg>
+        <span class="grow">This device has an unsaved checklist from before (started without an address).</span>
+        <button id="draft-use" class="btn outline sm" type="button">Start A Property With It</button>
+      </div>
+      <div class="toolbar">
+        <div class="seg" role="tablist" aria-label="Status">
+          <button type="button" data-tab="open" aria-pressed="true">Open <span class="n" data-n="open">0</span></button>
+          <button type="button" data-tab="closed" aria-pressed="false">Closed <span class="n" data-n="closed">0</span></button>
+          <button type="button" data-tab="cancelled" aria-pressed="false">Cancelled <span class="n" data-n="cancelled">0</span></button>
         </div>
+        <label class="search"><svg class="i"><use href="#i-search"/></svg><span class="sr">Search properties</span>
+          <input id="search" class="input" type="search" placeholder="Search Address, CRM Link Or Answers" autocomplete="off"></label>
+      </div>
+      <div id="prop-list" class="list"></div>
+    </section>
 
-        <!-- Controls Bar -->
-        <div class="flex flex-wrap gap-3 mb-6 justify-end no-print relative z-10">
-            <button onclick="window.printChecklist()" class="px-5 py-2.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-md transition-all flex items-center cursor-pointer">
-                <i class="fa-solid fa-print mr-2 text-gray-400"></i>Print / PDF
-            </button>
-            <button onclick="toggleAll(true)" class="px-5 py-2.5 bg-gradient-to-r from-brand-emerald/10 to-brand-cyan/10 border border-brand-emerald/30 hover:border-brand-emerald/60 text-gray-200 hover:text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-md transition-all flex items-center cursor-pointer">
-                <i class="fa-solid fa-folder-open mr-2 text-brand-emerald"></i>Expand All
-            </button>
-            <button onclick="toggleAll(false)" class="px-5 py-2.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 hover:text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-md transition-all flex items-center cursor-pointer">
-                <i class="fa-solid fa-folder-closed mr-2 text-gray-400"></i>Collapse All
-            </button>
-            <button onclick="resetChecklist()" class="px-5 py-2.5 bg-gradient-to-r from-brand-crimson to-brand-purple text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-[0_0_15px_rgba(220,38,38,0.3)] hover:shadow-[0_0_25px_rgba(220,38,38,0.5)] transition-all flex items-center ml-0 sm:ml-2 cursor-pointer">
-                <i class="fa-solid fa-rotate-right mr-2"></i>Reset Call
-            </button>
+    <!-- Checklist -->
+    <section id="view-check" class="list" hidden>
+      <a class="link-btn" href="#/"><svg class="i sm"><use href="#i-back"/></svg>Back To Properties</a>
+      <div class="card prop-head">
+        <div class="eyebrow-row"><span class="eyebrow">Property Context</span><span id="p-tag"></span></div>
+        <h1 id="p-address" class="title"></h1>
+        <div id="p-meta" class="meta"></div>
+        <div class="crm-row">
+          <label class="field"><span>CRM Lead Link</span>
+            <input id="crm-link" class="input" type="url" inputmode="url" placeholder="https://app.gohighlevel.com/..." autocomplete="off"></label>
+          <a id="crm-open" class="btn outline" target="_blank" rel="noopener" hidden><svg class="i sm"><use href="#i-ext"/></svg>Open In CRM</a>
         </div>
-
-        <!-- Checklist Sections -->
-        <div class="space-y-5 relative z-10" id="checklist-container">
-
-            <!-- Mortgage Questions -->
-            <div class="glass-card rounded-xl border border-gray-800 overflow-hidden group">
-                <button class="accordion-header w-full px-6 py-5 flex justify-between items-center bg-gray-900/60 hover:bg-gray-800/80 transition-colors cursor-pointer border-b border-gray-800" onclick="toggleAccordion(this)">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-lg bg-brand-cyan/10 border border-brand-cyan/20 flex items-center justify-center mr-4 text-brand-cyan shadow-inner group-hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all">
-                            <i class="fa-solid fa-building-columns text-lg"></i>
-                        </div>
-                        <h2 class="text-sm font-bold text-white tracking-widest uppercase">Mortgage Questions</h2>
-                    </div>
-                    <i class="fa-solid fa-chevron-down text-gray-500 transform transition-transform duration-300 group-hover:text-brand-cyan"></i>
-                </button>
-                <div class="accordion-content open bg-gray-900/20 px-6 py-5">
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Mtg Company ?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Total Principle Owed / Total Payoff ?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Is Property In Pre Foreclosure? Any Red Flags Like This ?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Was There Any Late Payments?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">What is The Monthly Principal & Interest Payment</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">What is The Monthly Escrow Payments</span>
-                    </label>
-                    
-                    <!-- Custom Breakdown Inputs for Escrow -->
-                    <div class="flex flex-col sm:flex-row gap-3 mb-4" style="margin-left: 3.5rem; width: calc(100% - 3.5rem);">
-                        <div class="flex-1 flex items-center relative">
-                            <div class="absolute left-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider pointer-events-none">HOI</div>
-                            <input type="text" class="question-answer w-full bg-gray-950/60 border border-gray-700/50 hover:border-brand-emerald/50 focus:bg-gray-900 focus:border-brand-emerald focus:ring-1 focus:ring-brand-emerald py-2 pr-3 text-xs font-bold text-white outline-none transition-all placeholder-gray-600 rounded-lg shadow-inner" style="padding-left: 3rem;" placeholder="Amount..." oninput="window.saveCurrentState()">
-                        </div>
-                        <div class="flex-1 flex items-center relative">
-                            <div class="absolute left-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider pointer-events-none">Taxes</div>
-                            <input type="text" class="question-answer w-full bg-gray-950/60 border border-gray-700/50 hover:border-brand-emerald/50 focus:bg-gray-900 focus:border-brand-emerald focus:ring-1 focus:ring-brand-emerald py-2 pr-3 text-xs font-bold text-white outline-none transition-all placeholder-gray-600 rounded-lg shadow-inner" style="padding-left: 4rem;" placeholder="Amount..." oninput="window.saveCurrentState()">
-                        </div>
-                    </div>
-
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Can They Send A Copy of Mortgage Statement (Y/N)</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Pictures -->
-            <div class="glass-card rounded-xl border border-gray-800 overflow-hidden group">
-                <button class="accordion-header w-full px-6 py-5 flex justify-between items-center bg-gray-900/60 hover:bg-gray-800/80 transition-colors cursor-pointer border-b border-gray-800" onclick="toggleAccordion(this)">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-lg bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center mr-4 text-brand-purple shadow-inner group-hover:shadow-[0_0_15px_rgba(79,70,229,0.3)] transition-all">
-                            <i class="fa-solid fa-camera text-lg"></i>
-                        </div>
-                        <h2 class="text-sm font-bold text-white tracking-widest uppercase">Pictures</h2>
-                    </div>
-                    <i class="fa-solid fa-chevron-down text-gray-500 transform transition-transform duration-300 group-hover:text-brand-purple"></i>
-                </button>
-                <div class="accordion-content bg-gray-900/20 px-6 py-5">
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Sending Photos Any Current Photos From Seller ?</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Emergency Contact Info -->
-            <div class="glass-card rounded-xl border border-gray-800 overflow-hidden group">
-                <button class="accordion-header w-full px-6 py-5 flex justify-between items-center bg-gray-900/60 hover:bg-gray-800/80 transition-colors cursor-pointer border-b border-gray-800" onclick="toggleAccordion(this)">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-lg bg-brand-emerald/10 border border-brand-emerald/20 flex items-center justify-center mr-4 text-brand-emerald shadow-inner group-hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all">
-                            <i class="fa-solid fa-address-book text-lg"></i>
-                        </div>
-                        <h2 class="text-sm font-bold text-white tracking-widest uppercase">Emergency Contact Info</h2>
-                    </div>
-                    <i class="fa-solid fa-chevron-down text-gray-500 transform transition-transform duration-300 group-hover:text-brand-emerald"></i>
-                </button>
-                <div class="accordion-content bg-gray-900/20 px-6 py-5">
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Who Is The Emergency Contact? Best Phone Number/ Best Way To Communicate With This Person? ( Call Or Text, Etc.)</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- HOA Questions -->
-            <div class="glass-card rounded-xl border border-gray-800 overflow-hidden group">
-                <button class="accordion-header w-full px-6 py-5 flex justify-between items-center bg-gray-900/60 hover:bg-gray-800/80 transition-colors cursor-pointer border-b border-gray-800" onclick="toggleAccordion(this)">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-lg bg-brand-gold/10 border border-brand-gold/20 flex items-center justify-center mr-4 text-brand-gold shadow-inner group-hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all">
-                            <i class="fa-solid fa-users text-lg"></i>
-                        </div>
-                        <h2 class="text-sm font-bold text-white tracking-widest uppercase">HOA Questions</h2>
-                    </div>
-                    <i class="fa-solid fa-chevron-down text-gray-500 transform transition-transform duration-300 group-hover:text-brand-gold"></i>
-                </button>
-                <div class="accordion-content bg-gray-900/20 px-6 py-5">
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Whats HOA Contact Info?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Best Way To Communicate</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Start Ordering The HOA Approval Process At Least Understand Timeline For Process?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">How Does One Apply?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Any Upcoming Special Assessments That We Know About Coming Up ? (Maybe Get HOA Contact And Communicate/ Verify Info With Them Directly)</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">If So, What Is It For? What Is The Amount? When Will It Be Added To The Bill? Make Sure Sellers Understand THEY’RE Paying It (Discuss Potential Options For Them To Handle Special Assessment, Ie. Money In Escrow, Money Out At Closing, Or Doing A Price Reduction For The Special Assessment Amount Needs To Be Put In Writing Whatever Agreed Upon)</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">HOA Monthly/ Yearly Amount?</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">When Paid</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">HOA Rental Restrictions ? (Ie No STR / Only A Certain % Of Units In Building Can Be Rented Have We Reached That Percentage)</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Can Buyers Be Under An LLC/ Biz Entity Or Must It Be Under A Personal Name ?</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- SFHs -->
-            <div class="glass-card rounded-xl border border-gray-800 overflow-hidden group">
-                <button class="accordion-header w-full px-6 py-5 flex justify-between items-center bg-gray-900/60 hover:bg-gray-800/80 transition-colors cursor-pointer border-b border-gray-800" onclick="toggleAccordion(this)">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-lg bg-brand-crimson/10 border border-brand-crimson/20 flex items-center justify-center mr-4 text-brand-crimson shadow-inner group-hover:shadow-[0_0_15px_rgba(220,38,38,0.3)] transition-all">
-                            <i class="fa-solid fa-house text-lg"></i>
-                        </div>
-                        <h2 class="text-sm font-bold text-white tracking-widest uppercase">SFHs</h2>
-                    </div>
-                    <i class="fa-solid fa-chevron-down text-gray-500 transform transition-transform duration-300 group-hover:text-brand-crimson"></i>
-                </button>
-                <div class="accordion-content bg-gray-900/20 px-6 py-5">
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">How Long Big Ticket Items Fully Replaced And Or Serviced/Maintained? ( HVAC, Electrical, Plumbing, Roof)</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Occupancy? (Vacant Or Occupied Who Lives In The Home? )</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Owner Occupied</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Tenant Occupied? If Yes What Type Of Lease (Yearly Or Month To Month)? How Much Is Rents?</span>
-                    </label>
-                    <label class="check-container nested-2">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">If Section 8? How Much Does Section 8 Pay/ Mo? How Much Does The Tenant Pay?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Confirm Bdr/Bth And Living Square Footage (Heated Square Footage) ?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Construction Of House? ( Check Local County Property Appraiser Site, Ie. Block, Wood Frame, Etc? )</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Year Built</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Utilities ( City Water And Sewer Or Well And Septic? If Well/Septic Most Recent Maintenance Done And/Or When Last Replaced)</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Confirm Lot Size? Lot Dimensions ?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Confirm Floodzone Code (And What Code Means No Flood Zone, Minimal Flood, Etc)</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Confirm Residential Zoning Code ( And What It Means)</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Confirm If Pool Or No Pool</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Parking Type?</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">If Garage , Type? ( How Many Cars / Attached Or Detached)</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Is Prop. In Historic Zone?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">School Zoning? (Elementary, Middle, High)</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Post Occupancy Needed (Y/N)</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">What Are The Terms</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Land -->
-            <div class="glass-card rounded-xl border border-gray-800 overflow-hidden group">
-                <button class="accordion-header w-full px-6 py-5 flex justify-between items-center bg-gray-900/60 hover:bg-gray-800/80 transition-colors cursor-pointer border-b border-gray-800" onclick="toggleAccordion(this)">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center mr-4 text-green-500 shadow-inner group-hover:shadow-[0_0_15px_rgba(34,197,94,0.3)] transition-all">
-                            <i class="fa-solid fa-map-location-dot text-lg"></i>
-                        </div>
-                        <h2 class="text-sm font-bold text-white tracking-widest uppercase">Land</h2>
-                    </div>
-                    <i class="fa-solid fa-chevron-down text-gray-500 transform transition-transform duration-300 group-hover:text-green-500"></i>
-                </button>
-                <div class="accordion-content bg-gray-900/20 px-6 py-5">
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Confirm Lot Square Footage</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Confirm Lot Dimensions (Dispo Can Confirm)</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Confirm Residential Zoning Code ( And What It Means)</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Confirm Flood Zone Code (And What Code Means No Flood Zone, Minimal Flood, Etc )</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Has There Ever Been A Property On The Lot? If So When Was It Demolished?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Have Impact Fees Been Paid ? If So How Much Were They?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Are There Utilities On The Lot Or On The Road Passing In Front Of Lot? Or How Far Away Are The Utilities From Lot?</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">What Type Of Utilities? (Ie City Water/ Sewer Or Well And Septic If The Latter When Was It Maintained/ Replaced Last?) Confirm This Info Whether Raw Land Or Not</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Is There A Standard Survey?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Any Ecological Surveys Done?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Any Protected Species On The Land We Need To Know About (Ie Turtles/ Specific Trees, Etc)?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Land Is Protected Area/ Historical ?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Is There Existing Building?</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Situation ? Liens? Violations? Need Demo?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Is The Lot ‘Level’ ? Any Elevation We Need To Know About?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Any Wetlands On Prop/ Any Lowlands On Prop?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">If Rural, Any Animal Restrictions?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Whats Nearest Major City Nearby ?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Whats Nearest Grocery Store?</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Income Producing Properties -->
-            <div class="glass-card rounded-xl border border-gray-800 overflow-hidden group">
-                <button class="accordion-header w-full px-6 py-5 flex justify-between items-center bg-gray-900/60 hover:bg-gray-800/80 transition-colors cursor-pointer border-b border-gray-800" onclick="toggleAccordion(this)">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-lg bg-pink-500/10 border border-pink-500/20 flex items-center justify-center mr-4 text-pink-500 shadow-inner group-hover:shadow-[0_0_15px_rgba(236,72,153,0.3)] transition-all">
-                            <i class="fa-solid fa-city text-lg"></i>
-                        </div>
-                        <h2 class="text-sm font-bold text-white tracking-widest uppercase">Income Producing Properties</h2>
-                    </div>
-                    <i class="fa-solid fa-chevron-down text-gray-500 transform transition-transform duration-300 group-hover:text-pink-500"></i>
-                </button>
-                <div class="accordion-content bg-gray-900/20 px-6 py-5">
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Tenant Occupied? If Yes What Type Of Lease (Yearly Or Month To Month)? How Much Is Rents? Retail Tenants Or Section 8 Tenants? When Does Lease End?</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Lease Docs Needed?</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Rent Rolls?</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Current P&Ls?</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">If Occupied, How Long Have Tenants Been There / How Long Do They Want To Be There For?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">When Was The Last Time The Big Ticket Items Were Replaced (HVAC/ Roof/ Plumbing/ Electric )</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">How Many Units?</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Layout Of Units (Ie : Side By Side Duplex Vs Main Home With Smaller Detached ADU Vs Top And Bottom Duplex )</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Access Instructions?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Bdr/Bth Count Of Each Unit?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Sqft Of Each Unit</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">How Many Meters? (Electric And Water Meters)</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">This Zoned For Mult Family?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Utilities? (City Water/Sewer Or Well And Septic)</span>
-                    </label>
-                    <label class="check-container nested-1">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">If Well/Septic When Last Replaced/ Maintained</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">How Many Parking Spots Total ?( Off Street Or On Street Parking)</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Mobile Homes -->
-            <div class="glass-card rounded-xl border border-gray-800 overflow-hidden group">
-                <button class="accordion-header w-full px-6 py-5 flex justify-between items-center bg-gray-900/60 hover:bg-gray-800/80 transition-colors cursor-pointer border-b border-gray-800" onclick="toggleAccordion(this)">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mr-4 text-orange-500 shadow-inner group-hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] transition-all">
-                            <i class="fa-solid fa-trailer text-lg"></i>
-                        </div>
-                        <h2 class="text-sm font-bold text-white tracking-widest uppercase">Mobile Homes</h2>
-                    </div>
-                    <i class="fa-solid fa-chevron-down text-gray-500 transform transition-transform duration-300 group-hover:text-orange-500"></i>
-                </button>
-                <div class="accordion-content bg-gray-900/20 px-6 py-5">
-                    <div class="bg-brand-crimson/10 border border-brand-crimson/30 rounded-lg p-3 mb-5 ml-2 flex items-start shadow-inner">
-                        <i class="fa-solid fa-circle-exclamation text-brand-crimson mt-0.5 mr-3"></i>
-                        <p class="text-xs font-bold text-gray-200 uppercase tracking-wider mt-0.5">Treat Like SFH With All The Questions But Add These:</p>
-                    </div>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Mobile Home Model Number</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Mobile Home Manufacturer</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">If Title Was Retired Or Not?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Permanent Foundation?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Verify Year Built , If Possible ?</span>
-                    </label>
-                    <label class="check-container">
-                        <input type="checkbox" class="checklist-cb">
-                        <span class="checkmark"></span>
-                        <span class="check-text">Single Wide Vs Double Wide?</span>
-                    </label>
-                </div>
-            </div>
-
+        <div class="overall"><div class="progress" id="p-progress"><i></i></div><b id="p-count"></b></div>
+        <div class="actions-row">
+          <button id="status-btn" class="btn secondary sm" type="button" aria-haspopup="true"><span id="status-btn-text">Status</span><svg class="i sm"><use href="#i-chev"/></svg></button>
+          <button id="activity-btn" class="btn ghost sm" type="button"><svg class="i sm"><use href="#i-history"/></svg>Activity</button>
+          <button id="print-btn" class="btn ghost sm" type="button"><svg class="i sm"><use href="#i-print"/></svg>Print / PDF</button>
+          <span class="spacer"></span>
+          <button id="expand-btn" class="btn ghost sm" type="button"><svg class="i sm"><use href="#i-expand"/></svg>Expand All</button>
+          <button id="collapse-btn" class="btn ghost sm" type="button"><svg class="i sm"><use href="#i-collapse"/></svg>Collapse All</button>
+          <button id="delete-btn" class="btn ghost sm danger" type="button"><svg class="i sm"><use href="#i-trash"/></svg>Delete</button>
         </div>
-    </main>
+      </div>
+      <div id="locked-note" class="note" hidden>
+        <svg class="i"><use href="#i-lock"/></svg><span class="grow" id="locked-text"></span>
+        <button id="reopen-btn" class="btn outline sm" type="button">Reopen</button>
+      </div>
+      <div id="sections" class="list"></div>
+    </section>
+  </main>
+</div>
 
-    <!-- Footer -->
-    <footer class="max-w-6xl mx-auto px-4 mt-8 pb-10 text-center text-gray-500 font-medium text-xs no-print border-t border-gray-800/60 pt-8 uppercase tracking-widest relative z-10">
-        <p>&copy; <span id="year"></span> Total Cash Home Buyers. All rights reserved.</p>
-    </footer>
+<div id="print-sheet"></div>
+<div id="toasts" class="toasts" aria-live="polite"></div>
 
-    <!-- Manage Addresses Modal -->
-    <div id="manage-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300 no-print">
-        <div class="bg-[#0f1423] rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-brand-emerald/30 w-full max-w-lg overflow-hidden transform scale-95 transition-transform duration-300 relative">
-            <div class="absolute -right-20 -top-20 w-48 h-48 bg-brand-emerald/10 rounded-full blur-3xl pointer-events-none"></div>
-            
-            <div class="flex justify-between items-center p-5 border-b border-gray-800 relative z-10 bg-gray-900/40">
-                <h3 class="text-sm font-bold text-white uppercase tracking-widest flex items-center"><i class="fa-solid fa-cloud text-brand-emerald mr-2"></i>Cloud Saved Checklists</h3>
-                <button onclick="closeManageModal()" class="text-gray-500 hover:text-white transition-colors cursor-pointer"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            
-            <div class="p-2 max-h-[60vh] overflow-y-auto custom-scrollbar relative z-10 bg-gray-900/20" id="saved-addresses-list">
-                <!-- Populated by Firebase -->
-            </div>
-            
-            <div class="p-4 border-t border-gray-800 flex justify-end relative z-10 bg-gray-900/40">
-                <button onclick="closeManageModal()" class="px-5 py-2.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-md cursor-pointer">Close</button>
-            </div>
-        </div>
-    </div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></symbol>
+    <symbol id="i-ext" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+    <symbol id="i-print" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></symbol>
+    <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></symbol>
+    <symbol id="i-collapse" viewBox="0 0 24 24"><path d="m7 20 5-5 5 5M7 4l5 5 5-5"/></symbol>
+    <symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></symbol>
+    <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol>
+    <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></symbol>
+    <symbol id="i-reopen" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></symbol>
+    <symbol id="i-bank" viewBox="0 0 24 24"><path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l9 5H3z"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+    <symbol id="i-contact" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01"/></symbol>
+    <symbol id="i-trailer" viewBox="0 0 24 24"><rect x="2" y="5" width="16" height="12" rx="2"/><path d="M18 14h4M6 9h4v3H6z"/><circle cx="7" cy="19" r="2"/></symbol>
+  </defs>
+</svg>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
-        import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
+import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged, connectAuthEmulator, signInWithCredential } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+import { getFirestore, connectFirestoreEmulator, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, runTransaction, arrayUnion } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyC5Sw04PNvf8df9WwmGxvNwRVW3x__Ukkg",
-            authDomain: "tc-1st-call-checklist.firebaseapp.com",
-            projectId: "tc-1st-call-checklist",
-            storageBucket: "tc-1st-call-checklist.firebasestorage.app",
-            messagingSenderId: "833877431256",
-            appId: "1:833877431256:web:bcbebc7e0985c7821898ad",
-            measurementId: "G-PEK0RE2D8V"
-        };
-        const customAppId = 'tchb-checklist-live';
+// =============================================================== the checklist (FROZEN: order = saved data keys)
+// Saved records key every check box as chk_<n> and every answer box as ans_<n>, numbered in page order exactly as
+// the original app did: each question's own answer box follows it, and the HOI and Taxes boxes (ans_6, ans_7) follow
+// the Monthly Escrow answer. Never reorder, insert or remove a question: add new ones only at the very end.
+const SECTIONS = [
+  { title: 'Mortgage Questions', icon: 'bank', items: [
+    ['Mtg Company ?'],
+    ['Total Principle Owed / Total Payoff ?'],
+    ['Is Property In Pre Foreclosure? Any Red Flags Like This ?'],
+    ['Was There Any Late Payments?'],
+    ['What is The Monthly Principal & Interest Payment'],
+    ['What is The Monthly Escrow Payments', 0, 'escrow'],
+    ['Can They Send A Copy of Mortgage Statement (Y/N)'] ] },
+  { title: 'Pictures', icon: 'camera', items: [
+    ['Sending Photos Any Current Photos From Seller ?'] ] },
+  { title: 'Emergency Contact Info', icon: 'contact', items: [
+    ['Who Is The Emergency Contact? Best Phone Number/ Best Way To Communicate With This Person? ( Call Or Text, Etc.)'] ] },
+  { title: 'HOA Questions', icon: 'users', items: [
+    ['Whats HOA Contact Info?'],
+    ['Best Way To Communicate'],
+    ['Start Ordering The HOA Approval Process At Least Understand Timeline For Process?'],
+    ['How Does One Apply?'],
+    ['Any Upcoming Special Assessments That We Know About Coming Up ? (Maybe Get HOA Contact And Communicate/ Verify Info With Them Directly)'],
+    ['If So, What Is It For? What Is The Amount? When Will It Be Added To The Bill? Make Sure Sellers Understand THEY’RE Paying It (Discuss Potential Options For Them To Handle Special Assessment, Ie. Money In Escrow, Money Out At Closing, Or Doing A Price Reduction For The Special Assessment Amount Needs To Be Put In Writing Whatever Agreed Upon)', 1],
+    ['HOA Monthly/ Yearly Amount?'],
+    ['When Paid', 1],
+    ['HOA Rental Restrictions ? (Ie No STR / Only A Certain % Of Units In Building Can Be Rented Have We Reached That Percentage)'],
+    ['Can Buyers Be Under An LLC/ Biz Entity Or Must It Be Under A Personal Name ?'] ] },
+  { title: 'SFHs', icon: 'home', items: [
+    ['How Long Big Ticket Items Fully Replaced And Or Serviced/Maintained? ( HVAC, Electrical, Plumbing, Roof)'],
+    ['Occupancy? (Vacant Or Occupied Who Lives In The Home? )'],
+    ['Owner Occupied', 1],
+    ['Tenant Occupied? If Yes What Type Of Lease (Yearly Or Month To Month)? How Much Is Rents?', 1],
+    ['If Section 8? How Much Does Section 8 Pay/ Mo? How Much Does The Tenant Pay?', 2],
+    ['Confirm Bdr/Bth And Living Square Footage (Heated Square Footage) ?'],
+    ['Construction Of House? ( Check Local County Property Appraiser Site, Ie. Block, Wood Frame, Etc? )'],
+    ['Year Built'],
+    ['Utilities ( City Water And Sewer Or Well And Septic? If Well/Septic Most Recent Maintenance Done And/Or When Last Replaced)'],
+    ['Confirm Lot Size? Lot Dimensions ?'],
+    ['Confirm Floodzone Code (And What Code Means No Flood Zone, Minimal Flood, Etc)'],
+    ['Confirm Residential Zoning Code ( And What It Means)'],
+    ['Confirm If Pool Or No Pool'],
+    ['Parking Type?'],
+    ['If Garage , Type? ( How Many Cars / Attached Or Detached)', 1],
+    ['Is Prop. In Historic Zone?'],
+    ['School Zoning? (Elementary, Middle, High)'],
+    ['Post Occupancy Needed (Y/N)'],
+    ['What Are The Terms', 1] ] },
+  { title: 'Land', icon: 'map', items: [
+    ['Confirm Lot Square Footage'],
+    ['Confirm Lot Dimensions (Dispo Can Confirm)'],
+    ['Confirm Residential Zoning Code ( And What It Means)'],
+    ['Confirm Flood Zone Code (And What Code Means No Flood Zone, Minimal Flood, Etc )'],
+    ['Has There Ever Been A Property On The Lot? If So When Was It Demolished?'],
+    ['Have Impact Fees Been Paid ? If So How Much Were They?'],
+    ['Are There Utilities On The Lot Or On The Road Passing In Front Of Lot? Or How Far Away Are The Utilities From Lot?'],
+    ['What Type Of Utilities? (Ie City Water/ Sewer Or Well And Septic If The Latter When Was It Maintained/ Replaced Last?) Confirm This Info Whether Raw Land Or Not', 1],
+    ['Is There A Standard Survey?'],
+    ['Any Ecological Surveys Done?'],
+    ['Any Protected Species On The Land We Need To Know About (Ie Turtles/ Specific Trees, Etc)?'],
+    ['Land Is Protected Area/ Historical ?'],
+    ['Is There Existing Building?'],
+    ['Situation ? Liens? Violations? Need Demo?', 1],
+    ['Is The Lot ‘Level’ ? Any Elevation We Need To Know About?'],
+    ['Any Wetlands On Prop/ Any Lowlands On Prop?'],
+    ['If Rural, Any Animal Restrictions?'],
+    ['Whats Nearest Major City Nearby ?'],
+    ['Whats Nearest Grocery Store?'] ] },
+  { title: 'Income Producing Properties', icon: 'building', items: [
+    ['Tenant Occupied? If Yes What Type Of Lease (Yearly Or Month To Month)? How Much Is Rents? Retail Tenants Or Section 8 Tenants? When Does Lease End?'],
+    ['Lease Docs Needed?', 1],
+    ['Rent Rolls?', 1],
+    ['Current P&Ls?', 1],
+    ['If Occupied, How Long Have Tenants Been There / How Long Do They Want To Be There For?', 1],
+    ['When Was The Last Time The Big Ticket Items Were Replaced (HVAC/ Roof/ Plumbing/ Electric )'],
+    ['How Many Units?'],
+    ['Layout Of Units (Ie : Side By Side Duplex Vs Main Home With Smaller Detached ADU Vs Top And Bottom Duplex )', 1],
+    ['Access Instructions?'],
+    ['Bdr/Bth Count Of Each Unit?'],
+    ['Sqft Of Each Unit'],
+    ['How Many Meters? (Electric And Water Meters)'],
+    ['This Zoned For Mult Family?'],
+    ['Utilities? (City Water/Sewer Or Well And Septic)'],
+    ['If Well/Septic When Last Replaced/ Maintained', 1],
+    ['How Many Parking Spots Total ?( Off Street Or On Street Parking)'] ] },
+  { title: 'Mobile Homes', icon: 'trailer', note: 'Treat Like SFH With All The Questions But Add These:', items: [
+    ['Mobile Home Model Number'],
+    ['Mobile Home Manufacturer'],
+    ['If Title Was Retired Or Not?'],
+    ['Permanent Foundation?'],
+    ['Verify Year Built , If Possible ?'],
+    ['Single Wide Vs Double Wide?'] ] },
+];
+// Number the questions exactly as the original page did.
+let nChk = 0, nAns = 0;
+for (const s of SECTIONS) s.qs = s.items.map(([text, nest = 0, extra]) => {
+  const q = { text, nest, chk: nChk++, ans: nAns++ };
+  if (extra === 'escrow') q.escrow = [{ label: 'HOI', ans: nAns++ }, { label: 'Taxes', ans: nAns++ }];
+  return q;
+});
+const CHECK_COUNT = nChk, ANSWER_COUNT = nAns;          // 79 and 81
+window.__TC_MAP = SECTIONS.map(s => ({ title: s.title, qs: s.qs.map(q => ({ text: q.text, nest: q.nest, chk: q.chk, ans: q.ans, escrow: q.escrow })) }));
 
-        let app, analytics, auth, db, googleProvider;
-        try {
-            app = initializeApp(firebaseConfig);
-            analytics = getAnalytics(app);
-            auth = getAuth(app);
-            db = getFirestore(app);
-            googleProvider = new GoogleAuthProvider();
-            googleProvider.setCustomParameters({ hd: 'totalchb.com' });
-        } catch(e) { console.error("Firebase init error", e); }
+// =============================================================== Firebase
+// Local checks only: on localhost with ?emulator the page talks to the Firebase emulators under a demo project,
+// so it can never reach the live database. The live site always uses the real config below.
+const EMU = location.hostname === 'localhost' && new URLSearchParams(location.search).has('emulator');
+const firebaseConfig = EMU ? { apiKey: 'demo-key', authDomain: 'localhost', projectId: 'demo-tc-checklist', appId: 'demo-app' } : {
+  apiKey: "AIzaSyC5Sw04PNvf8df9WwmGxvNwRVW3x__Ukkg",
+  authDomain: "tc-1st-call-checklist.firebaseapp.com",
+  projectId: "tc-1st-call-checklist",
+  storageBucket: "tc-1st-call-checklist.firebasestorage.app",
+  messagingSenderId: "833877431256",
+  appId: "1:833877431256:web:bcbebc7e0985c7821898ad",
+  measurementId: "G-PEK0RE2D8V"
+};
+const customAppId = 'tchb-checklist-live';
+const DOMAIN = '@totalchb.com';
 
-        let currentChecklists = {};
-        const addressInput = document.getElementById('property-address');
-        const crmInput = document.getElementById('crm-link');
-        const statusText = document.getElementById('save-status');
-        let saveTimeout;
-        let currentUser = null;
-        let localDeviceId = localStorage.getItem('tchb_device_id');
-        if (!localDeviceId) { localDeviceId = 'dev_' + Date.now() + Math.random().toString(36).substr(2, 9); localStorage.setItem('tchb_device_id', localDeviceId); }
+let app, auth, db, googleProvider;
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  if (EMU) {
+    connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+    connectFirestoreEmulator(db, '127.0.0.1', 8080);
+  } else {
+    try { getAnalytics(app); } catch (e) {}
+  }
+  googleProvider = new GoogleAuthProvider();
+  googleProvider.setCustomParameters({ hd: 'totalchb.com' });
+} catch (e) { console.error('Firebase init error', e); }
 
-        // --- STREAMING_CHUNK:Global UI Functions ---
-        window.toggleAccordion = function(button) {
-            const content = button.nextElementSibling;
-            const icon = button.querySelector('.fa-chevron-down');
-            if (content.classList.contains('open')) {
-                content.classList.remove('open');
-                icon.style.transform = 'rotate(0deg)';
-            } else {
-                content.classList.add('open');
-                icon.style.transform = 'rotate(180deg)';
-                setTimeout(() => {
-                    const y = button.getBoundingClientRect().top + window.pageYOffset - 100;
-                    window.scrollTo({top: y, behavior: 'smooth'});
-                }, 300);
-            }
-        };
+const dataPath = (...rest) => ['artifacts', customAppId, 'public', 'data', ...rest];
+const checklistsRef = () => collection(db, ...dataPath('checklists'));
+const checklistRef = id => doc(db, ...dataPath('checklists', id));
+const presenceRef = uid => doc(db, ...dataPath('active_users', uid));
+// A record's ID is its address, exactly as the original app made it.
+const safeId = address => encodeURIComponent(address).replace(/\./g, '%2E');
 
-        window.toggleAll = function(expand) {
-            const contents = document.querySelectorAll('.accordion-content');
-            const icons = document.querySelectorAll('.accordion-header .fa-chevron-down');
-            contents.forEach((content, index) => {
-                if (expand) {
-                    content.classList.add('open');
-                    icons[index].style.transform = 'rotate(180deg)';
-                } else {
-                    content.classList.remove('open');
-                    icons[index].style.transform = 'rotate(0deg)';
-                }
-            });
-        };
+// =============================================================== small helpers
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const icon = (name, cls = '') => `<svg class="i ${cls}"><use href="#i-${name}"/></svg>`;
+const isWebLink = v => /^https?:\/\//i.test((v || '').trim());
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }, del(k) { try { localStorage.removeItem(k); } catch (e) {} } };
 
-        window.showStatus = function(text, type = 'normal') {
-            statusText.textContent = text;
-            if(type === 'success') {
-                statusText.className = "text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 bg-brand-emerald/20 border border-brand-emerald text-brand-emerald rounded transition-colors shadow-sm";
-            } else if(type === 'error') {
-                statusText.className = "text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 bg-brand-crimson/20 border border-brand-crimson text-brand-crimson rounded transition-colors shadow-sm";
-            } else {
-                statusText.className = "text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 bg-gray-800/50 border border-gray-700 text-gray-400 rounded transition-colors shadow-sm";
-            }
-            setTimeout(() => {
-                statusText.className = "text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 bg-gray-800/50 border border-gray-700 text-gray-400 rounded transition-colors shadow-sm";
-            }, 2000);
-        };
+let localDeviceId = store.get('tchb_device_id');
+if (!localDeviceId) { localDeviceId = 'dev_' + Date.now() + Math.random().toString(36).substr(2, 9); store.set('tchb_device_id', localDeviceId); }
 
-        window.printChecklist = function() {
-            const sections = document.querySelectorAll('.group');
-            sections.forEach(section => {
-                const checkboxes = section.querySelectorAll('input[type="checkbox"]');
-                const textInputs = section.querySelectorAll('.question-answer');
-                let hasData = false;
-                
-                checkboxes.forEach(cb => { if (cb.checked) hasData = true; });
-                textInputs.forEach(ti => { if (ti.value.trim() !== '') hasData = true; });
+// The clock: dates come from the website server's clock (its Date header), not the device's, shown in Eastern time.
+let clockOffset = +store.get('tchb-checklist-clock') || 0;
+const now = () => Math.round(Date.now() + clockOffset);
+const syncClock = () => { const t0 = Date.now();
+  return fetch(location.pathname + '?clock=' + t0, { method: 'HEAD', cache: 'no-store' }).then(r => {
+    const d = Date.parse(r.headers.get('date')), t1 = Date.now();
+    if (!isNaN(d)) { clockOffset = d + 500 - (t0 + t1) / 2; store.set('tchb-checklist-clock', String(Math.round(clockOffset))); }
+  }).catch(() => {}); };
+const ET = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit',
+  hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23', timeZoneName: 'short' });
+const ET12 = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' });
+const ET12s = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit', second: '2-digit' });
+const etParts = ts => Object.fromEntries(ET.formatToParts(new Date(ts)).map(p => [p.type, p.value]));
+const etDate = ts => { const p = etParts(ts); return p.weekday + ' ' + p.month + '/' + p.day + '/' + p.year; };
+const et24 = (ts, secs = true) => { const p = etParts(ts); return p.hour + ':' + p.minute + (secs ? ':' + p.second : ''); };
+const etZone = ts => etParts(ts).timeZoneName;
+// "Mon 11/02/2026 14:05 (2:05 PM EST)"
+const whenShort = ts => etDate(ts) + ' ' + et24(ts, false) + ' (' + ET12.format(new Date(ts)) + ' ' + etZone(ts) + ')';
+const tsOf = v => typeof v === 'number' ? v : (v ? Date.parse(v) || 0 : 0);
 
-                if (!hasData) section.classList.add('no-print-section');
-                else section.classList.remove('no-print-section');
-            });
+// =============================================================== people: hub team directory, else from the email
+let team = {};
+try { team = JSON.parse(store.get('tchb-checklist-team') || '{}') || {}; } catch (e) { team = {}; }
+const prettyEmail = email => (String(email || '').split('@')[0] || '').split(/[._-]+/).filter(Boolean)
+  .map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || 'Someone';
+const nameOf = email => { const p = team[String(email || '').toLowerCase()]; return (p && p.name) || prettyEmail(email); };
+const photoOf = email => { const k = String(email || '').toLowerCase(), p = team[k];
+  if (p && p.photo) return p.photo; if (currentUser && currentUser.email && currentUser.email.toLowerCase() === k) return currentUser.photoURL || ''; return ''; };
+const initials = name => name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+const avatarHtml = (email, cls = 'sm') => { const n = nameOf(email), ph = photoOf(email);
+  return `<span class="avatar ${cls}" aria-hidden="true">${esc(initials(n))}${ph ? `<img src="${esc(ph)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}</span>`; };
+async function loadTeam() {
+  try {
+    const token = await auth.currentUser.getIdToken();
+    const r = await fetch('/api/team', { method: 'POST', headers: { Authorization: 'Bearer ' + token } });
+    if (!r.ok) return;
+    const body = await r.json(), next = {};
+    (body.people || []).forEach(p => { if (p && p.email) next[String(p.email).toLowerCase()] = { name: p.name || '', photo: p.photo || '' }; });
+    if (Object.keys(next).length) { team = next; store.set('tchb-checklist-team', JSON.stringify(team)); renderAll(); }
+  } catch (e) {}
+}
 
-            window.toggleAll(true);
-            setTimeout(() => { 
-                window.print(); 
-                setTimeout(() => {
-                    sections.forEach(s => s.classList.remove('no-print-section'));
-                }, 500);
-            }, 300); 
-        };
+// =============================================================== UI kit: toasts, menus, modals
+function toast(msg, opts = {}) {
+  const el = document.createElement('div');
+  el.className = 'toast' + (opts.error ? ' err' : '');
+  el.innerHTML = `<span>${esc(msg)}</span>`;
+  if (opts.action) { const b = document.createElement('button'); b.type = 'button'; b.textContent = opts.action; b.onclick = () => { el.remove(); opts.onAction(); }; el.appendChild(b); }
+  $('toasts').appendChild(el);
+  if (!opts.sticky) setTimeout(() => el.remove(), opts.ms || 3200);
+  return el;
+}
+let openMenuEl = null;
+function closeMenu() { if (openMenuEl) { openMenuEl.scrim.remove(); openMenuEl.menu.remove(); openMenuEl = null; } }
+function openMenu(anchor, html, cls = '') {
+  closeMenu();
+  const scrim = document.createElement('div'); scrim.className = 'scrim'; scrim.onclick = closeMenu;
+  const menu = document.createElement('div'); menu.className = 'menu ' + cls; menu.setAttribute('role', 'menu'); menu.innerHTML = html;
+  document.body.append(scrim, menu);
+  const r = anchor.getBoundingClientRect(), w = menu.offsetWidth, h = menu.offsetHeight;
+  // line up with the button's left edge, or its right edge when that would run off the screen
+  let left = r.left + w <= window.innerWidth - 8 ? r.left : r.right - w;
+  left = Math.max(8, Math.min(left, window.innerWidth - w - 8));
+  let top = r.bottom + 8; if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 8);
+  menu.style.left = left + 'px'; menu.style.top = top + 'px';
+  openMenuEl = { scrim, menu };
+  const keys = e => { if (e.key === 'Escape') { closeMenu(); document.removeEventListener('keydown', keys); } };
+  document.addEventListener('keydown', keys);
+  return menu;
+}
+// A hub modal. requireText: the person must type that word to confirm.
+function modal({ title, body = '', confirm = 'Confirm', danger = false, requireText = '', input = null, extra = '' }) {
+  return new Promise(resolve => {
+    const scrim = document.createElement('div'); scrim.className = 'modal-scrim';
+    scrim.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-label="${esc(title)}">
+      <h2>${esc(title)}</h2>${body}
+      ${input ? `<label class="field"><span>${esc(input.label)}</span><input class="input" data-m-input autocomplete="off" placeholder="${esc(input.placeholder || '')}"></label>` : ''}
+      ${requireText ? `<label class="field"><span>Type ${esc(requireText)} To Confirm</span><input class="input" data-m-input autocomplete="off" autocapitalize="characters"></label>` : ''}
+      ${extra}<p class="err" data-m-err hidden></p>
+      <div class="actions"><button class="btn ghost" type="button" data-m-cancel>Cancel</button>
+      <button class="btn ${danger ? 'primary' : 'secondary'}" type="button" data-m-ok>${esc(confirm)}</button></div></div>`;
+    document.body.appendChild(scrim);
+    const ok = scrim.querySelector('[data-m-ok]'), inp = scrim.querySelector('[data-m-input]'), err = scrim.querySelector('[data-m-err]');
+    const done = v => { scrim.remove(); document.removeEventListener('keydown', keys); resolve(v); };
+    const check = () => { if (requireText) ok.disabled = inp.value.trim().toUpperCase() !== requireText; };
+    const submit = async () => {
+      if (ok.disabled) return;
+      if (input && input.validate) { const msg = await input.validate(inp.value, scrim); if (msg) { err.textContent = msg; err.hidden = false; return; } }
+      done(input ? { value: inp.value, root: scrim } : true);
+    };
+    const keys = e => { if (e.key === 'Escape') done(false); if (e.key === 'Enter' && (inp ? document.activeElement === inp : true)) submit(); };
+    document.addEventListener('keydown', keys);
+    scrim.addEventListener('click', e => { if (e.target === scrim) done(false); });
+    scrim.querySelector('[data-m-cancel]').onclick = () => done(false);
+    ok.onclick = submit;
+    if (inp) { inp.addEventListener('input', () => { err.hidden = true; check(); }); check(); setTimeout(() => inp.focus(), 30); }
+    if (input && input.onReady) input.onReady(scrim);
+  });
+}
 
-        window.openManageModal = function() {
-            const modal = document.getElementById('manage-modal');
-            window.renderManageModalList();
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.querySelector('div').classList.remove('scale-95');
-            }, 10);
-        };
+// =============================================================== logo (inline, so dark mode can lighten the lettering)
+fetch('logo.svg').then(r => r.ok ? r.text() : '').then(svg => {
+  if (!/^\s*<svg[\s>]/.test(svg)) throw new Error('no logo');
+  document.querySelectorAll('[data-logo]').forEach((el, i) => { el.innerHTML = svg.replace(/id="([^"]+)"/g, `id="$1-l${i}"`).replace(/url\(#([^)]+)\)/g, `url(#$1-l${i})`); });
+}).catch(() => document.querySelectorAll('[data-logo]').forEach(el => { el.innerHTML = '<img src="logo.svg" alt="Total Cash Home Buyers" style="height:100%">'; }));
 
-        window.closeManageModal = function() {
-            const modal = document.getElementById('manage-modal');
-            modal.classList.add('opacity-0');
-            modal.querySelector('div').classList.add('scale-95');
-            setTimeout(() => { modal.classList.add('hidden'); }, 300);
-        };
+// =============================================================== theme
+const setTheme = t => {
+  document.documentElement.dataset.theme = t; store.set('tchb-checklist-theme', t);
+  document.querySelectorAll('[data-theme-btn]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themeBtn === t)));
+};
+setTheme(document.documentElement.dataset.theme || 'light');
+document.querySelectorAll('[data-theme-btn]').forEach(b => b.onclick = () => setTheme(b.dataset.themeBtn));
 
-        window.loadFromModal = function(address) {
-            addressInput.value = address;
-            window.loadAddressState(address);
-            window.closeManageModal();
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        };
+// =============================================================== loading screen
+const splashTimer = setTimeout(() => { $('splash-msg').textContent = 'Almost ready…'; }, 2500);
+function hideSplash() { clearTimeout(splashTimer); const s = $('splash'); if (!s.classList.contains('out')) { s.classList.add('out'); setTimeout(() => s.hidden = true, 260); } }
 
-        window.resetChecklist = function() {
-            const currentAddress = addressInput.value.trim() || 'Unsaved Draft';
-            if(confirm(`Are you sure you want to completely clear the checklist currently on your screen?`)) {
-                addressInput.value = '';
-                crmInput.value = '';
-                document.querySelectorAll('.checklist-cb').forEach(cb => cb.checked = false);
-                document.querySelectorAll('.question-answer').forEach(input => { input.value = ''; input.dispatchEvent(new Event('input')); });
-                window.toggleAll(false);
-                
-                const firstContent = document.querySelector('.accordion-content');
-                const firstIcon = document.querySelector('.accordion-header .fa-chevron-down');
-                firstContent.classList.add('open');
-                firstIcon.style.transform = 'rotate(180deg)';
-                window.scrollTo({top: 0, behavior: 'smooth'});
-                window.showStatus('Screen reset');
-            }
-        };
+// =============================================================== state
+let currentUser = null;
+let records = {};            // doc id -> data, live from Firestore
+let loaded = false;
+let openId = null;           // the property on screen
+let tab = 'open', query = '';
+const statusOf = d => (d && (d.status === 'closed' || d.status === 'cancelled')) ? d.status : 'open';
+const STATUS = { open: { label: 'Open', icon: 'circle' }, closed: { label: 'Closed', icon: 'check-circle' }, cancelled: { label: 'Cancelled', icon: 'ban' } };
+const tagHtml = st => `<span class="tag s-${st}">${icon(STATUS[st].icon)}${STATUS[st].label}</span>`;
+const checkedCount = d => { let n = 0; for (let i = 0; i < CHECK_COUNT; i++) if (d && d.checks && d.checks['chk_' + i]) n++; return n; };
+const updatedLine = d => { const t = tsOf(d && d.updatedAt); if (!t) return '';
+  return 'Updated ' + whenShort(t) + (d.updatedBy ? ' by ' + nameOf(d.updatedBy) : ''); };
 
-        // --- STREAMING_CHUNK:Firebase Auth & Sync ---
-        window.signInWithGoogle = async function() {
-            if (!auth || !googleProvider) return;
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                if (result.user.email && result.user.email.endsWith('@totalchb.com')) {
-                    document.getElementById('auth-error').classList.add('hidden');
-                    document.body.classList.add('gate-unlocked');
-                } else {
-                    document.getElementById('auth-error').innerText = "Access Denied. @totalchb.com emails only.";
-                    document.getElementById('auth-error').classList.remove('hidden');
-                    await signOut(auth);
-                }
-            } catch(e) {
-                document.getElementById('auth-error').innerText = e.message;
-                document.getElementById('auth-error').classList.remove('hidden');
-            }
-        };
+// =============================================================== saving: field by field, never the whole record
+// Each change is sent as its own field (checks.chk_5, answers.ans_6, crmLink), so two people editing the same property
+// never overwrite each other. Failed saves show Not Saved and retry; nothing is silently dropped.
+let pending = null;          // { id, fields: {path: value} }
+let inFlight = null, saveTimer = null, retryTimer = null, retryDelay = 2000, slowTimer = null;
+let saveState = 'idle';
+function setSave(state, detail = '') {
+  saveState = state;
+  const b = $('save-badge'), t = $('save-text');
+  b.className = 'save-badge ' + (state === 'idle' ? '' : state);
+  t.textContent = state === 'saving' ? 'Saving…' : state === 'saved' ? 'Saved' : state === 'error' ? 'Not Saved – Retry' : state === 'slow' ? 'Saving… (Offline?)' : 'All Saved';
+  if (state === 'slow') b.className = 'save-badge saving';
+  b.title = detail;
+}
+function queueField(path, value, delay) {
+  if (!openId) return;
+  if (pending && pending.id !== openId) flushNow();
+  if (!pending) pending = { id: openId, fields: {} };
+  pending.fields[path] = value;
+  setSave('saving');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(flushNow, delay);
+}
+function flushNow() {
+  clearTimeout(saveTimer); clearTimeout(retryTimer);
+  if (inFlight || !pending || !auth || !auth.currentUser) return;
+  const job = pending; pending = null;
+  const fields = { ...job.fields, updatedAt: new Date(now()).toISOString(), updatedBy: auth.currentUser.email };
+  setSave('saving');
+  slowTimer = setTimeout(() => { if (inFlight) setSave('slow', 'No answer from the server yet. Your changes are kept and will be sent when the connection is back.'); }, 8000);
+  inFlight = updateDoc(checklistRef(job.id), fields).then(() => {
+    inFlight = null; clearTimeout(slowTimer); retryDelay = 2000;
+    if (pending) flushNow(); else { setSave('saved'); setTimeout(() => { if (saveState === 'saved') setSave('idle'); }, 1800); }
+  }).catch(e => {
+    inFlight = null; clearTimeout(slowTimer);
+    // keep the failed changes, under any newer ones typed since
+    if (pending && pending.id === job.id) pending.fields = { ...job.fields, ...pending.fields }; else if (!pending) pending = job;
+    if (e && e.code === 'not-found') { pending = null; setSave('error', 'This property was deleted.'); toast('Not Saved: This Property Was Deleted', { error: true }); return; }
+    const why = (e && (e.code || e.message)) || 'unknown error';
+    setSave('error', 'Not saved: ' + why + '. Retrying…');
+    retryTimer = setTimeout(flushNow, retryDelay); retryDelay = Math.min(retryDelay * 2, 30000);
+  });
+}
+$('save-badge').onclick = () => { if (saveState === 'error') { retryDelay = 2000; flushNow(); } };
+window.addEventListener('beforeunload', e => { if (pending || inFlight) { flushNow(); e.preventDefault(); e.returnValue = ''; } });
+const isPending = path => !!(pending && pending.id === openId && path in pending.fields);
 
-        window.logOut = async function() {
-            if (auth) {
-                if (currentUser && db) {
-                    try {
-                        const ref = doc(db, 'artifacts', customAppId, 'public', 'data', 'active_users', currentUser.uid);
-                        await setDoc(ref, { sessions: { [localDeviceId]: { lastActive: 0 } } }, { merge: true });
-                    } catch(e) {}
-                }
-                await signOut(auth);
-                window.location.reload();
-            }
-        };
+// =============================================================== auth
+$('google-login-btn').onclick = async () => {
+  if (!auth || !googleProvider) return;
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    if (!(result.user.email && result.user.email.endsWith(DOMAIN))) {
+      showAuthError('Access Denied. @totalchb.com emails only.'); await signOut(auth);
+    }
+  } catch (e) { showAuthError(e.message); }
+};
+function showAuthError(msg) { const el = $('auth-error'); el.textContent = msg; el.hidden = false; }
+async function logOut() {
+  if (!auth) return;
+  if (currentUser && db) { try { await setDoc(presenceRef(currentUser.uid), { sessions: { [localDeviceId]: { lastActive: 0 } } }, { merge: true }); } catch (e) {} }
+  await signOut(auth);
+  window.location.reload();
+}
+if (EMU) window.__emuSignIn = (email, name = '') => signInWithCredential(auth, GoogleAuthProvider.credential(JSON.stringify({ sub: 'u-' + email.replace(/\W/g, ''), email, email_verified: true, name })));
 
-        function initSync() {
-            if (!auth.currentUser) return;
-            const colRef = collection(db, 'artifacts', customAppId, 'public', 'data', 'checklists');
-            
-            onSnapshot(colRef, (snapshot) => {
-                currentChecklists = {};
-                snapshot.forEach(doc => {
-                    currentChecklists[doc.id] = doc.data();
-                });
-                updateDatalist();
-                if(!document.getElementById('manage-modal').classList.contains('hidden')) {
-                    window.renderManageModalList();
-                }
-            }, (error) => {
-                console.error("Cloud Sync error:", error);
-            });
-        }
+let started = false;
+if (auth) onAuthStateChanged(auth, user => {
+  if (user && user.email && user.email.endsWith(DOMAIN)) {
+    currentUser = user;
+    $('gate').hidden = true; $('app').hidden = false;
+    renderAvatar();
+    if (!started) { started = true; startSync(); startPresence(); loadTeam(); }
+  } else {
+    if (user) { showAuthError('Access Denied. @totalchb.com emails only.'); signOut(auth); }
+    currentUser = null;
+    $('app').hidden = true; $('gate').hidden = false; hideSplash();
+  }
+}); else { $('gate').hidden = false; showAuthError('Could not start. Check your connection and reload.'); hideSplash(); }
 
-        if(auth) {
-            onAuthStateChanged(auth, (user) => {
-                if (user && user.email && user.email.endsWith('@totalchb.com')) {
-                    currentUser = user;
-                    document.body.classList.add('gate-unlocked');
-                    document.getElementById('sync-ping').classList.remove('hidden');
-                    initSync();
-                    
-                    // Active Users Presence
-                    const updatePresence = () => {
-                        if (currentUser && db) {
-                            const deviceType = ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) ? 'Mobile' : 'Desktop';
-                            setDoc(
-                                doc(db, 'artifacts', customAppId, 'public', 'data', 'active_users', currentUser.uid),
-                                { email: currentUser.email, sessions: { [localDeviceId]: { lastActive: Date.now(), type: deviceType } } }, { merge: true }
-                            ).catch(e => {});
-                        }
-                    };
-                    updatePresence(); setInterval(updatePresence, 60000);
+function renderAvatar() {
+  const b = $('avatar-btn'), e = currentUser.email;
+  b.innerHTML = esc(initials(nameOf(e))) + (photoOf(e) ? `<img src="${esc(photoOf(e))}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : '');
+  b.title = nameOf(e);
+}
+$('avatar-btn').onclick = e => {
+  const em = currentUser.email;
+  const m = openMenu(e.currentTarget, `<div class="row">${avatarHtml(em, '')}<div class="who"><b>${esc(nameOf(em))}</b><span>${esc(em)}</span></div></div><hr>
+    <button type="button" data-signout>${icon('logout', 'sm')}Sign Out</button>`);
+  m.querySelector('[data-signout]').onclick = () => { closeMenu(); logOut(); };
+};
 
-                    const activeUsersRef = collection(db, 'artifacts', customAppId, 'public', 'data', 'active_users');
-                    onSnapshot(activeUsersRef, (snapshot) => {
-                        let onlineData = []; const now = Date.now();
-                        snapshot.forEach(d => {
-                            const data = d.data(); let isOnline = false;
-                            if(data.sessions) Object.values(data.sessions).forEach(sess => { if (now - sess.lastActive < 300000) isOnline = true; });
-                            if (isOnline) onlineData.push(data);
-                        });
-                        
-                        const list = document.getElementById('activeUsersList');
-                        const count = document.getElementById('activeUserCount');
-                        const countBtn = document.getElementById('activeUserCountBtn');
-                        
-                        count.innerText = onlineData.length; countBtn.innerText = onlineData.length;
-                        if(onlineData.length === 0) {
-                            list.innerHTML = `<div class="text-center p-3 text-[10px] text-gray-500 font-bold uppercase tracking-wider">No users online</div>`;
-                        } else {
-                            list.innerHTML = onlineData.map(u => {
-                                const name = u.email.split('@')[0];
-                                let hasMob = false; let hasDesk = false;
-                                Object.values(u.sessions).forEach(s => { if(now - s.lastActive < 300000) { if(s.type==='Mobile') hasMob=true; else hasDesk=true; } });
-                                return `
-                                <div class="flex items-center justify-between px-2.5 py-2 rounded bg-gray-800/40 border border-gray-700/50 mb-1">
-                                    <div class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-brand-emerald animate-pulse"></div><span class="text-xs font-bold text-gray-300 capitalize">${name}</span></div>
-                                    <div class="flex items-center gap-2"><i class="fa-solid fa-mobile-screen text-[10px] ${hasMob ? 'text-brand-emerald' : 'text-gray-600'}"></i><i class="fa-solid fa-desktop text-[10px] ${hasDesk ? 'text-brand-emerald' : 'text-gray-600'}"></i></div>
-                                </div>`;
-                            }).join('');
-                        }
-                    });
+// =============================================================== live sync
+function startSync() {
+  onSnapshot(checklistsRef(), snap => {
+    const next = {}; snap.forEach(d => { next[d.id] = d.data(); });
+    records = next;
+    const first = !loaded; loaded = true;
+    if (first) { hideSplash(); route(); } else renderAll();
+  }, err => {
+    console.error('Cloud Sync error:', err);
+    toast('Live Sync Error: ' + (err.code || 'unknown') + '. Reload to try again.', { error: true, sticky: true });
+    hideSplash();
+  });
+}
 
-                } else {
-                    currentUser = null;
-                }
-            });
-        }
+// Presence: the same records as before ("who's online" within the last five minutes, per device).
+let presence = [];
+function startPresence() {
+  const deviceType = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ? 'Mobile' : 'Desktop';
+  const beat = () => { if (currentUser && db) setDoc(presenceRef(currentUser.uid), { email: currentUser.email, sessions: { [localDeviceId]: { lastActive: Date.now(), type: deviceType } } }, { merge: true }).catch(() => {}); };
+  beat(); setInterval(beat, 60000);
+  onSnapshot(collection(db, ...dataPath('active_users')), snap => {
+    const t = Date.now(), list = [];
+    snap.forEach(d => { const u = d.data(); if (!u || !u.email || !u.sessions) return;
+      let mob = false, desk = false;
+      Object.values(u.sessions).forEach(s => { if (s && t - s.lastActive < 300000) { if (s.type === 'Mobile') mob = true; else desk = true; } });
+      if (mob || desk) list.push({ email: u.email, mob, desk }); });
+    presence = list.sort((a, b) => nameOf(a.email).localeCompare(nameOf(b.email)));
+    $('active-count').textContent = presence.length;
+  }, () => {});
+}
+$('active-btn').onclick = e => {
+  const rows = presence.length ? presence.map(u => `<div class="row">${avatarHtml(u.email)}<div class="who"><b>${esc(nameOf(u.email))}</b></div>
+    <div class="dev"><span class="${u.mob ? 'on' : ''}" title="Phone">${icon('phone', 'sm')}</span><span class="${u.desk ? 'on' : ''}" title="Desktop">${icon('desktop', 'sm')}</span></div></div>`).join('')
+    : '<div class="muted">No One Else Is Online</div>';
+  openMenu(e.currentTarget, `<div class="label">Online Now · ${presence.length}</div>${rows}`, 'pop');
+};
 
-        window.toggleActiveUsers = function(e) {
-            if(e) e.stopPropagation();
-            document.getElementById('activeUsersDropdown').classList.toggle('hidden');
-        };
-        document.addEventListener('click', (e) => {
-            const drop = document.getElementById('activeUsersDropdown');
-            if(drop && !drop.classList.contains('hidden') && !e.target.closest('#activeUsersDropdown') && !e.target.closest('[onclick*="toggleActiveUsers"]')) {
-                drop.classList.add('hidden');
-            }
-        });
+// =============================================================== routing: #/ (properties) and #/p/<id> (a checklist)
+function route() {
+  if (!loaded) return;
+  closeMenu();
+  const m = /^#\/p\/(.+)$/.exec(location.hash);
+  if (m) {
+    let id; try { id = decodeURIComponent(m[1]); } catch (e) { id = ''; }
+    if (records[id]) return showChecklist(id);
+    toast('That Property Was Not Found', { error: true });
+    history.replaceState(null, '', '#/');
+  }
+  showHome();
+}
+window.addEventListener('hashchange', route);
+const goTo = id => { location.hash = '#/p/' + encodeURIComponent(id); };
+function renderAll() { if (!loaded) return; if (openId) applyRecord(); else renderHome(); if (currentUser) renderAvatar(); }
 
-        // --- STREAMING_CHUNK:Data Saving and Loading ---
-        window.saveCurrentState = function() {
-            const currentAddress = addressInput.value.trim();
-            const state = {
-                crmLink: crmInput.value,
-                checks: {},
-                answers: {}
-            };
+// =============================================================== properties home
+function showHome() {
+  if (pending) flushNow();
+  openId = null; document.body.classList.remove('locked');
+  $('view-check').hidden = true; $('view-home').hidden = false;
+  renderHome();
+}
+function searchHit(d, q) {
+  if (!q) return { ok: true };
+  const hay = [['', d.address], ['CRM Link', d.crmLink]];
+  for (const s of SECTIONS) for (const qq of s.qs) {
+    hay.push([qq.text, d.answers && d.answers['ans_' + qq.ans]]);
+    (qq.escrow || []).forEach(x => hay.push([x.label, d.answers && d.answers['ans_' + x.ans]]));
+  }
+  for (const [label, v] of hay) { const s = String(v || ''), i = s.toLowerCase().indexOf(q);
+    if (i >= 0) return { ok: true, label, text: s, at: i, first: label === '' }; }
+  return { ok: false };
+}
+function renderHome() {
+  const all = Object.entries(records).filter(([, d]) => d && d.address);
+  const counts = { open: 0, closed: 0, cancelled: 0 };
+  all.forEach(([, d]) => counts[statusOf(d)]++);
+  document.querySelectorAll('[data-n]').forEach(el => el.textContent = counts[el.dataset.n]);
+  document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === tab)));
+  const q = query.trim().toLowerCase();
+  const rows = all.filter(([, d]) => statusOf(d) === tab).map(([id, d]) => [id, d, searchHit(d, q)]).filter(r => r[2].ok)
+    .sort((a, b) => tsOf(b[1].updatedAt) - tsOf(a[1].updatedAt) || a[1].address.localeCompare(b[1].address));
+  const list = $('prop-list');
+  if (!rows.length) {
+    list.innerHTML = q ? `<div class="empty"><h3>No Matches</h3><p>Nothing in ${STATUS[tab].label} matches “${esc(query.trim())}”.</p></div>`
+      : `<div class="empty"><h3>No ${STATUS[tab].label} Properties</h3><p>${tab === 'open' ? 'Press New Property to start a first-call checklist.' : 'Properties marked ' + STATUS[tab].label + ' show here.'}</p></div>`;
+  } else list.innerHTML = rows.map(([id, d, hit]) => {
+    const n = checkedCount(d), pct = Math.round(n / CHECK_COUNT * 100);
+    const snippet = hit.text && !hit.first ? (() => { const a = Math.max(0, hit.at - 40), s = hit.text.slice(a, hit.at + q.length + 60);
+      const i = hit.at - a; return `<div class="hit">${esc(hit.label)}: ${a ? '…' : ''}${esc(s.slice(0, i))}<mark>${esc(s.slice(i, i + q.length))}</mark>${esc(s.slice(i + q.length))}${a + s.length < hit.text.length ? '…' : ''}</div>`; })() : '';
+    return `<div class="card prop-card" role="link" tabindex="0" data-id="${esc(id)}">
+      <div class="grow"><div class="prop-title">${esc(d.address)}</div>
+        <div class="tag-row">${tagHtml(statusOf(d))}<span class="meta">${esc(updatedLine(d))}</span></div>
+        <div class="prog-row"><div class="progress${n === CHECK_COUNT ? ' full' : ''}"><i style="width:${pct}%"></i></div><span>${n} of ${CHECK_COUNT} Checked</span></div>${snippet}</div>
+      ${isWebLink(d.crmLink) ? `<div class="side"><a class="btn outline sm" href="${esc(d.crmLink.trim())}" target="_blank" rel="noopener" data-crm>${icon('ext', 'sm')}Open In CRM</a></div>` : ''}
+    </div>`;
+  }).join('');
+  $('draft-note').hidden = !store.get('tchb_unsaved_draft');
+}
+$('prop-list').addEventListener('click', e => { if (e.target.closest('[data-crm]')) return; const c = e.target.closest('.prop-card'); if (c) goTo(c.dataset.id); });
+$('prop-list').addEventListener('keydown', e => { const c = e.target.closest('.prop-card'); if (c && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); goTo(c.dataset.id); } });
+document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; renderHome(); });
+$('search').addEventListener('input', e => { query = e.target.value; renderHome(); });
 
-            document.querySelectorAll('.checklist-cb').forEach((cb, index) => { state.checks['chk_' + index] = cb.checked; });
-            document.querySelectorAll('.question-answer').forEach((input, index) => { state.answers['ans_' + index] = input.value; });
+// New Property: the address is typed once and becomes the record's ID.
+function readDraft() { try { const d = JSON.parse(store.get('tchb_unsaved_draft') || 'null'); return d && typeof d === 'object' ? d : null; } catch (e) { return null; } }
+async function newProperty(useDraftDefault = false) {
+  const draft = readDraft();
+  let useDraft = !!draft && useDraftDefault;
+  const res = await modal({ title: 'New Property', confirm: 'Create',
+    body: '<p class="hint">Type the property address exactly as it should appear. It can’t be changed after it’s created. If the address already exists, it opens instead.</p>',
+    input: { label: 'Property Address', placeholder: 'e.g. 123 Main St, Miami FL 33101',
+      validate: v => !v.trim() ? 'Type the property address.' : '',
+      onReady: root => { const sw = root.querySelector('[data-draft]'); if (sw) sw.onclick = () => { useDraft = !useDraft; sw.setAttribute('aria-checked', String(useDraft)); }; } },
+    extra: draft ? `<div class="switch-row"><button type="button" class="switch" role="switch" aria-checked="${useDraft}" data-draft aria-label="Use unsaved draft"></button><span>Fill it with the unsaved checklist from this device</span></div>` : '' });
+  if (!res) return;
+  const address = res.value.trim(), id = safeId(address);
+  if (records[id]) { toast('That Property Already Exists – Opened It'); return goTo(id); }
+  // the same full shape the original app saved, so every version reads it the same way
+  const checks = {}, answers = {};
+  for (let i = 0; i < CHECK_COUNT; i++) checks['chk_' + i] = !!(useDraft && draft.checks && draft.checks['chk_' + i]);
+  for (let i = 0; i < ANSWER_COUNT; i++) answers['ans_' + i] = (useDraft && draft.answers && typeof draft.answers['ans_' + i] === 'string') ? draft.answers['ans_' + i] : '';
+  const data = { crmLink: (useDraft && typeof draft.crmLink === 'string') ? draft.crmLink : '', checks, answers, address,
+    updatedAt: new Date(now()).toISOString(), updatedBy: currentUser.email };
+  try {
+    const existed = await runTransaction(db, async tx => { const snap = await tx.get(checklistRef(id)); if (snap.exists()) return true; tx.set(checklistRef(id), data); return false; });
+    if (useDraft && !existed) store.del('tchb_unsaved_draft');
+    toast(existed ? 'That Property Already Exists – Opened It' : 'Property Created');
+    records[id] = records[id] || data;
+    goTo(id);
+  } catch (e) { toast('Could Not Create: ' + (e.code || e.message), { error: true }); }
+}
+$('new-btn').onclick = () => newProperty(false);
+$('draft-use').onclick = () => newProperty(true);
 
-            if (!currentAddress) {
-                localStorage.setItem('tchb_unsaved_draft', JSON.stringify(state));
-                window.showStatus('Draft stored locally', 'normal');
-                return;
-            } else {
-                localStorage.removeItem('tchb_unsaved_draft');
-            }
+// =============================================================== checklist screen
+function buildSections() {
+  const host = $('sections');
+  host.innerHTML = SECTIONS.map((s, si) => `<div class="card sec" data-sec="${si}" data-open="${si === 0}">
+    <button class="sec-head" type="button" aria-expanded="${si === 0}"><span class="sec-icon">${icon(s.icon)}</span><h2>${esc(s.title)}</h2>
+      <span class="chip" data-sec-count="${si}">0 / ${s.qs.length}</span>${icon('chev', 'chev')}</button>
+    <div class="sec-body">${s.note ? `<div class="note gold sec-note">${icon('alert')}<span>${esc(s.note)}</span></div>` : ''}
+    ${s.qs.map(q => `<div class="q n${q.nest}" data-q="${q.chk}">
+      <button class="check" type="button" role="checkbox" aria-checked="false" data-chk="${q.chk}" aria-label="${esc(q.text)}">${icon('check')}</button>
+      <div class="q-main"><div class="q-text" data-toggle="${q.chk}">${esc(q.text)}</div>
+        <div class="ans-wrap"><textarea class="input ans" rows="1" data-ans="${q.ans}" placeholder="Add answer/notes or paste a link..." aria-label="Answer: ${esc(q.text)}"></textarea>
+          <a class="ans-link" data-link="${q.ans}" target="_blank" rel="noopener" title="Open link in new tab" hidden>${icon('ext', 'sm')}</a></div>
+        ${q.escrow ? `<div class="escrow">${q.escrow.map(x => `<label><span>${esc(x.label)}</span><input class="input" type="text" data-ans="${x.ans}" placeholder="Amount..." aria-label="${esc(x.label)} amount"></label>`).join('')}</div>` : ''}
+      </div></div>`).join('')}</div></div>`).join('');
+  host.querySelectorAll('.sec-head').forEach(h => h.onclick = () => setOpen(h.parentElement, h.parentElement.dataset.open !== 'true'));
+  host.addEventListener('click', e => {
+    const t = e.target.closest('[data-chk],[data-toggle]'); if (!t || isLocked()) return;
+    const n = t.dataset.chk || t.dataset.toggle, box = host.querySelector(`[data-chk="${n}"]`);
+    const on = box.getAttribute('aria-checked') !== 'true';
+    setCheck(n, on); queueField('checks.chk_' + n, on, 0);
+    const d = records[openId]; if (d) { d.checks = { ...(d.checks || {}), ['chk_' + n]: on }; updateCounts(d); }
+  });
+  host.addEventListener('input', e => {
+    const el = e.target.closest('[data-ans]'); if (!el) return;
+    if (el.tagName === 'TEXTAREA') grow(el);
+    linkFor(el);
+    queueField('answers.ans_' + el.dataset.ans, el.value, 700);
+    const d = records[openId]; if (d) d.answers = { ...(d.answers || {}), ['ans_' + el.dataset.ans]: el.value };
+  });
+  host.addEventListener('focusout', e => { if (e.target.closest('[data-ans]') && pending) flushNow(); });
+}
+const grow = el => { el.style.height = 'auto'; el.style.height = el.scrollHeight + 2 + 'px'; };
+const linkFor = el => { const a = $('sections').querySelector(`[data-link="${el.dataset.ans}"]`); if (!a) return;
+  if (isWebLink(el.value)) { a.href = el.value.trim(); a.hidden = false; } else a.hidden = true; };
+const setOpen = (sec, open) => { sec.dataset.open = String(open); sec.querySelector('.sec-head').setAttribute('aria-expanded', String(open));
+  if (open) sec.querySelectorAll('textarea').forEach(grow); };
+const setCheck = (n, on) => { const box = $('sections').querySelector(`[data-chk="${n}"]`); box.setAttribute('aria-checked', String(on)); box.closest('.q').classList.toggle('done', on); };
+const isLocked = () => !!openId && statusOf(records[openId]) !== 'open';
+$('expand-btn').onclick = () => document.querySelectorAll('.sec').forEach(s => setOpen(s, true));
+$('collapse-btn').onclick = () => document.querySelectorAll('.sec').forEach(s => setOpen(s, false));
 
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(async () => {
-                if (!auth || !auth.currentUser) return;
-                const safeId = encodeURIComponent(currentAddress).replace(/\./g, '%2E');
-                const docRef = doc(db, 'artifacts', customAppId, 'public', 'data', 'checklists', safeId);
-                state.address = currentAddress;
-                state.updatedAt = new Date().toISOString();
-                
-                try {
-                    await setDoc(docRef, state);
-                    window.showStatus('Saved to Cloud ✓', 'success');
-                } catch(e) {
-                    console.error("Save error", e);
-                    window.showStatus('Cloud Error', 'error');
-                }
-            }, 800);
-        };
+function showChecklist(id) {
+  if (pending && pending.id !== id) flushNow();
+  const fresh = openId !== id;
+  openId = id;
+  $('view-home').hidden = true; $('view-check').hidden = false;
+  if (fresh) {
+    document.querySelectorAll('.sec').forEach((s, i) => setOpen(s, i === 0));
+    window.scrollTo({ top: 0 });
+  }
+  applyRecord(true);
+}
+// Put the record on screen. Live updates from teammates fill every box except the one you're typing in and
+// any change of yours that hasn't been saved yet.
+function applyRecord(force = false) {
+  const d = records[openId];
+  if (!d) { toast('This Property Was Deleted', { error: true }); openId = null; location.hash = '#/'; return; }
+  const st = statusOf(d), locked = st !== 'open';
+  document.body.classList.toggle('locked', locked);
+  $('p-address').textContent = d.address || '';
+  $('p-tag').innerHTML = tagHtml(st);
+  $('p-meta').textContent = updatedLine(d);
+  $('status-btn-text').textContent = 'Status: ' + STATUS[st].label;
+  $('locked-note').hidden = !locked;
+  $('locked-text').textContent = locked ? `This property is ${STATUS[st].label}${d.statusBy ? ' (by ' + nameOf(d.statusBy) + (d.statusAt ? ', ' + whenShort(d.statusAt) : '') + ')' : ''}. It’s view-only until it’s reopened.` : '';
+  const focused = document.activeElement;
+  const crm = $('crm-link');
+  if (focused !== crm && !isPending('crmLink')) crm.value = d.crmLink || '';
+  crm.readOnly = locked; crmButton();
+  for (let i = 0; i < CHECK_COUNT; i++) if (!isPending('checks.chk_' + i)) setCheck(i, !!(d.checks && d.checks['chk_' + i]));
+  document.querySelectorAll('#sections [data-chk]').forEach(b => b.disabled = locked);
+  document.querySelectorAll('#sections [data-ans]').forEach(el => {
+    const v = (d.answers && typeof d.answers['ans_' + el.dataset.ans] === 'string') ? d.answers['ans_' + el.dataset.ans] : '';
+    if (el !== focused && !isPending('answers.ans_' + el.dataset.ans) && (force || el.value !== v)) { el.value = v; if (el.tagName === 'TEXTAREA') grow(el); linkFor(el); }
+    el.readOnly = locked;
+  });
+  updateCounts(d);
+}
+function updateCounts(d) {
+  const n = checkedCount(d);
+  $('p-count').textContent = `${n} of ${CHECK_COUNT} Checked`;
+  $('p-progress').querySelector('i').style.width = Math.round(n / CHECK_COUNT * 100) + '%';
+  $('p-progress').classList.toggle('full', n === CHECK_COUNT);
+  SECTIONS.forEach((s, si) => { const c = s.qs.filter(q => d.checks && d.checks['chk_' + q.chk]).length;
+    const el = document.querySelector(`[data-sec-count="${si}"]`); el.textContent = `${c} / ${s.qs.length}`; el.classList.toggle('green', c === s.qs.length); });
+}
+const crmButton = () => { const v = $('crm-link').value, a = $('crm-open'); if (isWebLink(v)) { a.href = v.trim(); a.hidden = false; } else a.hidden = true; };
+$('crm-link').addEventListener('input', e => { if (isLocked()) return; crmButton(); queueField('crmLink', e.target.value, 700); const d = records[openId]; if (d) d.crmLink = e.target.value; });
+$('crm-link').addEventListener('blur', () => { if (pending) flushNow(); });
 
-        window.loadAddressState = function(address) {
-            const safeId = encodeURIComponent(address).replace(/\./g, '%2E');
-            const state = currentChecklists[safeId];
-            
-            if (state) {
-                crmInput.value = state.crmLink || '';
-                document.querySelectorAll('.checklist-cb').forEach((cb, index) => {
-                    cb.checked = !!(state.checks && state.checks['chk_' + index]);
-                });
-                document.querySelectorAll('.question-answer').forEach((input, index) => {
-                    input.value = (state.answers && state.answers['ans_' + index]) ? state.answers['ans_' + index] : '';
-                    input.dispatchEvent(new Event('input')); 
-                });
-                window.showStatus(`Loaded from Cloud`, 'success');
-            } else {
-                crmInput.value = '';
-                document.querySelectorAll('.checklist-cb').forEach(cb => cb.checked = false);
-                document.querySelectorAll('.question-answer').forEach(input => { input.value = ''; input.dispatchEvent(new Event('input')); });
-                window.showStatus('New property started', 'success');
-            }
-        };
+// Status: Open by default; Closed and Cancelled are view-only until reopened. Every change is logged with who and when.
+async function changeStatus(next) {
+  const d = records[openId]; if (!d) return;
+  const verb = next === 'open' ? 'Reopen' : 'Mark ' + STATUS[next].label;
+  const ok = await modal({ title: verb + '?', confirm: verb, danger: next === 'cancelled',
+    body: `<p>${esc(d.address)}</p><p class="hint">${next === 'open' ? 'It moves back to Open and can be edited again.' : 'It moves to ' + STATUS[next].label + ' and becomes view-only until someone reopens it.'}</p>` });
+  if (!ok) return;
+  if (pending) flushNow();
+  const at = now(), by = currentUser.email;
+  try {
+    await updateDoc(checklistRef(openId), { status: next, statusAt: at, statusBy: by, statusLog: arrayUnion({ status: next, at, by }),
+      updatedAt: new Date(at).toISOString(), updatedBy: by });
+    toast(next === 'open' ? 'Reopened' : 'Marked ' + STATUS[next].label);
+  } catch (e) { toast('Not Saved: ' + (e.code || e.message), { error: true }); }
+}
+$('status-btn').onclick = e => {
+  const st = statusOf(records[openId]);
+  const opts = [['closed', 'Mark Closed', 'check-circle'], ['cancelled', 'Mark Cancelled', 'ban'], ['open', 'Reopen', 'reopen']].filter(([s]) => s !== st);
+  const m = openMenu(e.currentTarget, `<div class="label">Status: ${STATUS[st].label}</div>` + opts.map(([s, l, ic]) => `<button type="button" data-st="${s}">${icon(ic, 'sm')}${l}</button>`).join(''));
+  m.querySelectorAll('[data-st]').forEach(b => b.onclick = () => { closeMenu(); changeStatus(b.dataset.st); });
+};
+$('reopen-btn').onclick = () => changeStatus('open');
+$('activity-btn').onclick = e => {
+  const d = records[openId] || {}, log = Array.isArray(d.statusLog) ? [...d.statusLog].sort((a, b) => (b.at || 0) - (a.at || 0)) : [];
+  const word = s => s === 'open' ? 'Reopened' : 'Marked ' + (STATUS[s] ? STATUS[s].label : s);
+  const rows = log.map(l => `<div class="log-row">${avatarHtml(l.by)}<div class="who"><b>${esc(word(l.status))}</b>${esc(nameOf(l.by))} · ${esc(l.at ? etDate(l.at) + ' ' + et24(l.at) + ' ' + etZone(l.at) : '')}</div></div>`).join('');
+  openMenu(e.currentTarget, `<div class="label">Activity</div>${rows || '<div class="muted">No status changes yet.</div>'}<hr>
+    <div class="muted">${esc(updatedLine(d) || 'Not updated yet')}</div>`, 'pop');
+};
+$('delete-btn').onclick = async () => {
+  const d = records[openId]; if (!d) return;
+  const ok = await modal({ title: 'Delete This Property?', confirm: 'Delete', danger: true, requireText: 'DELETE',
+    body: `<p><b>${esc(d.address)}</b></p><p class="hint">This permanently deletes the checklist for the whole team. It can’t be undone. To keep it but take it off the Open list, mark it Cancelled instead.</p>` });
+  if (!ok) return;
+  const id = openId; pending = null;
+  try { await deleteDoc(checklistRef(id)); delete records[id]; toast('Property Deleted'); openId = null; location.hash = '#/'; }
+  catch (e) { toast('Could Not Delete: ' + (e.code || e.message), { error: true }); }
+};
 
-        window.deleteAddress = async function(address) {
-            if(confirm(`Are you sure you want to permanently delete the cloud checklist for:\n"${address}"?\n\nThis will remove it for the entire team.`)) {
-                if (!auth || !auth.currentUser) return;
-                const safeId = encodeURIComponent(address).replace(/\./g, '%2E');
-                const docRef = doc(db, 'artifacts', customAppId, 'public', 'data', 'checklists', safeId);
-                
-                try {
-                    await deleteDoc(docRef);
-                    if(addressInput.value.trim() === address) {
-                        addressInput.value = '';
-                        crmInput.value = '';
-                        document.querySelectorAll('.checklist-cb').forEach(cb => cb.checked = false);
-                        document.querySelectorAll('.question-answer').forEach(input => { input.value = ''; input.dispatchEvent(new Event('input')); });
-                        window.showStatus('Cloud Record Deleted');
-                    }
-                } catch (e) {}
-            }
-        };
+// Print / PDF: a printable sheet with every answer in full. Sections with nothing filled in are left out, as before.
+$('print-btn').onclick = () => {
+  if (pending) flushNow();
+  const d = records[openId]; if (!d) return;
+  const ansOf = n => (d.answers && typeof d.answers['ans_' + n] === 'string') ? d.answers['ans_' + n] : '';
+  const chkOf = n => !!(d.checks && d.checks['chk_' + n]);
+  const secs = SECTIONS.filter(s => s.qs.some(q => chkOf(q.chk) || ansOf(q.ans).trim() || (q.escrow || []).some(x => ansOf(x.ans).trim())));
+  const st = statusOf(d), t = now();
+  $('print-sheet').innerHTML = `<div class="ps-head"><span class="logo-mark">${document.querySelector('[data-logo]').innerHTML}</span><h1>TC First Call Checklist</h1></div>
+    <dl class="ps-kv"><dt>Property Address</dt><dd>${esc(d.address)}</dd><dt>CRM Lead Link</dt><dd>${esc(d.crmLink || '—')}</dd>
+      <dt>Status</dt><dd>${STATUS[st].label}${d.statusBy ? ' (by ' + esc(nameOf(d.statusBy)) + (d.statusAt ? ', ' + esc(whenShort(d.statusAt)) : '') + ')' : ''}</dd>
+      <dt>Checked</dt><dd>${checkedCount(d)} of ${CHECK_COUNT}</dd><dt>Last Updated</dt><dd>${esc(updatedLine(d).replace(/^Updated /, '') || '—')}</dd>
+      <dt>Printed</dt><dd>${esc(whenShort(t))} by ${esc(nameOf(currentUser.email))}</dd></dl>
+    ${secs.length ? secs.map(s => `<div class="ps-sec"><h2>${esc(s.title)}</h2>${s.note ? `<div class="ps-note">${esc(s.note)}</div>` : ''}
+      ${s.qs.map(q => `<div class="ps-q n${q.nest}"><span class="ps-box${chkOf(q.chk) ? ' on' : ''}"></span><div><div class="t">${esc(q.text)}</div>
+        ${ansOf(q.ans).trim() ? `<div class="a">${esc(ansOf(q.ans))}</div>` : ''}
+        ${q.escrow ? `<div class="a">${q.escrow.map(x => esc(x.label) + ': ' + (esc(ansOf(x.ans)) || '—')).join('   ·   ')}</div>` : ''}</div></div>`).join('')}</div>`).join('')
+      : '<p>Nothing has been filled in yet.</p>'}`;
+  setTimeout(() => window.print(), 50);
+};
 
-        function updateDatalist() {
-            const datalist = document.getElementById('saved-addresses');
-            datalist.innerHTML = '';
-            Object.values(currentChecklists).forEach(data => {
-                if(data.address) {
-                    const option = document.createElement('option');
-                    option.value = data.address;
-                    datalist.appendChild(option);
-                }
-            });
-        }
+buildSections();
 
-        window.renderManageModalList = function() {
-            const listContainer = document.getElementById('saved-addresses-list');
-            listContainer.innerHTML = '';
-            const addresses = Object.values(currentChecklists).map(d => d.address).filter(Boolean);
-            
-            if (addresses.length === 0) {
-                listContainer.innerHTML = '<p class="text-gray-500 text-center text-xs font-bold uppercase tracking-wider py-8">No saved checklists found.</p>';
-            } else {
-                addresses.sort((a,b) => a.localeCompare(b)).forEach(address => {
-                    const safeAddress = address.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                    const item = document.createElement('div');
-                    item.className = 'flex justify-between items-center p-3 m-2 bg-gray-900/40 hover:bg-gray-800/80 border border-gray-800 rounded-lg group transition-colors shadow-sm';
-                    item.innerHTML = `
-                        <span class="font-bold text-gray-200 text-xs truncate pr-4 flex-grow uppercase tracking-wider">${address}</span>
-                        <div class="flex gap-2 flex-shrink-0">
-                            <button onclick="loadFromModal('${safeAddress}')" class="w-8 h-8 flex items-center justify-center bg-gray-800 text-brand-emerald border border-brand-emerald/30 hover:bg-brand-emerald hover:text-white rounded-md transition-colors shadow" title="Load">
-                                <i class="fa-solid fa-folder-open text-xs"></i>
-                            </button>
-                            <button onclick="deleteAddress('${safeAddress}')" class="w-8 h-8 flex items-center justify-center bg-gray-800 text-brand-crimson border border-brand-crimson/30 hover:bg-brand-crimson hover:text-white rounded-md transition-colors shadow" title="Delete">
-                                <i class="fa-solid fa-trash-can text-xs"></i>
-                            </button>
-                        </div>
-                    `;
-                    listContainer.appendChild(item);
-                });
-            }
-        };
+// =============================================================== clock + server time
+function tick() { const t = now(); $('clock-a').textContent = etDate(t) + ' ' + et24(t); $('clock-b').textContent = ET12s.format(new Date(t)) + ' ' + etZone(t); }
+syncClock().then(tick); tick(); setInterval(tick, 1000); setInterval(syncClock, 15 * 60 * 1000);
 
-        // --- STREAMING_CHUNK:DOM Setup and Cursors ---
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('year').textContent = new Date().getFullYear();
-
-            // Default Open First Accordion
-            const contents = document.querySelectorAll('.accordion-content');
-            const icons = document.querySelectorAll('.accordion-header .fa-chevron-down');
-            contents.forEach((content, index) => {
-                if(index !== 0) {
-                    content.classList.remove('open');
-                    icons[index].style.transform = 'rotate(0deg)';
-                } else {
-                    icons[index].style.transform = 'rotate(180deg)';
-                }
-            });
-
-            // Dynamically Inject Answer Fields & Link Buttons under each question
-            const checkContainers = document.querySelectorAll('.check-container');
-            checkContainers.forEach((container, index) => {
-                let marginBase = 3.5; 
-                if (container.classList.contains('nested-1')) marginBase += 2.5;
-                if (container.classList.contains('nested-2')) marginBase += 5;
-
-                const wrapper = document.createElement('div');
-                wrapper.className = 'relative flex items-center mb-4 question-wrapper';
-                wrapper.style.marginLeft = marginBase + 'rem';
-                wrapper.style.width = 'calc(100% - ' + marginBase + 'rem)';
-
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'question-answer w-full bg-gray-950/60 border border-gray-700/50 hover:border-brand-emerald/50 focus:bg-gray-900 focus:border-brand-emerald focus:ring-1 focus:ring-brand-emerald px-3 py-2 text-xs font-bold text-white outline-none transition-all placeholder-gray-600 rounded-lg shadow-inner pr-8';
-                input.placeholder = 'Add answer/notes or paste a link...';
-                
-                const linkBtn = document.createElement('a');
-                linkBtn.className = 'absolute right-3 text-gray-500 hover:text-brand-emerald hidden transition-colors no-print';
-                linkBtn.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
-                linkBtn.target = '_blank';
-                linkBtn.title = "Open link in new tab";
-
-                input.addEventListener('input', () => {
-                    const val = input.value.trim();
-                    if (/^https?:\/\//i.test(val)) {
-                        linkBtn.href = val; linkBtn.classList.remove('hidden');
-                    } else {
-                        linkBtn.classList.add('hidden');
-                    }
-                    window.saveCurrentState();
-                });
-
-                wrapper.appendChild(input);
-                wrapper.appendChild(linkBtn);
-                container.parentNode.insertBefore(wrapper, container.nextSibling);
-            });
-
-            // Recover local draft if active
-            const draft = localStorage.getItem('tchb_unsaved_draft');
-            if (draft && !addressInput.value.trim()) {
-                const state = JSON.parse(draft);
-                crmInput.value = state.crmLink || '';
-                document.querySelectorAll('.checklist-cb').forEach((cb, index) => {
-                    cb.checked = !!(state.checks && state.checks['chk_' + index]);
-                });
-                document.querySelectorAll('.question-answer').forEach((input, index) => {
-                    input.value = (state.answers && state.answers['ans_' + index]) ? state.answers['ans_' + index] : '';
-                    input.dispatchEvent(new Event('input'));
-                });
-                window.showStatus('Local draft recovered');
-            }
-
-            // Global Listeners
-            addressInput.addEventListener('change', (e) => {
-                const newAddress = e.target.value.trim();
-                if (newAddress) {
-                    window.loadAddressState(newAddress);
-                    window.saveCurrentState(); 
-                }
-            });
-
-            crmInput.addEventListener('input', window.saveCurrentState);
-            document.querySelectorAll('.checklist-cb').forEach(cb => cb.addEventListener('change', window.saveCurrentState));
-        });
-
-        // --- STREAMING_CHUNK:Canvas Background Animation ---
-        const canvas = document.getElementById('gridCanvas');
-        const ctx = canvas.getContext('2d');
-        let gridSize = 55; let sparks = []; let lastSpanSpawn = 0; let lastInteractionTime = Date.now(); 
-        const brandColors = [{ r: 79, g: 70, b: 229 }, { r: 220, g: 38, b: 38 }, { r: 16, g: 185, b: 129 }];
-
-        let customMouseX = window.innerWidth / 2; let customMouseY = window.innerHeight / 2;
-        let ringX = customMouseX; let ringY = customMouseY;
-
-        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resizeCanvas);
-
-        function createSpark(x = null, y = null, isClick = false) {
-            const isHorizontal = Math.random() > 0.5;
-            let startX, startY, dirX, dirY;
-            if (isClick && x !== null && y !== null) {
-                startX = Math.round(x / gridSize) * gridSize; startY = Math.round(y / gridSize) * gridSize;
-                dirX = isHorizontal ? (Math.random() > 0.5 ? 1 : -1) : 0; dirY = isHorizontal ? 0 : (Math.random() > 0.5 ? 1 : -1);
-            } else {
-                if (isHorizontal) {
-                    startX = Math.random() < 0.5 ? 0 : canvas.width; startY = Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize;
-                    dirX = startX === 0 ? 1 : -1; dirY = 0;
-                } else {
-                    startX = Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize; startY = Math.random() < 0.5 ? 0 : canvas.height;
-                    dirX = 0; dirY = startY === 0 ? 1 : -1;
-                }
-            }
-            const color = brandColors[Math.floor(Math.random() * brandColors.length)];
-            sparks.push({ startX, startY, targetX: startX + dirX * gridSize, targetY: startY + dirY * gridSize, dirX, dirY, progress: 0, speed: 0.02 + Math.random() * 0.03, life: 1, decay: 0.005 + Math.random() * 0.01, history: [], color: color });
-        }
-
-        document.addEventListener('mousedown', (e) => { 
-            lastInteractionTime = Date.now();
-            for(let i=0; i<3; i++) createSpark(e.clientX, e.clientY, true); 
-            const ring = document.getElementById('cursor-ring');
-            if(ring) { ring.style.transform = `translate(-50%, -50%) scale(0.7)`; setTimeout(() => ring.style.transform = `translate(-50%, -50%) scale(1)`, 150); }
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            document.body.classList.add('mouse-active');
-            customMouseX = e.clientX; customMouseY = e.clientY;
-            const dot = document.getElementById('cursor-dot');
-            if(dot) { dot.style.left = `${customMouseX}px`; dot.style.top = `${customMouseY}px`; }
-            const glow = document.getElementById('mouseGlow');
-            if(glow) {
-                glow.style.setProperty('--mouse-x', `${e.clientX}px`); glow.style.setProperty('--mouse-y', `${e.clientY}px`);
-                if (glow.style.opacity === '0' || glow.style.opacity === '') glow.style.opacity = '1';
-            }
-        });
-
-        document.addEventListener('mouseover', (e) => {
-            if (e.target.closest('a, button, input, textarea, select, [onclick], .cursor-pointer, label')) { 
-                document.body.classList.add('cursor-hover'); 
-            } else { 
-                document.body.classList.remove('cursor-hover'); 
-            }
-        });
-
-        document.addEventListener('mouseleave', () => { const glow = document.getElementById('mouseGlow'); if(glow) glow.style.opacity = '0'; });
-
-        function drawSparks() {
-            ctx.lineCap = 'round';
-            sparks.forEach(spark => {
-                const c = spark.color;
-                ctx.beginPath(); ctx.moveTo(spark.startX, spark.startY);
-                ctx.lineTo(spark.startX + (spark.targetX - spark.startX) * spark.progress, spark.startY + (spark.targetY - spark.startY) * spark.progress);
-                ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${spark.life})`; ctx.lineWidth = 2; ctx.stroke();
-                spark.history.forEach((point, index) => {
-                    ctx.beginPath(); ctx.moveTo(point.x, point.y); ctx.lineTo(point.nextX, point.nextY);
-                    ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${spark.life * (index / spark.history.length) * 0.5})`;
-                    ctx.lineWidth = 2 * (index / spark.history.length); ctx.stroke();
-                });
-                ctx.shadowColor = `rgb(${c.r}, ${c.g}, ${c.b})`; ctx.shadowBlur = 10; ctx.beginPath();
-                const currentX = spark.startX + (spark.targetX - spark.startX) * spark.progress; const currentY = spark.startY + (spark.targetY - spark.startY) * spark.progress;
-                ctx.arc(currentX, currentY, 1.5, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${Math.min(c.r+40,255)}, ${Math.min(c.g+40,255)}, ${Math.min(c.b+40,255)}, ${spark.life})`; ctx.fill(); ctx.shadowBlur = 0;
-            });
-        }
-
-        function animateGrid(timestamp) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = 'rgba(79, 70, 229, 0.07)'; ctx.lineWidth = 1; ctx.beginPath();
-            for (let x = 0; x < canvas.width; x += gridSize) { ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); }
-            for (let y = 0; y < canvas.height; y += gridSize) { ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); }
-            ctx.stroke();
-
-            ringX += (customMouseX - ringX) * 0.15; ringY += (customMouseY - ringY) * 0.15;
-            const ring = document.getElementById('cursor-ring');
-            if (ring) { ring.style.left = `${ringX}px`; ring.style.top = `${ringY}px`; }
-
-            drawSparks();
-            
-            if (Date.now() - lastInteractionTime > 5000 && timestamp - lastSpanSpawn > 500 && sparks.length < 32) { createSpark(); lastSpanSpawn = timestamp; }
-
-            for (let i = sparks.length - 1; i >= 0; i--) {
-                let spark = sparks[i]; spark.progress += spark.speed; spark.life -= spark.decay;
-                if (spark.history.length > 5) spark.history.shift();
-                spark.history.push({ x: spark.startX + (spark.targetX - spark.startX) * spark.progress, y: spark.startY + (spark.targetY - spark.startY) * spark.progress, nextX: spark.startX + (spark.targetX - spark.startX) * (spark.progress + 0.1), nextY: spark.startY + (spark.targetY - spark.startY) * (spark.progress + 0.1) });
-                if (spark.life <= 0) { sparks.splice(i, 1); } 
-                else if (spark.progress >= 1) {
-                    spark.startX = spark.targetX; spark.startY = spark.targetY; spark.progress = 0;
-                    if (Math.random() < 0.3 && sparks.length < 32) {
-                        let isHorizontal = spark.dirX !== 0; let branchDirX = isHorizontal ? 0 : (Math.random() > 0.5 ? 1 : -1); let branchDirY = isHorizontal ? (Math.random() > 0.5 ? 1 : -1) : 0;
-                        sparks.push({ startX: spark.startX, startY: spark.startY, targetX: spark.startX + branchDirX * gridSize, targetY: spark.startY + branchDirY * gridSize, dirX: branchDirX, dirY: branchDirY, progress: 0, speed: spark.speed, life: spark.life * 0.75, decay: spark.decay, history: [], color: spark.color });
-                    }
-                    spark.targetX = spark.startX + spark.dirX * gridSize; spark.targetY = spark.startY + spark.dirY * gridSize;
-                }
-            }
-            requestAnimationFrame(animateGrid);
-        }
-
-        resizeCanvas(); requestAnimationFrame(animateGrid);
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service_worker.js')
-                    .then(registration => {
-                        console.log('PWA ServiceWorker registered successfully with scope: ', registration.scope);
-                    })
-                    .catch(err => {
-                        console.error('PWA ServiceWorker registration failed: ', err);
-                    });
-            });
-        }
-    </script>
+// =============================================================== app updates (service worker)
+// The worker always fetches the newest page first; when a new version takes over, offer a reload.
+if ('serviceWorker' in navigator && !EMU) {
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController || reloading) return;
+    toast('A New Version Is Ready', { sticky: true, action: 'Reload', onAction: () => { reloading = true; if (pending) flushNow(); location.reload(); } });
+  });
+  window.addEventListener('load', () => {
+    // check for a newer worker straight away (browsers otherwise check only about once a day), then every 30 minutes
+    navigator.serviceWorker.register('./service_worker.js').then(reg => { reg.update().catch(() => {}); setInterval(() => reg.update().catch(() => {}), 30 * 60 * 1000); })
+      .catch(err => console.error('PWA ServiceWorker registration failed: ', err));
+  });
+}
+</script>
 </body>
 </html>
