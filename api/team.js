@@ -3,7 +3,7 @@
 // through the endpoint the Title Commitment Agent already uses (POST /api/title-agent/team, signed with the shared secret),
 // asking for the Managers plus the departments in HUB_TEAM_DEPTS.
 // Vercel settings for this project (names only):
-//   HUB_SYNC_SECRET  the hub's shared secret (the same value as the hub's TITLE_AGENT_SYNC_SECRET)
+//   HUB_SYNC_SECRET  TC Checklist's own secret for the hub (the same value as the hub project's TC_CHECKLIST_SYNC_SECRET)
 //   HUB_TEAM_DEPTS   optional, which departments' names to bring over, comma separated from TC, DISPO, ACQ, OPS
 //                    (default TC,DISPO). Managers always come over. Takes effect on the next deploy.
 //   HUB_TEAM_URL     optional, default https://hub.totalchb.com/api/title-agent/team
