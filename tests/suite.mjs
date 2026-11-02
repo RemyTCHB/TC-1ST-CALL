@@ -376,7 +376,13 @@ await (async () => {
     const body = '{}', ts = 1700000000, h = sign('s3cret', body, ts);
     assert.equal(h['X-Hub-Signature'], 'sha256=' + crypto.createHmac('sha256', 's3cret').update(ts + '.' + body).digest('hex'));
   });
-  await check('handler: 401 without sign-in, 503 until the secret is set, then names from the hub', async () => {
+  await check('departments to bring over come from HUB_TEAM_DEPTS (default TC and DISPO)', () => {
+    const { deptsWanted } = require(join(ROOT, 'api/team.js'));
+    assert.deepEqual(deptsWanted(undefined), ['TC', 'DISPO']); assert.deepEqual(deptsWanted(''), ['TC', 'DISPO']);
+    assert.deepEqual(deptsWanted('tc, dispo,ACQ'), ['TC', 'DISPO', 'ACQ']); assert.deepEqual(deptsWanted('OPS'), ['OPS']);
+    assert.deepEqual(deptsWanted('nonsense'), ['TC', 'DISPO']);
+  });
+  await check('handler: 401 without sign-in, 503 until the secret is set, then names (Managers, TC, DISPO) from the hub', async () => {
     const handler = require(join(ROOT, 'api/team.js'));
     const call = async (headers = {}) => { const res = { headers: {}, setHeader(k, v) { this.headers[k] = v; }, end(b) { this.body = b; } };
       await handler({ method: 'POST', headers }, res); return { code: res.statusCode, body: JSON.parse(res.body) }; };
@@ -393,7 +399,8 @@ await (async () => {
       assert.equal(r.code, 200); assert.deepEqual(r.body.people, [{ name: 'Alex Tester', email: 'alex.tester@totalchb.com', photo: '' }]);
       assert.equal(hubCall.url, 'https://hub.totalchb.com/api/title-agent/team');
       const ts = hubCall.init.headers['X-Hub-Timestamp'];
-      assert.equal(hubCall.init.headers['X-Hub-Signature'], 'sha256=' + crypto.createHmac('sha256', 'test-secret').update(ts + '.{}').digest('hex'));
+      assert.equal(hubCall.init.body, '{"depts":["TC","DISPO"]}');
+      assert.equal(hubCall.init.headers['X-Hub-Signature'], 'sha256=' + crypto.createHmac('sha256', 'test-secret').update(ts + '.' + hubCall.init.body).digest('hex'));
     } finally { global.fetch = realFetch; delete process.env.HUB_SYNC_SECRET; }
   });
 })();

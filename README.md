@@ -51,7 +51,7 @@ The app is an installable **Progressive Web App** with offline support, so it lo
 
 Vercel deploys `main` to tc.totalchb.com.
 
-**Vercel settings (names only):** `HUB_SYNC_SECRET` (the same value as the hub's `TITLE_AGENT_SYNC_SECRET`), optional `HUB_TEAM_URL`. Without them the app shows names from email addresses.
+**Vercel settings (names only):** `HUB_SYNC_SECRET` (the same value as the hub's `TITLE_AGENT_SYNC_SECRET`); optional `HUB_TEAM_DEPTS`, which departments' names come over from the hub, comma separated from `TC, DISPO, ACQ, OPS` (default `TC,DISPO`; Managers always come over; takes effect on the next deploy); optional `HUB_TEAM_URL`. Without the secret the app shows names from email addresses.
 
 ## Data (do not change)
 
