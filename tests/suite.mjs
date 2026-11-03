@@ -156,27 +156,42 @@ await check('names come from the hub directory, else from the email', async () =
 const helpOf = async page => {
   await page.click('#avatar-btn'); await page.click('[data-help]'); await page.waitForSelector('.help-panel h2[data-sec]');
   return { title: await page.textContent('[data-help-title]'), nav: await page.$$eval('[data-help-nav] [data-go]', els => els.length),
-    pdf: await page.getAttribute('.help-panel a[download]', 'href') };
+    pdfs: await page.$$eval('[data-pdf]', els => els.map(e => e.dataset.pdf + (e.classList.contains('mine') ? '*' : ''))) };
 };
+// Download a guide from Help and read it: pages and text (pdfinfo / pdftotext). Made-up passwords only.
+const fetchGuide = async (page, kind) => {
+  const [dl] = await Promise.all([page.waitForEvent('download'), page.click(`[data-pdf-dl="${kind}"]`)]);
+  const f = join(OUT, `guide-${kind}-${Date.now()}.pdf`); await dl.saveAs(f);
+  return { pages: +execSync(`pdfinfo "${f}"`, { encoding: 'utf8' }).match(/Pages:\s+(\d+)/)[1], text: execSync(`pdftotext "${f}" -`, { encoding: 'utf8' }) };
+};
+const pagesOf = file => +execSync(`pdfinfo "${join(ROOT, file)}"`, { encoding: 'utf8' }).match(/Pages:\s+(\d+)/)[1];
 await check('Help: a Member gets the Team Guide in the app, with no passwords; the PDF opens', async () => {
   await A.page.click('#avatar-btn'); assert.match(await A.page.textContent('.menu'), /Member · TC/); await A.page.keyboard.press('Escape');
   const h = await helpOf(A.page);
   assert.equal(h.title, 'Team Guide'); assert.equal(h.nav, 15, '14 sections + the Quick Reference Card');
-  assert.equal(h.pdf, 'guides/TC_Checklist_Team_Guide.pdf');
+  assert.deepEqual(h.pdfs, ['member*']);
   assert.equal(await A.page.locator('.help-panel [data-tc-pw], .help-panel code.pw').count(), 0);
   assert.match(await A.page.textContent('.help-body'), /only Team Leaders and Managers can delete/i);
-  const st = await A.page.evaluate(u => fetch(u, { method: 'HEAD' }).then(r => r.status + ' ' + r.headers.get('content-type')), h.pdf);
-  assert.equal(st, '200 application/pdf');
+  const g = await fetchGuide(A.page, 'member');
+  assert.equal(g.pages, pagesOf('guides/TC_Checklist_Team_Guide.pdf'), 'a Member gets the plain guide');
+  assert.doesNotMatch(g.text, /sample-pass|sample-own/);
   await A.page.click('[data-help-nav] [data-go="9"]'); await A.page.waitForTimeout(700);
   assert.equal(await A.page.getAttribute('[data-help-nav] [data-go="9"]', 'aria-current'), 'true', 'contents follow the scroll');
   await A.page.keyboard.press('Escape'); assert.equal(await A.page.locator('.help-panel').count(), 0);
   const hb = await helpOf(B.page); assert.equal(hb.title, 'Team Guide', 'not in the hub: a Member'); await B.page.click('.help-panel [data-close]');
 });
 await check('Help: a Manager gets the Manager Guide with the TC and own passwords; a Team Leader the TC one', async () => {
-  for (const [email, title, pdf, own] of [['morgan.manager@totalchb.com', 'Manager Guide', 'Manager', true], ['lee.leader@totalchb.com', 'Team Leader Guide', 'Team_Leader', false]]) {
+  for (const [email, title, pdf, own, kinds] of [['morgan.manager@totalchb.com', 'Manager Guide', 'Manager', true, ['manager*', 'lead', 'member']],
+    ['lee.leader@totalchb.com', 'Team Leader Guide', 'Team_Leader', false, ['lead*', 'member']]]) {
     const M = await openApp(browser, email);
     const h = await helpOf(M.page);
-    assert.equal(h.title, title); assert.equal(h.pdf, `guides/TC_Checklist_${pdf}_Guide.pdf`);
+    assert.equal(h.title, title); assert.deepEqual(h.pdfs, kinds);
+    const kind = kinds[0].slice(0, -1), mine = await fetchGuide(M.page, kind);
+    assert.equal(mine.pages, pagesOf(`guides/TC_Checklist_${pdf}_Guide.pdf`) + 1, 'own copy ends with the passwords page');
+    assert.match(mine.text, /Your Delete Passwords/); assert.match(mine.text, /sample-pass/);
+    assert.equal(/sample-own/.test(mine.text), own, 'own passwords only for managers');
+    const other = await fetchGuide(M.page, 'member');
+    assert.equal(other.pages, pagesOf('guides/TC_Checklist_Team_Guide.pdf')); assert.doesNotMatch(other.text, /sample-pass/);
     await M.page.waitForSelector('.help-panel code.pw');
     const pw = await M.page.$$eval('.help-panel code.pw', els => els.map(e => e.textContent));
     assert.deepEqual(pw, own ? ['sample-pass', 'sample-own'] : ['sample-pass'], email);

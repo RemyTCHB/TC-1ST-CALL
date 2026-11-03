@@ -316,8 +316,8 @@ def pw_slot() -> list:
     if MODE == "html":
         return [H('<div data-tc-pw></div>')]
     return [box("Open <b>Help</b> in the app (click your initials → Help) to see the delete passwords you may use. They "
-                "show there after you sign in, and are never printed in this guide or sent by email.", "warn",
-                "Your passwords")]
+                "show there after you sign in. Your own copy of this guide from Help ends with a <b>Your Delete "
+                "Passwords</b> page; this public copy never holds them.", "warn", "Your passwords")]
 
 
 # ---------------------------------------------------------------- pages
@@ -501,8 +501,12 @@ def story() -> list:
     s += [P("Help", "h2"),
           P("Click your initials, then <b>Help</b>. It opens the guide for your role inside the app, like the Team Hub: "
             "the <b>Team Guide</b> for Members, the <b>Team Leader Guide</b> or the <b>Manager Guide</b> (your role "
-            "comes from the Team Hub). Pick a section on the left, or scroll. <b>PDF</b> downloads a copy to print. "
-            "Team Leaders and Managers also see the delete passwords they may use."),
+            "comes from the Team Hub). Pick a section on the left, or scroll. Team Leaders and Managers also see the delete "
+            "passwords they may use."),
+          P("The guide PDFs are along the top of Help, each with <b>Open</b> and <b>Download</b>. Your own guide is "
+            "marked <b>Yours</b>; for Team Leaders and Managers, your copy ends with a <b>Your Delete Passwords</b> page, "
+            "added only when you open or download it. Team Leaders can also get the Team Guide, and Managers all three "
+            "(without passwords)."),
           shot("16-help", "Help: the guide for your role, with its contents.", 1.0, crop=(0.0, 0.0, 1.0, 1.0), max_h=4.3)]
     s += [shot("05-active", "Click Active to see who's online.", 0.5, crop=(0.6, 0.0, 0.98, 0.38)),
           shot("15-home-dark", "The dark look.", 1.0, crop=(0, 0, 1, 0.62))]
@@ -755,7 +759,7 @@ def story() -> list:
                       'starts here.', S["cell"]),
                  Para('<font name="Nunito-Bold" color="#109648">Closed</font><br/>The deal closed. View-only until '
                       'reopened.', S["cell"]),
-                 Para('<font name="Nunito-Bold" color="#767388">Cancelled</font><br/>The deal fell through. '
+                 Para('<font name="Nunito-Bold" color="#BD2239">Cancelled</font><br/>The deal fell through. '
                       'View-only until reopened.', S["cell"])]], colWidths=[WIDTH / 3] * 3)
     st.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, -1), LAV), ("VALIGN", (0, 0), (-1, -1), "TOP"),
                             ("LINEAFTER", (0, 0), (1, 0), 4, colors.white), ("TOPPADDING", (0, 0), (-1, -1), 8),
@@ -764,7 +768,7 @@ def story() -> list:
     if MODE == "html":
         st = H('<div class="cards"><div><b>Open</b>Being worked. Every property starts here.</div>'
                '<div><b style="color:#109648">Closed</b>The deal closed. View-only until reopened.</div>'
-               '<div><b style="color:#767388">Cancelled</b>The deal fell through. View-only until reopened.</div></div>')
+               '<div><b style="color:#BD2239">Cancelled</b>The deal fell through. View-only until reopened.</div></div>')
     s += [P("Statuses", "h2"), st]
     return s
 
