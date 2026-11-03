@@ -52,7 +52,7 @@ function serve(root, port, opts = {}) {
   const srv = createServer((req, res) => {
     const url = new URL(req.url, 'http://localhost');
     if (url.pathname === '/api/team') { res.writeHead(200, { 'Content-Type': 'application/json' });
-      return res.end(JSON.stringify({ people: [{ name: 'Alex Tester', email: 'alex.tester@totalchb.com', photo: '' }, { name: 'Morgan Manager', email: 'morgan.manager@totalchb.com', photo: '' }] })); }
+      return res.end(JSON.stringify({ people: [{ name: 'Alex Tester', email: 'alex.tester@totalchb.com', photo: '', role: 'member', dept: 'TC' }, { name: 'Morgan Manager', email: 'morgan.manager@totalchb.com', photo: '', role: 'manager', dept: '' }] })); }
     let p = url.pathname === '/' ? '/index.html' : url.pathname;
     const file = join(typeof root === 'function' ? root() : root, decodeURIComponent(p));
     if (!existsSync(file) || !statSync(file).isFile()) { res.writeHead(404); return res.end('not found'); }
@@ -152,6 +152,30 @@ await check('home lists an existing (old-format) record under Open with its prog
 await check('names come from the hub directory, else from the email', async () => {
   await A.page.click('#avatar-btn'); assert.match(await A.page.textContent('.menu'), /Alex Tester/); await A.page.keyboard.press('Escape');
   await B.page.click('#avatar-btn'); assert.match(await B.page.textContent('.menu'), /Bea Sample/); await B.page.keyboard.press('Escape');
+});
+await check('Help & Guides: a Member sees the Team Guide only, and the guides open', async () => {
+  await A.page.click('#avatar-btn'); assert.match(await A.page.textContent('.menu'), /Member · TC/);
+  await A.page.click('[data-help]'); await A.page.waitForSelector('.modal.help');
+  assert.deepEqual(await A.page.$$eval('[data-guide]', els => els.map(e => e.dataset.guide)), ['team']);
+  for (const href of await A.page.$$eval('.modal.help a[href$=".pdf"]', els => els.map(e => e.href))) {
+    const st = await A.page.evaluate(u => fetch(u, { method: 'HEAD' }).then(r => r.status + ' ' + r.headers.get('content-type')), href);
+    assert.equal(st, '200 application/pdf', href);
+  }
+  await A.page.keyboard.press('Escape'); assert.equal(await A.page.locator('.modal.help').count(), 0);
+  await B.page.click('#avatar-btn'); assert.match(await B.page.textContent('.menu'), /Member/, 'not in the hub: a Member');
+  await B.page.click('[data-help]'); await B.page.waitForSelector('.modal.help');
+  assert.deepEqual(await B.page.$$eval('[data-guide]', els => els.map(e => e.dataset.guide)), ['team']);
+  await B.page.click('.modal.help [data-close]');
+});
+await check('Help & Guides: a Manager sees the Team Guide and the Manager Guide', async () => {
+  const M = await openApp(browser, 'morgan.manager@totalchb.com');
+  await M.page.click('#avatar-btn'); assert.match(await M.page.textContent('.menu'), /Manager/);
+  await M.page.click('[data-help]'); await M.page.waitForSelector('.modal.help');
+  assert.deepEqual(await M.page.$$eval('[data-guide]', els => els.map(e => e.dataset.guide)), ['team', 'manager']);
+  assert.ok((await M.page.getAttribute('[data-guide="manager"] a[download]', 'href')).endsWith('guides/TC_Checklist_Manager_Guide.pdf'));
+  await M.page.waitForTimeout(250); await M.page.screenshot({ path: join(OUT, 'light-desktop-7c-help-manager.png') });
+  await M.page.keyboard.press('Escape'); await M.page.click('#avatar-btn'); await M.page.click('[data-signout]'); await M.page.waitForSelector('#gate:not([hidden])');
+  await M.context.close();
 });
 await check('search finds a property by answer text and shows where it matched', async () => {
   await A.page.fill('#search', 'pat hoa'); await A.page.waitForSelector('.hit mark');
@@ -320,6 +344,7 @@ for (const theme of ['light', 'dark']) for (const [w, h, size] of [[1280, 900, '
     await p.click('#status-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('5-status-menu') }); await p.keyboard.press('Escape');
     await p.click('#active-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('6-active-users') }); await p.keyboard.press('Escape');
     await p.click('#delete-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('7-delete-confirm') }); await p.click('[data-m-cancel]');
+    await p.click('#avatar-btn'); await p.click('[data-help]'); await p.waitForTimeout(250); await p.screenshot({ path: name('7b-help') }); await p.keyboard.press('Escape');
     await p.click('a.link-btn'); await p.click('[data-tab="closed"]'); await p.click('.prop-card .prop-title'); await p.waitForSelector('#locked-note:not([hidden])'); await p.waitForTimeout(500);
     await p.screenshot({ path: name('8-closed') });
     await p.click('a.link-btn'); await p.click('#new-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('9-new-property') }); await p.click('[data-m-cancel]');
@@ -419,7 +444,7 @@ await (async () => {
       delete process.env.HUB_SYNC_SECRET; assert.equal((await call({ authorization: 'Bearer ' + jwt({}) })).code, 503);
       process.env.HUB_SYNC_SECRET = 'test-secret';
       const r = await call({ authorization: 'Bearer ' + jwt({}) });
-      assert.equal(r.code, 200); assert.deepEqual(r.body.people, [{ name: 'Alex Tester', email: 'alex.tester@totalchb.com', photo: '' }]);
+      assert.equal(r.code, 200); assert.deepEqual(r.body.people, [{ name: 'Alex Tester', email: 'alex.tester@totalchb.com', photo: '', role: 'manager', dept: 'TC' }]);
       assert.equal(hubCall.url, 'https://hub.totalchb.com/api/title-agent/team');
       const ts = hubCall.init.headers['X-Hub-Timestamp'];
       assert.equal(hubCall.init.body, '{"depts":["TC","DISPO"]}');

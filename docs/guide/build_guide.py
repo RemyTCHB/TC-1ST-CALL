@@ -1,8 +1,9 @@
 """Builds the branded TC Checklist user guide (PDF) for the team.
 
-    python3 docs/guide/build_guide.py      ->  docs/guide/TC_Checklist_User_Guide.pdf
+    python3 docs/guide/build_guide.py  ->  guides/TC_Checklist_Team_Guide.pdf and guides/TC_Checklist_Manager_Guide.pdf
 
-Same look and building blocks as the Title Commitment Agent's guide. Screenshots in docs/guide/shots/ come from the app
+The Help button in the app (photo menu → Help & Guides) opens these: everyone gets the Team Guide, Managers also
+get the Manager Guide (the Team Guide plus the manager section). Same look and building blocks as the Title Commitment Agent's guide. Screenshots in docs/guide/shots/ come from the app
 on the local Firebase emulators with made-up sample properties and people, never real ones:
     cd tests && node run.mjs guide-shots.mjs
 Fonts: Baloo 2 and Nunito Sans (SIL Open Font License), the same as the app. Needs reportlab and Pillow.
@@ -40,7 +41,10 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 SHOTS = HERE / "shots"
 CROPS = HERE / ".crops"  # cropped copies of the screenshots, rebuilt each time (gitignored)
-OUT = HERE / "TC_Checklist_User_Guide.pdf"
+GUIDES_DIR = ROOT / "guides"  # published with the app; the Help button opens these
+OUTS = {"team": GUIDES_DIR / "TC_Checklist_Team_Guide.pdf", "manager": GUIDES_DIR / "TC_Checklist_Manager_Guide.pdf"}
+AUD = "team"  # which guide is being built: "team" (everyone) or "manager" (Team Guide + the manager section)
+KIND = {"team": "Team Guide", "manager": "Manager Guide"}
 LOGO = ROOT / "logo-light.png"
 APP = "TC Checklist"
 
@@ -225,7 +229,7 @@ def cover(c, doc) -> None:
     c.drawString(MARGIN + c.stringWidth("TC ", "Baloo", 40), PAGE_H - 4.1 * inch, "Checklist")
     c.setFont("Baloo-Semi", 22)
     c.setFillColor(INDIGO)
-    c.drawString(MARGIN, PAGE_H - 4.7 * inch, "User Guide")
+    c.drawString(MARGIN, PAGE_H - 4.7 * inch, KIND[AUD])
     c.setFont("Nunito", 13)
     c.setFillColor(BODY)
     y = PAGE_H - 5.3 * inch
@@ -235,7 +239,7 @@ def cover(c, doc) -> None:
         y -= 19
     c.setFont("Nunito-Bold", 11)
     c.setFillColor(INK)
-    c.drawString(MARGIN, PAGE_H - 6.35 * inch, "For: Transaction Coordinators, Dispo and Managers")
+    c.drawString(MARGIN, PAGE_H - 6.35 * inch, "For: Transaction Coordinators and Dispo" if AUD == "team" else "For: Managers and the owner")
     c.setFont("Nunito", 10)
     c.setFillColor(MUTED)
     c.drawString(MARGIN, PAGE_H - 6.62 * inch, f"Version 2.0 · {date.today():%B %Y} · tc.totalchb.com")
@@ -253,7 +257,7 @@ def inner(c, doc) -> None:
     c.drawImage(str(LOGO), MARGIN, PAGE_H - 0.62 * inch, width=1.2 * inch, height=1.2 * inch * lh / lw, mask="auto")
     c.setFont("Nunito-Semi", 8.5)
     c.setFillColor(MUTED)
-    c.drawRightString(PAGE_W - MARGIN, PAGE_H - 0.5 * inch, f"{APP} · User Guide")
+    c.drawRightString(PAGE_W - MARGIN, PAGE_H - 0.5 * inch, f"{APP} · {KIND[AUD]}")
     c.setStrokeColor(LINE)
     c.setLineWidth(0.6)
     c.line(MARGIN, PAGE_H - 0.72 * inch, PAGE_W - MARGIN, PAGE_H - 0.72 * inch)
@@ -265,12 +269,21 @@ def inner(c, doc) -> None:
     c.restoreState()
 
 
-SECTIONS = [
+SECTIONS_ALL = [
     f"What {APP} Does", "Signing In", "Finding Your Way Around", "The Properties Page", "Starting A New Property",
     "Working The First Call", "Saving And Working Together", "Closing Or Cancelling A Property",
     "Printing Or Saving A PDF", "Deleting A Property", "On A Phone", "Getting The Newest Version",
     "For Managers And The Owner", "Good Habits", "Quick Answers",
 ]
+MANAGER_ONLY = {"For Managers And The Owner"}
+
+
+def secs() -> list[str]:
+    return [t for t in SECTIONS_ALL if AUD == "manager" or t not in MANAGER_ONLY]
+
+
+def num(title: str) -> int:
+    return secs().index(title) + 1
 
 
 def cards3(cards: list[tuple[str, str]]) -> Table:
@@ -295,15 +308,17 @@ def story() -> list:
     # ---- contents
     s += [P("Contents", "h1"), Spacer(1, 6)]
     toc = [[Para(f'<font name="Baloo" color="#BD2239">{i}</font>', S["toc"]), Para(t, S["toc"])]
-           for i, t in enumerate(SECTIONS, 1)]
+           for i, t in enumerate(secs(), 1)]
     toc.append([Para('<font name="Baloo" color="#BD2239">★</font>', S["toc"]),
                 Para("Quick Reference Card (last page)", S["toc"])])
     t = Table(toc, colWidths=[0.4 * inch, WIDTH - 0.4 * inch])
     t.setStyle(TableStyle([("LINEBELOW", (0, 0), (-1, -1), 0.4, LINE), ("TOPPADDING", (0, 0), (-1, -1), 3),
                            ("BOTTOMPADDING", (0, 0), (-1, -1), 3), ("LEFTPADDING", (0, 0), (-1, -1), 2)]))
     s += [t, Spacer(1, 14),
-          box("Everyone: read sections 1–12 and keep the Quick Reference Card handy. Managers and the owner: also "
-              "read section 13.", "tip", "Who reads what"),
+          box(f"Read sections 1–{num('Getting The Newest Version')} and keep the Quick Reference Card handy. "
+              "Managers have a Manager Guide with one more section." if AUD == "team" else
+              f"This is the Team Guide plus section {num('For Managers And The Owner')}, For Managers And The Owner. "
+              "Your team has the Team Guide.", "tip", "Who reads what"),
           box("TC Checklist now looks and works like the Universal Team Hub. There are no tick boxes: a question is done as soon as its answer box has text. It opens on a <b>Properties</b> list "
               "with <b>Open / Closed / Cancelled</b> tabs and a search box; edits save as you type and appear live "
               "for everyone; a property can be marked <b>Closed</b> or <b>Cancelled</b>; <b>Print / PDF</b> shows "
@@ -312,7 +327,7 @@ def story() -> list:
     s.append(PageBreak())
 
     # ---- 1
-    s += section(1, f"What {APP} Does",
+    s += section(num(f"What {APP} Does"), f"What {APP} Does",
                  "TC Checklist is the script for the seller's first call. It walks you through every question to ask, "
                  "keeps each answer with the property, and shares it live with the whole team.")
     s += [cards3([
@@ -336,10 +351,10 @@ def story() -> list:
               "approvals, zoning) with the source before it goes into a deal.", "warn")]
 
     # ---- 2
-    s += section(2, "Signing In", "Only company Google accounts (@totalchb.com) can open it. There is no separate "
+    s += section(num("Signing In"), "Signing In", "Only company Google accounts (@totalchb.com) can open it. There is no separate "
                                   "password.")
     s += [steps([
-        "Go to <b>tc.totalchb.com</b> and bookmark it (or install it: section 11).",
+        "Go to <b>tc.totalchb.com</b> and bookmark it (or install it: section " + str(num("On A Phone")) + ").",
         "Click <b>Sign In With Google</b> and pick your <b>@totalchb.com</b> account.",
         "You stay signed in on that browser.",
         "On a shared computer, click your initials at the top right, then <b>Sign Out</b>.",
@@ -349,25 +364,30 @@ def story() -> list:
               "only.\" Sign in again with your company account.", "tip")]
 
     # ---- 3
-    s += section(3, "Finding Your Way Around", need=4.5)
+    s += section(num("Finding Your Way Around"), "Finding Your Way Around", need=4.5)
     s += [shot("02-home", "The header (top) and the Properties page.", 1.0, crop=(0, 0, 1, 0.33))]
     s += [table(["Where", "What it's for"], [
         ["Logo", "Click it from anywhere to go back to the Properties page."],
         ["Clock", "Eastern time from the server: the date with the 24-hour time on top, the date with AM / PM "
                   "beneath. It's the same on every device."],
         ["All Saved", "<b>Green</b>: every change is saved for the whole team. <b>Saving…</b> (purple): a change is "
-                      "on its way. <b>Not Saved – Retry</b> (red): see section 7."],
+                      "on its way. <b>Not Saved – Retry</b> (red): see section " + str(num("Saving And Working Together")) + "."],
         ["Active", "How many teammates are online now. Click it to see who, and whether they're on a phone or a "
                    "computer."],
         ["Sun / moon", "Light or dark look. It follows your device at first; your choice is remembered on that "
                        "browser."],
-        ["Your initials", "Your name and email, and <b>Sign Out</b>."],
+        ["Your initials", "Your name, email and user type, <b>Help &amp; Guides</b>, and <b>Sign Out</b>."],
     ], [0.2, 0.8])]
+    s += [P("Help & Guides", "h2"),
+          P("Click your initials, then <b>Help &amp; Guides</b>. It shows the guides for your user type (from the Team "
+            "Hub): everyone gets the Team Guide, and Managers also get the Manager Guide. <b>Open</b> shows a guide "
+            "in a new tab; <b>Download</b> saves a copy. Quick tips and a short reference are underneath."),
+          shot("16-help", "Help & Guides, for a team member.", 0.62, crop=(0.24, 0.0, 0.76, 1.0), max_h=4.3)]
     s += [shot("05-active", "Click Active to see who's online.", 0.5, crop=(0.6, 0.0, 0.98, 0.38)),
           shot("15-home-dark", "The dark look.", 1.0, crop=(0, 0, 1, 0.62))]
 
     # ---- 4
-    s += section(4, "The Properties Page",
+    s += section(num("The Properties Page"), "The Properties Page",
                  "Home. Every property the team has started, newest activity first.", need=7.5)
     s += [shot("02-home", "The Properties page: tabs, search, New Property and the property cards.", 1.0)]
     s += [table(["Part", "What it shows"], [
@@ -385,7 +405,7 @@ def story() -> list:
               "a new tab instead.", "tip")]
 
     # ---- 5
-    s += section(5, "Starting A New Property", "Start one as soon as the first call is booked.")
+    s += section(num("Starting A New Property"), "Starting A New Property", "Start one as soon as the first call is booked.")
     s += [steps([
         "On the Properties page, click <b>New Property</b>.",
         "Type the property address exactly as it should appear, for example <b>1420 Sample Palm Dr, Exampleton FL "
@@ -395,7 +415,7 @@ def story() -> list:
     ]), shot("07-new-property", "New Property: type the address once.", 0.72, crop=(0.3, 0.3, 0.7, 0.68))]
     s += [box("The address can't be changed after it's created, because it's how the property is saved. If you "
               "make a typo, create the property again with the right address and delete the wrong one "
-              "(section 10).", "warn"),
+              f"(section {num('Deleting A Property')}).", "warn"),
           box("If the address already exists, <b>Create</b> simply opens it, so you never get two copies of the "
               "same property.", "good"),
           box("If you'd started a checklist before version 2 without typing an address, a yellow note on the "
@@ -403,7 +423,7 @@ def story() -> list:
               "property.", "tip", "An old unsaved checklist")]
 
     # ---- 6
-    s += section(6, "Working The First Call", need=5.0)
+    s += section(num("Working The First Call"), "Working The First Call", need=5.0)
     s += [shot("08-checklist-top", "A property: its details at the top, then the sections.", 1.0)]
     s += [steps([
         "Work down the sections. Each one shows how many of its questions are answered (for example <b>6 / 7</b>), "
@@ -427,7 +447,7 @@ def story() -> list:
               "ones.", "tip")]
 
     # ---- 7
-    s += section(7, "Saving And Working Together",
+    s += section(num("Saving And Working Together"), "Saving And Working Together",
                  "There is no Save button. Every answer saves on its own, a moment after you stop typing.")
     s += [table(["The badge says", "What it means"], [
         ["All Saved (green)", "Everything is saved for the whole team."],
@@ -443,7 +463,7 @@ def story() -> list:
     ])
 
     # ---- 8
-    s += section(8, "Closing Or Cancelling A Property",
+    s += section(num("Closing Or Cancelling A Property"), "Closing Or Cancelling A Property",
                  "When a deal closes or falls through, take it off the Open list.", need=5.0)
     s += [steps([
         "Open the property and click <b>Status: Open</b>.",
@@ -455,7 +475,7 @@ def story() -> list:
           shot("14-activity", "Activity: every status change, with who and when.", 0.55, crop=(0.13, 0.5, 0.47, 0.82))]
 
     # ---- 9
-    s += section(9, "Printing Or Saving A PDF", "For the deal file, or to send to someone on the deal.")
+    s += section(num("Printing Or Saving A PDF"), "Printing Or Saving A PDF", "For the deal file, or to send to someone on the deal.")
     s += [steps([
         "Open the property and click <b>Print / PDF</b>.",
         "In the print window, pick your printer, or <b>Save as PDF</b> as the destination.",
@@ -471,7 +491,7 @@ def story() -> list:
               "the deal.", "warn")]
 
     # ---- 10
-    s += section(10, "Deleting A Property")
+    s += section(num("Deleting A Property"), "Deleting A Property")
     s += [P("Deleting removes the property and every answer for the whole team, for good. Most of the time, "
             "<b>Mark Cancelled</b> is the better choice: it's off the Open list but still there if you need it."),
           steps(["Open the property and click <b>Delete</b>.", "Type <b>DELETE</b> in the box.",
@@ -479,7 +499,7 @@ def story() -> list:
           shot("11-delete", "Deleting asks you to type DELETE first.", 0.7, crop=(0.3, 0.27, 0.7, 0.73))]
 
     # ---- 11
-    s += section(11, "On A Phone", need=5.5)
+    s += section(num("On A Phone"), "On A Phone", need=5.5)
     s += [P("Same link, same sign-in. The header stacks into three rows, buttons fill the width, and menus slide up "
             "from the bottom. Answer boxes use a larger text size so the phone doesn't zoom in."),
           pair("21-phone-home", "22-phone-checklist", "On a phone: the Properties page and a checklist.", 4.4)]
@@ -487,32 +507,33 @@ def story() -> list:
               "<b>Install app</b> or <b>Add to Home screen</b>.", "tip")]
 
     # ---- 12
-    s += section(12, "Getting The Newest Version")
+    s += section(num("Getting The Newest Version"), "Getting The Newest Version")
     s += [P("TC Checklist checks for a new version every time it opens. When one arrives while you're using it, a "
             "note says <b>A New Version Is Ready</b>: click <b>Reload</b>."),
           box("If something looks out of date, do a hard reload once: <b>Ctrl+Shift+R</b> on Windows, "
               "<b>Cmd+Shift+R</b> on a Mac. On a phone, close the app fully and open it again.", "tip")]
 
-    # ---- 13
-    s += section(13, "For Managers And The Owner")
-    s += [table(["Topic", "How it works"], [
-        ["Who can use it", "Anyone with an @totalchb.com Google account. Access ends when the account is closed. The "
-                           "database itself only lets verified @totalchb.com accounts in."],
-        ["Names", "Names and photos come from the Universal Team Hub's team directory. Which departments come over is "
-                  "the Vercel setting <b>HUB_TEAM_DEPTS</b> on the TC Checklist project (default <b>TC,DISPO</b>; "
-                  "Managers always come over). Change it, then redeploy. Anyone not included shows a name built "
-                  "from their email."],
-        ["The connection", "TC Checklist signs its requests to the hub with its own secret "
-                           "(<b>HUB_SYNC_SECRET</b> here, <b>TC_CHECKLIST_SYNC_SECRET</b> in the hub). It can only "
-                           "read the team list."],
-        ["Data", "Every property and answer lives in the company's Firebase project. Delete is permanent; there is "
-                 "no recycle bin."],
-        ["Changing the questions", "Ask the developer. New questions can only be added at the end of the list, "
-                                   "because every saved answer is tied to its question's place."],
-    ], [0.22, 0.78])]
+    # ---- managers only
+    if AUD == "manager":
+        s += section(num("For Managers And The Owner"), "For Managers And The Owner")
+        s += [table(["Topic", "How it works"], [
+            ["Who can use it", "Anyone with an @totalchb.com Google account. Access ends when the account is closed. The "
+                               "database itself only lets verified @totalchb.com accounts in."],
+            ["Names", "Names and photos come from the Universal Team Hub's team directory. Which departments come over is "
+                      "the Vercel setting <b>HUB_TEAM_DEPTS</b> on the TC Checklist project (default <b>TC,DISPO</b>; "
+                      "Managers always come over). Change it, then redeploy. Anyone not included shows a name built "
+                      "from their email."],
+            ["The connection", "TC Checklist signs its requests to the hub with its own secret "
+                               "(<b>HUB_SYNC_SECRET</b> here, <b>TC_CHECKLIST_SYNC_SECRET</b> in the hub). It can only "
+                               "read the team list."],
+            ["Data", "Every property and answer lives in the company's Firebase project. Delete is permanent; there is "
+                     "no recycle bin."],
+            ["Changing the questions", "Ask the developer. New questions can only be added at the end of the list, "
+                                       "because every saved answer is tied to its question's place."],
+        ], [0.22, 0.78])]
 
     # ---- 14
-    s += section(14, "Good Habits")
+    s += section(num("Good Habits"), "Good Habits")
     s += bullets([
         "<b>Start the property before the call</b>, with the CRM link, so the team can find it.",
         "<b>Answer every question you ask</b>, even with a short No or N/A, so the team can see it was covered.",
@@ -524,7 +545,7 @@ def story() -> list:
     ])
 
     # ---- 15
-    s += section(15, "Quick Answers")
+    s += section(num("Quick Answers"), "Quick Answers")
     s += [table(["Question", "Answer"], [
         ["It says Access Denied.", "Sign in with your @totalchb.com Google account, not a personal one."],
         ["Where did Load Cloud Save and Reset Call go?", "Every property is on the Properties page now; click one to "
@@ -542,10 +563,10 @@ def story() -> list:
         ["The printout cut something off.", "It shouldn't: every answer prints in full. Make sure you used Print / "
                                             "PDF in the app, not the browser's own print."],
         ["It looks different from a teammate's screen.", "One of you has an older version: do a hard reload "
-                                                         "(section 12)."],
-        ["Someone shows as an email-style name.", "Their department isn't brought over from the hub. A manager can "
-                                                  "add it (section 13)."],
-        ["Does it work on my phone?", "Yes, with the same link and sign-in (section 11)."],
+                                                         f"(section {num('Getting The Newest Version')})."],
+        ["Someone shows as an email-style name.", "Their department isn't brought over from the hub. A manager can " +
+                                                  ("add it (section " + str(num("For Managers And The Owner")) + ")." if AUD == "manager" else "add it.")],
+        ["Does it work on my phone?", f"Yes, with the same link and sign-in (section {num('On A Phone')})."],
         ["Who sees my changes?", "Everyone on the team, immediately. Your name is recorded as the last person to "
                                  "update the property."],
     ], [0.38, 0.62])]
@@ -564,6 +585,7 @@ def story() -> list:
         ("Work on it again", "Open it → Reopen."),
         ("Remove a mistake", "Delete → type DELETE → Delete. Permanent."),
         ("Something looks old", "Ctrl+Shift+R (Cmd+Shift+R on a Mac). Phone: close and reopen."),
+        ("Find this guide", "Click your initials → Help & Guides."),
     ]
     s.append(table(["I want to…", "Do this"], [[a, b] for a, b in ref], [0.25, 0.75]))
     badge = Table([[Para('<font name="Nunito-Bold" color="#109648">All Saved</font><br/>Everything is saved for '
@@ -592,15 +614,23 @@ def story() -> list:
     return s
 
 
-def build() -> Path:
-    doc = BaseDocTemplate(str(OUT), pagesize=letter, title=f"{APP} User Guide",
+def build_one(aud: str) -> Path:
+    global AUD
+    AUD = aud
+    out = OUTS[aud]
+    out.parent.mkdir(exist_ok=True)
+    doc = BaseDocTemplate(str(out), pagesize=letter, title=f"{APP} {KIND[aud]}",
                           author="Total Cash Home Buyers", subject=f"How to use {APP}")
     cover_frame = Frame(MARGIN, MARGIN, WIDTH, PAGE_H - 2 * MARGIN, id="cover")
     body = Frame(MARGIN, 0.8 * inch, WIDTH, PAGE_H - 1.75 * inch, id="body")
     doc.addPageTemplates([PageTemplate("cover", [cover_frame], onPage=cover),
                           PageTemplate("inner", [body], onPage=inner)])
     doc.build([Spacer(1, 1), *story()])
-    return OUT
+    return out
+
+
+def build() -> list[Path]:
+    return [build_one(a) for a in ("team", "manager")]
 
 
 if __name__ == "__main__":
