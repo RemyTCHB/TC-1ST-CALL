@@ -241,7 +241,7 @@ h1.title { font-weight: 800; font-size: 40px; line-height: 1.15; color: var(--tc
 .tag svg.i { width: 12px; height: 12px; }
 .tag.s-open { color: var(--tchb-indigo-700); background: var(--tchb-indigo-050); }
 .tag.s-closed { color: var(--tchb-green-600); background: var(--tchb-green-050); }
-.tag.s-cancelled { color: var(--text-muted); background: var(--tchb-gray-100); }
+.tag.s-cancelled { color: var(--tchb-red-500); background: var(--tchb-red-050); }
 .meta { font-size: 13px; color: var(--text-muted); overflow-wrap: anywhere; }
 .meta b { color: var(--text-body); font-weight: 700; }
 .progress { height: 6px; border-radius: 999px; background: var(--tchb-gray-100); overflow: hidden; flex: 1; min-width: 60px; }
@@ -275,7 +275,7 @@ h1.title .accent { color: var(--tchb-red-500); }
   transition: transform 140ms var(--ease-out), box-shadow 180ms var(--ease-out), border-color 180ms var(--ease-out); animation: fadeUp 260ms var(--ease-out) both; }
 .prop-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--edge, var(--tchb-gradient-brand)); }
 .prop-card.s-closed { --edge: var(--tchb-green-500); }
-.prop-card.s-cancelled { --edge: var(--tchb-gray-300); }
+.prop-card.s-cancelled { --edge: var(--tchb-red-500); }
 .prop-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-raised); border-color: var(--border-strong); }
 .prop-card:focus-visible { box-shadow: var(--focus-ring), var(--shadow-raised); }
 .ring { --p: 0; width: 56px; height: 56px; flex: none; border-radius: 999px; display: flex; align-items: center; justify-content: center;
@@ -297,7 +297,7 @@ h1.title .accent { color: var(--tchb-red-500); }
 .prop-head { padding: 24px 26px; display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden; }
 .prop-head::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--tchb-gradient-brand); }
 .prop-head.s-closed::before { background: var(--tchb-green-500); }
-.prop-head.s-cancelled::before { background: var(--tchb-gray-300); }
+.prop-head.s-cancelled::before { background: var(--tchb-red-500); }
 .head-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; }
 .head-row > div:first-child { flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
 .prop-head h1.title { font-size: 32px; }
@@ -394,25 +394,78 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
 .log-row .who { flex: 1; min-width: 0; font-size: 13px; color: var(--text-muted); }
 .log-row .who b { display: block; font-family: var(--font-display); font-size: 14px; color: var(--text-body); }
 
-/* ---------------------------------------------------------------- Help & Guides */
+/* ---------------------------------------------------------------- Help (the Team Hub's in-app guide) */
 .menu .row .who .type { font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tchb-red-500); }
-.modal.help { max-width: 680px; gap: 16px; position: relative; }
-.help-close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 999px; border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; background: transparent; color: var(--tchb-indigo-700); }
+.help-scrim { padding: 24px; }
+.help-panel { width: 100%; max-width: 1120px; height: min(860px, calc(100vh - 48px)); display: flex; flex-direction: column; background: var(--surface-card);
+  border: 1px solid var(--border-default); border-radius: var(--radius-lg); box-shadow: var(--shadow-raised); overflow: hidden; }
+.help-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 20px 24px 14px; border-bottom: 1px solid var(--border-default); }
+.help-head h2 { font-size: 24px; font-weight: 800; margin-top: 2px; }
+.help-head .hint { margin: 2px 0 0; font-size: 13px; color: var(--text-muted); }
+.help-acts { display: flex; align-items: center; gap: 8px; flex: none; }
+.help-close { width: 40px; height: 40px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  background: transparent; color: var(--tchb-indigo-700); }
 .help-close:hover { background: var(--glass-hover); }
-.help h3 { font-size: 16px; font-weight: 800; margin-top: 4px; }
-.guide-card { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-default);
-  background: var(--surface-subtle); }
-.guide-card .gi { width: 44px; height: 44px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center;
-  background: var(--tchb-gradient-brand); color: #fff; }
-.guide-card .grow { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.guide-card b { font-family: var(--font-display); font-size: 16px; color: var(--tchb-indigo-700); }
-.guide-card span { font-size: 13px; color: var(--text-muted); }
-.guide-card .acts { display: flex; gap: 6px; flex: none; }
-.tips { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--text-body); }
-.ref { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0; font-size: 13.5px; }
-.ref dt { font-family: var(--font-display); font-weight: 700; color: var(--tchb-indigo-700); }
-.ref dd { margin: 0; color: var(--text-body); }
+.help-pdfs { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 20px; border-bottom: 1px solid var(--border-default); background: var(--surface-subtle); }
+.help-pdf { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; padding: 6px 6px 6px 12px; border-radius: 12px; background: var(--surface-card);
+  border: 1px solid var(--border-default); flex: 1 1 260px; }
+.help-pdf.mine { border-color: var(--tchb-indigo-500); }
+.help-pdf .grow { flex: 1 1 140px; min-width: 0; }
+.help-pdf b { font-family: var(--font-display); font-size: 14px; color: var(--tchb-indigo-700); display: flex; align-items: center; gap: 6px; }
+.help-pdf b .chip { padding: 1px 8px; font-size: 10.5px; }
+.help-pdf span.about { display: block; font-size: 12px; color: var(--text-muted); }
+.help-pdf .acts { display: flex; gap: 6px; flex: none; }
+.help-pdf .btn[aria-busy='true'] { opacity: 0.6; cursor: progress; }
+.help-main { flex: 1; min-height: 0; display: flex; }
+.help-nav { flex: none; width: 250px; overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 2px; border-right: 1px solid var(--border-default); background: var(--surface-subtle); }
+.help-nav button { display: flex; gap: 10px; align-items: baseline; text-align: left; border: none; background: transparent; cursor: pointer; padding: 8px 10px;
+  border-radius: 9px; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--tchb-indigo-700); }
+.help-nav button span { color: var(--tchb-red-500); min-width: 18px; }
+.help-nav button:hover { background: var(--glass-hover); }
+.help-nav button[aria-current='true'] { background: var(--surface-card); box-shadow: var(--shadow-button); }
+.help-body { flex: 1; min-width: 0; overflow-y: auto; padding: 8px 32px 40px; position: relative; }
+.help-body::after { content: ''; display: block; height: 55vh; }   /* room so every section can scroll to the top */
+.hg h2 { font-family: var(--font-display); font-weight: 800; font-size: 22px; line-height: 1.25; color: var(--tchb-indigo-700); margin: 30px 0 8px; padding-top: 14px; border-top: 1px solid var(--border-default); }
+.hg h2:first-child { border-top: none; margin-top: 8px; }
+.hg h2 .num { color: var(--tchb-red-500); margin-right: 10px; }
+.hg h3 { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--tchb-indigo-700); margin: 20px 0 6px; }
+.hg p { margin: 0 0 12px; font-size: 15px; line-height: 1.6; color: var(--text-body); }
+.hg p.lead { font-size: 16px; color: var(--text-muted); }
+.hg ul, .hg ol { margin: 0 0 12px; padding-left: 22px; font-size: 15px; line-height: 1.6; color: var(--text-body); }
+.hg li { margin: 0 0 5px; }
+.hg .box { margin: 8px 0 14px; padding: 10px 14px; border-left: 4px solid var(--tchb-indigo-500); border-radius: 0 10px 10px 0; background: var(--tchb-indigo-050); font-size: 15px; line-height: 1.55; color: var(--text-body); }
+.hg .box.warn { border-color: var(--tchb-gold-600); background: var(--tchb-gold-050); }
+.hg .box.good { border-color: var(--tchb-green-500); background: var(--tchb-green-050); }
+.hg .box.bad { border-color: var(--tchb-red-500); background: var(--tchb-red-050); }
+.hg .box > b:first-child { color: var(--tchb-indigo-700); }
+.hg .box.warn > b:first-child { color: var(--tchb-gold-600); }
+.hg .box.good > b:first-child { color: var(--tchb-green-600); }
+.hg-table, .hg .tbl { overflow-x: auto; margin: 8px 0 14px; border: 1px solid var(--border-default); border-radius: 12px; }
+.hg table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.45; color: var(--text-body); }
+.hg th { padding: 9px 12px; text-align: left; font-family: var(--font-display); font-weight: 700; font-size: 13px; color: #fff; background: var(--action-secondary); white-space: nowrap; }
+.hg td { padding: 9px 12px; border-top: 1px solid var(--border-default); vertical-align: top; }
+.hg figure { margin: 10px 0 18px; text-align: center; }
+.hg figure img { display: block; margin: 0 auto; max-width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--border-default); box-shadow: var(--shadow-card); }
+.hg figure.pair { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.hg figure.pair img { width: 240px; max-width: 45%; border-radius: 18px; margin: 0; }
+.hg figure.pair figcaption { flex-basis: 100%; }
+.hg figcaption { margin-top: 6px; font-size: 13px; color: var(--text-muted); }
+.hg .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 8px 0 14px; }
+.hg .cards > div { padding: 12px 14px; border-radius: 12px; background: var(--surface-accent-tint); font-size: 14px; line-height: 1.5; }
+.hg .cards b { display: block; font-family: var(--font-display); font-size: 16px; color: var(--tchb-indigo-700); margin-bottom: 4px; }
+.hg code.pw { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; background: var(--tchb-indigo-050); color: var(--tchb-indigo-700); padding: 2px 8px; border-radius: 6px; user-select: all; }
+.hg .muted { color: var(--text-muted); }
+.hg-note { margin: 8px 0 14px; padding: 10px 14px; border-radius: 10px; background: var(--surface-subtle); color: var(--text-muted); font-size: 14px; }
+@media (max-width: 760px) {
+  .help-scrim { padding: 0; }
+  .help-panel { height: 100vh; max-width: none; border-radius: 0; }
+  .help-head { padding: 14px 16px 10px; }
+  .help-main { flex-direction: column; }
+  .help-nav { width: auto; flex-direction: row; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--border-default); padding: 8px; scrollbar-width: none; }
+  .help-nav button { flex: none; white-space: nowrap; }
+  .help-body { padding: 4px 16px 32px; }
+  .hg .cards { grid-template-columns: 1fr; }
+}
 
 /* ---------------------------------------------------------------- phones */
 @media (max-width: 760px) {
@@ -459,11 +512,6 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   .actions-row .spacer { display: none; }
   .menu, .menu.pop { left: 8px !important; right: 8px !important; top: auto !important; bottom: 8px !important; width: auto; max-height: 70vh; }
   .modal { padding: 20px; }
-  .guide-card { flex-wrap: wrap; }
-  .guide-card .acts { width: 100%; }
-  .guide-card .acts .btn { flex: 1; }
-  .ref { grid-template-columns: 1fr; gap: 2px; }
-  .ref dd { margin-bottom: 6px; }
   .toasts { bottom: 16px; }
 }
 
@@ -884,7 +932,7 @@ function modal({ title, body = '', confirm = 'Confirm', danger = false, requireT
     const scrim = document.createElement('div'); scrim.className = 'modal-scrim';
     scrim.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-label="${esc(title)}">
       <h2>${esc(title)}</h2>${body}
-      ${input ? `<label class="field"><span>${esc(input.label)}</span><input class="input" data-m-input autocomplete="off" placeholder="${esc(input.placeholder || '')}"></label>` : ''}
+      ${input ? `<label class="field"><span>${esc(input.label)}</span><input class="input" data-m-input type="${input.type === 'password' ? 'password' : 'text'}" autocomplete="${input.type === 'password' ? 'new-password' : 'off'}" placeholder="${esc(input.placeholder || '')}"></label>` : ''}
       ${requireText ? `<label class="field"><span>Type ${esc(requireText)} To Confirm</span><input class="input" data-m-input autocomplete="off" autocapitalize="characters"></label>` : ''}
       ${extra}<p class="err" data-m-err hidden></p>
       <div class="actions"><button class="btn ghost" type="button" data-m-cancel>Cancel</button>
@@ -895,7 +943,8 @@ function modal({ title, body = '', confirm = 'Confirm', danger = false, requireT
     const check = () => { if (requireText) ok.disabled = inp.value.trim().toUpperCase() !== requireText; };
     const submit = async () => {
       if (ok.disabled) return;
-      if (input && input.validate) { const msg = await input.validate(inp.value, scrim); if (msg) { err.textContent = msg; err.hidden = false; return; } }
+      if (input && input.validate) { ok.disabled = true; let msg; try { msg = await input.validate(inp.value, scrim); } finally { ok.disabled = false; }
+        if (msg) { err.textContent = msg; err.hidden = false; if (input.type === 'password') { inp.select(); } return; } }
       done(input ? { value: inp.value, root: scrim } : true);
     };
     const keys = e => { if (e.key === 'Escape') done(false); if (e.key === 'Enter' && (inp ? document.activeElement === inp : true)) submit(); };
@@ -1026,55 +1075,149 @@ function renderAvatar() {
 $('avatar-btn').onclick = e => {
   const em = currentUser.email;
   const m = openMenu(e.currentTarget, `<div class="row">${avatarHtml(em, '')}<div class="who"><b>${esc(nameOf(em))}</b><span>${esc(em)}</span><span class="type">${esc(typeLine(em))}</span></div></div><hr>
-    <button type="button" data-help>${icon('help', 'sm')}Help &amp; Guides</button>
+    <button type="button" data-help>${icon('help', 'sm')}Help</button>
     <button type="button" data-signout>${icon('logout', 'sm')}Sign Out</button>`);
   m.querySelector('[data-help]').onclick = () => { closeMenu(); openHelp(); };
   m.querySelector('[data-signout]').onclick = () => { closeMenu(); logOut(); };
 };
 
-// =============================================================== Help & Guides (from the photo menu)
-// Everyone gets the Team Guide; Managers (from the hub's team directory) also get the Manager Guide.
-const GUIDES = [
-  { id: 'team', title: 'Team Guide', file: 'guides/TC_Checklist_Team_Guide.pdf', for: ['manager', 'lead', 'member'],
-    desc: 'How to run the first call: properties, answering questions, saving, Closed and Cancelled, printing and quick answers.' },
-  { id: 'manager', title: 'Manager Guide', file: 'guides/TC_Checklist_Manager_Guide.pdf', for: ['manager'],
-    desc: 'Everything in the Team Guide, plus who can use it, names and departments from the Team Hub, the data, and changing questions.' },
-];
-const guidesFor = role => GUIDES.filter(g => g.for.includes(role));
+// =============================================================== Help (from the photo menu), like the Team Hub's
+// The guide for this person's role (Member, Team Leader or Manager, from the Team Hub's directory), shown inside the app
+// from help/guides.json, with a contents list. Team Leaders and Managers also see the delete passwords they may use,
+// fetched from the server after sign-in (never written into the page or the repository, kept in memory only).
+// Guide PDFs (Open / Download), as in the Team Hub. The files hold no passwords; a Team Leader's or Manager's own copy
+// gets a last page, Your Delete Passwords, built here in the browser from the passwords the server gave this person
+// (pdf-lib, help/vendor/). Team Leaders can also open the Team Guide, and Managers all three, without passwords.
+const HELP_PDFS = {
+  member: { name: 'Team Guide', file: 'guides/TC_Checklist_Team_Guide.pdf', about: 'For team members.' },
+  lead: { name: 'Team Leader Guide', file: 'guides/TC_Checklist_Team_Leader_Guide.pdf', about: 'Ends with your delete passwords.' },
+  manager: { name: 'Manager Guide', file: 'guides/TC_Checklist_Manager_Guide.pdf', about: 'Ends with every TC Checklist delete password.' } };
+const pdfKinds = role => role === 'manager' ? ['manager', 'lead', 'member'] : role === 'lead' ? ['lead', 'member'] : ['member'];
+let helpGuides = null, helpGuidesP = null, helpPw = null, helpPwP = null, helpPwFor = '', helpPwErr = '', pdfLibsP = null;
+const loadScript = src => new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('Could not load ' + src)); document.head.appendChild(s); });
+const pdfLibs = () => pdfLibsP = pdfLibsP || (window.PDFLib ? Promise.resolve() : loadScript('help/vendor/pdf-lib-1.17.1.min.js'))
+  .then(() => window.fontkit ? null : loadScript('help/vendor/fontkit-1.1.1.umd.min.js')).catch(e => { pdfLibsP = null; throw e; });
+async function guidePdf(kind, withPw) {
+  const g = HELP_PDFS[kind], get = u => fetch(u, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error('Could not load the guide. Check your connection.'); return r.arrayBuffer(); });
+  const base = await get(g.file);
+  if (!withPw) return base;
+  if (!helpPw && helpPwP) await helpPwP;
+  if (!helpPw) throw new Error(helpPwErr || 'Your passwords could not be loaded. Close Help and open it again.');
+  await pdfLibs();
+  const { PDFDocument, rgb } = window.PDFLib, doc = await PDFDocument.load(base);
+  doc.registerFontkit(window.fontkit);
+  const [fh, fb, fr] = await Promise.all(['Baloo2-700-latin.ttf', 'NunitoSans-700-latin.ttf', 'NunitoSans-400-latin.ttf'].map(f => get('help/fonts/' + f).then(b => doc.embedFont(b))));
+  const hex = h => rgb(parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255);
+  const INDIGO = hex('#4d458a'), RED = hex('#bd2239'), INK = hex('#211e33'), BODY = hex('#47445a'), MUTED = hex('#767388'), LAV = hex('#f2f1f9'), LINE = hex('#dddbea');
+  const W = 612, H = 792, M = 58, page = doc.addPage([W, H]); let y = H - 70;
+  const text = (t, x, yy, f, size, color) => page.drawText(t, { x, y: yy, font: f, size, color });
+  const wrap = (t, f, size, width) => { const out = []; let line = ''; t.split(' ').forEach(w => { const next = line ? line + ' ' + w : w;
+    if (f.widthOfTextAtSize(next, size) > width && line) { out.push(line); line = w; } else line = next; }); if (line) out.push(line); return out; };
+  const para = (t, f = fr, size = 10.5, color = BODY, gap = 15) => { wrap(t, f, size, W - 2 * M).forEach(l => { text(l, M, y, f, size, color); y -= gap; }); y -= 4; };
+  const role = roleOf(currentUser.email), t = now();
+  text('TC CHECKLIST', M, y, fb, 9, RED); y -= 30;
+  text('Your Delete Passwords', M, y, fh, 26, INDIGO); y -= 14;
+  page.drawRectangle({ x: M, y, width: 60, height: 3, color: RED }); y -= 22;
+  para('For ' + nameOf(currentUser.email) + ' (' + currentUser.email + ') · ' + ROLE_LABEL[role] + ' · ' + etDate(t) + ' ' + et24(t) + ' ' + etZone(t), fr, 9.5, MUTED, 13);
+  para(role === 'manager' ? 'Every password that deletes a property in TC Checklist. They are the Team Hub\'s delete passwords: the hub server checks them, and they are kept only in its Vercel setting HUB_DELETE_PASSWORDS, never in the page or this guide\'s public copy.'
+    : 'The password that deletes a property in TC Checklist: the TC Team Leader password, the same as in the Team Hub. Members can\'t delete; they mark a property Cancelled instead.');
+  y -= 6;
+  const rowsIn = [...helpPw.rows.map(r => [r.dept + ' Team Leader password', r.lead || 'Not set']), ...helpPw.own.map(o => [o.name + ' (own password)', o.pw]),
+    ...(helpPw.confirmOnly || role === 'manager' ? [['Remy', 'No password: confirm only']] : [])];
+  const cols = [M, M + 250];
+  page.drawRectangle({ x: M, y: y - 8, width: W - 2 * M, height: 26, color: INDIGO });
+  ['For', 'Password'].forEach((h, i) => text(h, cols[i] + 10, y, fh, 10, rgb(1, 1, 1)));
+  y -= 30;
+  rowsIn.forEach((r, i) => {
+    if (i % 2) page.drawRectangle({ x: M, y: y - 9, width: W - 2 * M, height: 26, color: LAV });
+    text(r[0], cols[0] + 10, y, fb, 10.5, INK); text(r[1], cols[1] + 10, y, fr, 10.5, INK);
+    page.drawLine({ start: { x: M, y: y - 9 }, end: { x: W - M, y: y - 9 }, thickness: 0.6, color: LINE }); y -= 26;
+  });
+  if (!rowsIn.length) para('TC isn\'t turned on for you in Team (in the Team Hub) yet, so there are no passwords to show. Ask a manager.');
+  y -= 14;
+  para('Passwords are case-sensitive. Keep this page private: it is added only to your own copy, and only when you open or download it from Help in TC Checklist.', fr, 9.5, MUTED, 13);
+  text('TC Checklist · ' + g.name + ' · Confidential', M, 34, fb, 8, INDIGO);
+  text(String(doc.getPageCount()), W - M - 8, 34, fb, 8, RED);
+  return doc.save();
+}
+function getGuide(kind, how, btn) {
+  const role = roleOf(currentUser.email), withPw = kind === role && kind !== 'member';
+  const w = how === 'open' ? window.open('', '_blank') : null;
+  if (btn) btn.setAttribute('aria-busy', 'true');
+  guidePdf(kind, withPw).then(bytes => {
+    const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+    if (w) w.location.href = url;
+    else { const a = document.createElement('a'); a.href = url; a.download = HELP_PDFS[kind].file.split('/').pop(); document.body.appendChild(a); a.click(); a.remove(); }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }).catch(e => { if (w) w.close(); toast(e.message || 'Could Not Make The PDF', { error: true }); })
+    .then(() => { if (btn) btn.removeAttribute('aria-busy'); });
+}
+function pwTableHtml(role) {
+  const note = t => `<p class="hg-note">${t}</p>`;
+  if (helpPwErr) return note(esc(helpPwErr) + ' Close Help and open it again to retry.');
+  if (!helpPw) return note('Loading your passwords…');
+  const code = x => x ? `<code class="pw">${esc(x)}</code>` : '<span class="muted">not set up yet</span>';
+  const rows = helpPw.rows.map(r => `<tr><td><b>${esc(r.dept)} Team Leader password</b></td><td>${code(r.lead)}</td></tr>`)
+    .concat(helpPw.own.map(o => `<tr><td><b>${esc(o.name)}</b> (own password)</td><td>${code(o.pw)}</td></tr>`))
+    .concat(helpPw.confirmOnly || role === 'manager' ? ['<tr><td><b>Remy</b></td><td>No password: confirm only</td></tr>'] : []);
+  if (!rows.length) return note(role === 'lead' ? 'TC isn’t turned on for you in Team (in the Team Hub) yet, so there’s no password to show. Ask a manager.' : 'No delete passwords are set up yet. Ask Remy.');
+  return `<div class="hg-table"><table><thead><tr><th>For</th><th>Password</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+}
+function fillHelp(root, role) {
+  const box = root.querySelector('[data-help-body]'), g = helpGuides && helpGuides[role];
+  if (!g) return;
+  if (!box.dataset.filled) {
+    box.innerHTML = g.html; box.dataset.filled = '1';
+    root.querySelector('[data-help-nav]').innerHTML = g.sections.map((x, i) => `<button type="button" data-go="${i}"><span>${x.n}</span>${esc(x.title)}</button>`).join('');
+    root.querySelector('[data-help-title]').textContent = g.title;
+    spy(root);
+  }
+  const slot = box.querySelector('[data-tc-pw]'); if (slot) slot.innerHTML = role === 'member' ? '' : pwTableHtml(role);
+}
+function spy(root) {
+  const box = root.querySelector('[data-help-body]'), nav = root.querySelector('[data-help-nav]');
+  const hs = () => [...box.querySelectorAll('h2[data-sec]')];
+  let held = -1, holdT = 0;   // a clicked section stays marked while the page scrolls to it
+  const show = i => nav.querySelectorAll('[data-go]').forEach(b => b.setAttribute('aria-current', String(+b.dataset.go === i)));
+  const mark = () => { if (held >= 0) return; let i = 0; hs().forEach((h, j) => { if (h.offsetTop - 60 <= box.scrollTop) i = j; }); show(i); };
+  box.addEventListener('scroll', () => { if (held >= 0) { clearTimeout(holdT); holdT = setTimeout(() => { held = -1; }, 250); } mark(); }, { passive: true }); mark();
+  nav.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (!b) return; const i = +b.dataset.go, h = hs()[i];
+    if (!h) return; held = i; show(i); clearTimeout(holdT); holdT = setTimeout(() => { held = -1; }, 1200);
+    box.scrollTo({ top: Math.max(0, h.offsetTop - 12), behavior: 'smooth' }); });
+}
 function openHelp() {
   const em = currentUser.email, role = roleOf(em);
-  const scrim = document.createElement('div'); scrim.className = 'modal-scrim';
-  scrim.innerHTML = `<div class="modal help" role="dialog" aria-modal="true" aria-label="Help and guides">
-    <button class="help-close" type="button" aria-label="Close" data-close>${icon('x')}</button>
-    <div class="eyebrow-row"><span class="eyebrow">Help</span><span class="chip" data-type>${esc(typeLine(em))}</span></div>
-    <h2>Help &amp; <span style="color:var(--tchb-red-500)">Guides</span></h2>
-    <p class="hint">The guides for your user type. They open in a new tab; Download saves a copy.</p>
-    ${guidesFor(role).map(g => `<div class="guide-card" data-guide="${g.id}"><span class="gi">${icon('book', 'lg')}</span>
-      <div class="grow"><b>${esc(g.title)}</b><span>${esc(g.desc)}</span></div>
-      <div class="acts"><a class="btn secondary sm" href="${g.file}" target="_blank" rel="noopener">${icon('ext', 'sm')}Open</a>
-        <a class="btn outline sm" href="${g.file}" download>${icon('download', 'sm')}Download</a></div></div>`).join('')}
-    <h3>Quick Tips</h3>
-    <ul class="tips">
-      <li><b>Answer to finish a question.</b> Its circle turns green as soon as its box has text. Type No or N/A if there's nothing to add.</li>
-      <li><b>Watch the badge.</b> Green All Saved means the whole team has your changes; Not Saved retries on its own.</li>
-      <li><b>Deal over?</b> Status → Mark Closed or Mark Cancelled. Reopen brings it back.</li>
-      <li><b>Something looks old?</b> Hard reload: Ctrl+Shift+R (Cmd+Shift+R on a Mac); on a phone, close and reopen.</li>
-    </ul>
-    <h3>Quick Reference</h3>
-    <dl class="ref">
-      <dt>Start a first call</dt><dd>New Property → type the address → Create → paste the CRM Lead Link.</dd>
-      <dt>Find a property</dt><dd>Pick Open / Closed / Cancelled → type in Search (address, CRM link or any answer).</dd>
-      <dt>Record an answer</dt><dd>Type it in the box under the question. It saves by itself.</dd>
-      <dt>Print or PDF</dt><dd>Print / PDF → printer, or Save as PDF.</dd>
-      <dt>Remove a mistake</dt><dd>Delete → type DELETE → Delete. Permanent; Cancel is usually better.</dd>
-    </dl>
-    <div class="actions"><button class="btn secondary" type="button" data-close>Close</button></div></div>`;
+  const scrim = document.createElement('div'); scrim.className = 'modal-scrim help-scrim';
+  scrim.innerHTML = `<div class="help-panel" role="dialog" aria-modal="true" aria-label="Help">
+    <div class="help-head"><div><div class="eyebrow-row"><span class="eyebrow">Help</span><span class="chip">${esc(typeLine(em))}</span></div>
+      <h2 data-help-title>${role === 'manager' ? 'Manager Guide' : role === 'lead' ? 'Team Leader Guide' : 'Team Guide'}</h2>
+      <p class="hint">The guide for your role. Pick a section, or scroll.</p></div>
+      <div class="help-acts"><button class="help-close" type="button" aria-label="Close" data-close>${icon('x')}</button></div></div>
+    <div class="help-pdfs">${pdfKinds(role).map(k => `<div class="help-pdf${k === role ? ' mine' : ''}" data-pdf="${k}">${icon('book')}
+      <div class="grow"><b>${esc(HELP_PDFS[k].name)}${k === role ? '<span class="chip">Yours</span>' : ''}</b>
+        <span class="about">${esc(k === role || k === 'member' ? HELP_PDFS[k].about : 'Without passwords.')}</span></div>
+      <div class="acts"><button class="btn secondary sm" type="button" data-pdf-open="${k}" title="Open the PDF in a new tab">${icon('ext', 'sm')}Open</button>
+        <button class="btn outline sm" type="button" data-pdf-dl="${k}" title="Download the PDF">${icon('download', 'sm')}Download</button></div></div>`).join('')}</div>
+    <div class="help-main"><nav class="help-nav" data-help-nav aria-label="Contents"></nav>
+      <div class="help-body hg" data-help-body tabindex="0"><p class="hg-note">Loading the guide…</p></div></div></div>`;
   const close = () => { scrim.remove(); document.removeEventListener('keydown', keys); };
   const keys = e => { if (e.key === 'Escape') close(); };
   document.addEventListener('keydown', keys);
-  scrim.addEventListener('click', e => { if (e.target === scrim || e.target.closest('[data-close]')) close(); });
+  scrim.addEventListener('click', e => {
+    if (e.target === scrim || e.target.closest('[data-close]')) return close();
+    const b = e.target.closest('[data-pdf-open],[data-pdf-dl]'); if (b) getGuide(b.dataset.pdfOpen || b.dataset.pdfDl, b.dataset.pdfOpen ? 'open' : 'download', b);
+  });
   document.body.appendChild(scrim);
   setTimeout(() => scrim.querySelector('.help-close').focus(), 30);
+  helpGuidesP = helpGuidesP || fetch('help/guides.json', { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  helpGuidesP.then(g => { helpGuides = g; fillHelp(scrim, role); })
+    .catch(() => { helpGuidesP = null; scrim.querySelector('[data-help-body]').innerHTML = '<p class="hg-note">Could not load the guide. Check your connection and try again, or use the PDF button.</p>'; });
+  if (role !== 'member' && !(helpPw && helpPwFor === em)) {
+    helpPw = null; helpPwErr = ''; helpPwFor = em;
+    helpPwP = serverPost('/api/passwords', {}).then(r => { if (!r.ok) throw new Error(r.body.error || 'Could not load the passwords.'); helpPw = r.body; })
+      .catch(e => { helpPwErr = e.message || 'Could not load the passwords.'; helpPwFor = ''; })
+      .then(() => { if (scrim.isConnected) fillHelp(scrim, role); });
+  }
 }
 
 // =============================================================== live sync
@@ -1340,10 +1483,37 @@ $('activity-btn').onclick = e => {
   openMenu(e.currentTarget, `<div class="label">Activity</div>${rows || '<div class="muted">No status changes yet.</div>'}<hr>
     <div class="muted">${esc(updatedLine(d) || 'Not updated yet')}</div>`, 'pop');
 };
+// Server helpers: the page's sign-in goes with every call; the server checks it before asking the Team Hub.
+async function serverPost(path, obj) {
+  const token = await auth.currentUser.getIdToken();
+  const r = await fetch(path, { method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, body: JSON.stringify(obj || {}) });
+  let body = {}; try { body = await r.json(); } catch (e) { body = {}; }
+  return { ok: r.ok, status: r.status, body };
+}
+// Deleting follows the Team Hub's rules and passwords (checked on the server, never in the page): Remy confirms;
+// people with their own delete password use it; Managers and Team Leaders who see TC use the TC Team Leader password;
+// Members can't delete and are offered Mark Cancelled instead.
 $('delete-btn').onclick = async () => {
   const d = records[openId]; if (!d) return;
-  const ok = await modal({ title: 'Delete This Property?', confirm: 'Delete', danger: true, requireText: 'DELETE',
-    body: `<p><b>${esc(d.address)}</b></p><p class="hint">This permanently deletes the checklist for the whole team. It can’t be undone. To keep it but take it off the Open list, mark it Cancelled instead.</p>` });
+  const btn = $('delete-btn'); btn.disabled = true;
+  let r; try { r = await serverPost('/api/delete-check', { ask: true }); } catch (e) { r = { ok: false, status: 0, body: {} }; } finally { btn.disabled = false; }
+  if (r.status === 403) {
+    const st = statusOf(d), go = await modal({ title: 'Ask A Team Leader', confirm: st === 'cancelled' ? 'OK' : 'Mark Cancelled Instead',
+      body: `<p>${esc(r.body.error || 'Only Team Leaders and Managers can delete a property.')}</p><p class="hint">Deleting is permanent. To take it off the Open list, mark it Cancelled; a Team Leader can delete it if it was a mistake, like a mistyped address.</p>` });
+    if (go && st !== 'cancelled') changeStatus('cancelled');
+    return;
+  }
+  if (!r.ok) return toast(r.body.error || 'Could Not Check: Try Again In A Moment', { error: true });
+  const warn = `<p><b>${esc(d.address)}</b></p><p class="hint">This permanently deletes the checklist for the whole team. It can’t be undone. To keep it but take it off the Open list, mark it Cancelled instead.</p>`;
+  const ok = r.body.need === 'confirm'
+    ? await modal({ title: 'Delete This Property?', confirm: 'Delete', danger: true, requireText: 'DELETE', body: warn })
+    : await modal({ title: 'Delete This Property?', confirm: 'Delete', danger: true, body: warn,
+      input: { type: 'password', label: r.body.own ? 'Your Delete Password' : 'TC Team Leader Password', placeholder: 'Password',
+        validate: async v => {
+          if (!v) return 'Type the password.';
+          let c; try { c = await serverPost('/api/delete-check', { password: v }); } catch (e) { return 'The Team Hub did not answer. Try again in a moment.'; }
+          return c.ok && c.body.ok ? '' : (c.body.error || 'Could not check the password.');
+        } } });
   if (!ok) return;
   const id = openId; pending = null;
   try { await deleteDoc(checklistRef(id)); delete records[id]; toast('Property Deleted'); openId = null; location.hash = '#/'; }

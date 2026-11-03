@@ -28,16 +28,28 @@ The app is an installable **Progressive Web App** with offline support, so it lo
 
 ---
 
-## Guides
+## Help And Guides
 
-In the app: click your photo → **Help & Guides**. It shows the guides for your user type, taken from the Universal Team
-Hub's team directory: everyone gets the **Team Guide** ([`guides/TC_Checklist_Team_Guide.pdf`](guides/TC_Checklist_Team_Guide.pdf)),
-and Managers also get the **Manager Guide** ([`guides/TC_Checklist_Manager_Guide.pdf`](guides/TC_Checklist_Manager_Guide.pdf)),
-which adds the section for managers and the owner. Anyone not in the hub's directory counts as a Member.
+In the app: click your photo → **Help**. Like the Universal Team Hub's Help, it opens the guide for the person's role
+inside the app, with a contents list: the **Team Guide** (Members), the **Team Leader Guide** or the **Manager Guide**.
+Roles come from the Team Hub's directory; anyone not in it counts as a Member. **PDF** downloads the same guide
+(`guides/TC_Checklist_Team_Guide.pdf`, `..._Team_Leader_Guide.pdf`, `..._Manager_Guide.pdf`).
 
-Rebuild both with `python3 docs/guide/build_guide.py` (needs reportlab and Pillow). Their screenshots come from the app on
-the local emulators with made-up properties: `cd tests && node run.mjs guide-shots.mjs`. The guides contain no real data
-and are published with the app at `/guides/`.
+Team Leaders and Managers also see the delete passwords they may use. The page fills that table from `/api/passwords`
+after sign-in; the passwords are never written into `help/guides.json`, the PDFs or this repository.
+
+Everything is built from one script: `python3 docs/guide/build_guide.py` writes the three PDFs and `help/guides.json`
+(+ `help/img/`). Screenshots come from the app on the local emulators with made-up data:
+`cd tests && node run.mjs guide-shots.mjs`.
+
+## Deleting A Property
+
+Deleting follows the Team Hub's rules and uses its delete passwords (owner, 2026-11-03): Remy confirms; anyone with their
+own delete password uses it; Managers and Team Leaders who see TC use the **TC Team Leader password**; Members can't
+delete and are offered **Mark Cancelled** instead. The page asks `/api/delete-check`, which checks the person's sign-in
+and asks the hub (`/api/tc-checklist/delete-check`, signed with `HUB_SYNC_SECRET`). The passwords live only in the
+hub's `HUB_DELETE_PASSWORDS` setting. The check happens on the server before the page deletes (the owner chose a page
+check; the database rules themselves still allow deletes).
 
 ## What It Does
 
@@ -62,7 +74,7 @@ and are published with the app at `/guides/`.
 
 Vercel deploys `main` to tc.totalchb.com.
 
-**Vercel settings (names only):** `HUB_SYNC_SECRET` (TC Checklist's own secret; the same value as the hub project's `TC_CHECKLIST_SYNC_SECRET`); optional `HUB_TEAM_DEPTS`, which departments' names come over from the hub, comma separated from `TC, DISPO, ACQ, OPS` (default `TC,DISPO`; Managers always come over; takes effect on the next deploy); optional `HUB_TEAM_URL`. Without the secret the app shows names from email addresses.
+**Vercel settings (names only):** `HUB_SYNC_SECRET` (TC Checklist's own secret; the same value as the hub project's `TC_CHECKLIST_SYNC_SECRET`); optional `HUB_TEAM_DEPTS`, which departments' names come over from the hub, comma separated from `TC, DISPO, ACQ, OPS` (default `TC,DISPO`; Managers always come over; takes effect on the next deploy); optional `HUB_TEAM_URL` and `HUB_URL` (default https://hub.totalchb.com). Without the secret the app shows names from email addresses, everyone counts as a Member, and deleting is unavailable.
 
 ## Data (do not change)
 

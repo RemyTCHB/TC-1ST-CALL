@@ -153,29 +153,61 @@ await check('names come from the hub directory, else from the email', async () =
   await A.page.click('#avatar-btn'); assert.match(await A.page.textContent('.menu'), /Alex Tester/); await A.page.keyboard.press('Escape');
   await B.page.click('#avatar-btn'); assert.match(await B.page.textContent('.menu'), /Bea Sample/); await B.page.keyboard.press('Escape');
 });
-await check('Help & Guides: a Member sees the Team Guide only, and the guides open', async () => {
-  await A.page.click('#avatar-btn'); assert.match(await A.page.textContent('.menu'), /Member · TC/);
-  await A.page.click('[data-help]'); await A.page.waitForSelector('.modal.help');
-  assert.deepEqual(await A.page.$$eval('[data-guide]', els => els.map(e => e.dataset.guide)), ['team']);
-  for (const href of await A.page.$$eval('.modal.help a[href$=".pdf"]', els => els.map(e => e.href))) {
-    const st = await A.page.evaluate(u => fetch(u, { method: 'HEAD' }).then(r => r.status + ' ' + r.headers.get('content-type')), href);
-    assert.equal(st, '200 application/pdf', href);
-  }
-  await A.page.keyboard.press('Escape'); assert.equal(await A.page.locator('.modal.help').count(), 0);
-  await B.page.click('#avatar-btn'); assert.match(await B.page.textContent('.menu'), /Member/, 'not in the hub: a Member');
-  await B.page.click('[data-help]'); await B.page.waitForSelector('.modal.help');
-  assert.deepEqual(await B.page.$$eval('[data-guide]', els => els.map(e => e.dataset.guide)), ['team']);
-  await B.page.click('.modal.help [data-close]');
+const helpOf = async page => {
+  await page.click('#avatar-btn'); await page.click('[data-help]'); await page.waitForSelector('.help-panel h2[data-sec]');
+  return { title: await page.textContent('[data-help-title]'), nav: await page.$$eval('[data-help-nav] [data-go]', els => els.length),
+    pdfs: await page.$$eval('[data-pdf]', els => els.map(e => e.dataset.pdf + (e.classList.contains('mine') ? '*' : ''))) };
+};
+// Download a guide from Help and read it: pages and text (pdfinfo / pdftotext). Made-up passwords only.
+const fetchGuide = async (page, kind) => {
+  const [dl] = await Promise.all([page.waitForEvent('download'), page.click(`[data-pdf-dl="${kind}"]`)]);
+  const f = join(OUT, `guide-${kind}-${Date.now()}.pdf`); await dl.saveAs(f);
+  return { pages: +execSync(`pdfinfo "${f}"`, { encoding: 'utf8' }).match(/Pages:\s+(\d+)/)[1], text: execSync(`pdftotext "${f}" -`, { encoding: 'utf8' }) };
+};
+const pagesOf = file => +execSync(`pdfinfo "${join(ROOT, file)}"`, { encoding: 'utf8' }).match(/Pages:\s+(\d+)/)[1];
+await check('Help: a Member gets the Team Guide in the app, with no passwords; the PDF opens', async () => {
+  await A.page.click('#avatar-btn'); assert.match(await A.page.textContent('.menu'), /Member · TC/); await A.page.keyboard.press('Escape');
+  const h = await helpOf(A.page);
+  assert.equal(h.title, 'Team Guide'); assert.equal(h.nav, 15, '14 sections + the Quick Reference Card');
+  assert.deepEqual(h.pdfs, ['member*']);
+  assert.equal(await A.page.locator('.help-panel [data-tc-pw], .help-panel code.pw').count(), 0);
+  assert.match(await A.page.textContent('.help-body'), /only Team Leaders and Managers can delete/i);
+  const g = await fetchGuide(A.page, 'member');
+  assert.equal(g.pages, pagesOf('guides/TC_Checklist_Team_Guide.pdf'), 'a Member gets the plain guide');
+  assert.doesNotMatch(g.text, /sample-pass|sample-own/);
+  await A.page.click('[data-help-nav] [data-go="9"]'); await A.page.waitForTimeout(700);
+  assert.equal(await A.page.getAttribute('[data-help-nav] [data-go="9"]', 'aria-current'), 'true', 'contents follow the scroll');
+  await A.page.keyboard.press('Escape'); assert.equal(await A.page.locator('.help-panel').count(), 0);
+  const hb = await helpOf(B.page); assert.equal(hb.title, 'Team Guide', 'not in the hub: a Member'); await B.page.click('.help-panel [data-close]');
 });
-await check('Help & Guides: a Manager sees the Team Guide and the Manager Guide', async () => {
-  const M = await openApp(browser, 'morgan.manager@totalchb.com');
-  await M.page.click('#avatar-btn'); assert.match(await M.page.textContent('.menu'), /Manager/);
-  await M.page.click('[data-help]'); await M.page.waitForSelector('.modal.help');
-  assert.deepEqual(await M.page.$$eval('[data-guide]', els => els.map(e => e.dataset.guide)), ['team', 'manager']);
-  assert.ok((await M.page.getAttribute('[data-guide="manager"] a[download]', 'href')).endsWith('guides/TC_Checklist_Manager_Guide.pdf'));
-  await M.page.waitForTimeout(250); await M.page.screenshot({ path: join(OUT, 'light-desktop-7c-help-manager.png') });
-  await M.page.keyboard.press('Escape'); await M.page.click('#avatar-btn'); await M.page.click('[data-signout]'); await M.page.waitForSelector('#gate:not([hidden])');
-  await M.context.close();
+await check('Help: a Manager gets the Manager Guide with the TC and own passwords; a Team Leader the TC one', async () => {
+  for (const [email, title, pdf, own, kinds] of [['morgan.manager@totalchb.com', 'Manager Guide', 'Manager', true, ['manager*', 'lead', 'member']],
+    ['lee.leader@totalchb.com', 'Team Leader Guide', 'Team_Leader', false, ['lead*', 'member']]]) {
+    const M = await openApp(browser, email);
+    const h = await helpOf(M.page);
+    assert.equal(h.title, title); assert.deepEqual(h.pdfs, kinds);
+    const kind = kinds[0].slice(0, -1), mine = await fetchGuide(M.page, kind);
+    assert.equal(mine.pages, pagesOf(`guides/TC_Checklist_${pdf}_Guide.pdf`) + 1, 'own copy ends with the passwords page');
+    assert.match(mine.text, /Your Delete Passwords/); assert.match(mine.text, /sample-pass/);
+    assert.equal(/sample-own/.test(mine.text), own, 'own passwords only for managers');
+    const other = await fetchGuide(M.page, 'member');
+    assert.equal(other.pages, pagesOf('guides/TC_Checklist_Team_Guide.pdf')); assert.doesNotMatch(other.text, /sample-pass/);
+    await M.page.waitForSelector('.help-panel code.pw');
+    const pw = await M.page.$$eval('.help-panel code.pw', els => els.map(e => e.textContent));
+    assert.deepEqual(pw, own ? ['sample-pass', 'sample-own'] : ['sample-pass'], email);
+    assert.match(await M.page.textContent('.help-panel [data-tc-pw]'), /TC Team Leader password/);
+    if (own) { await M.page.evaluate(() => document.querySelector('[data-tc-pw]').scrollIntoView()); await M.page.waitForTimeout(300);
+      await M.page.screenshot({ path: join(OUT, 'light-desktop-7c-help-manager.png') }); }
+    await M.page.keyboard.press('Escape'); await M.page.click('#avatar-btn'); await M.page.click('[data-signout]'); await M.page.waitForSelector('#gate:not([hidden])');
+    await M.context.close();
+  }
+});
+await check('the Help files and PDFs hold no passwords (only a slot the page fills after sign-in)', () => {
+  const g = readFileSync(join(ROOT, 'help/guides.json'), 'utf8'), j = JSON.parse(g);
+  assert.deepEqual(Object.keys(j), ['member', 'lead', 'manager']);
+  assert.equal(j.member.html.includes('data-tc-pw'), false); assert.equal(j.lead.html.includes('data-tc-pw'), true); assert.equal(j.manager.html.includes('data-tc-pw'), true);
+  assert.equal(/sample-pass|class="pw"/.test(g), false);
+  for (const f of ['Team', 'Team_Leader', 'Manager']) assert.ok(statSync(join(ROOT, `guides/TC_Checklist_${f}_Guide.pdf`)).size > 100000, f);
 });
 await check('search finds a property by answer text and shows where it matched', async () => {
   await A.page.fill('#search', 'pat hoa'); await A.page.waitForSelector('.hit mark');
@@ -297,11 +329,25 @@ await check('an address with quotes, dots and slashes is shown safely and works'
   assert.equal(await A.page.locator('.prop-title b').count(), 0);
   await env.withSecurityRulesDisabled(async c => { const { deleteDoc } = await import('firebase/firestore'); await deleteDoc(doc(c.firestore(), CL(safeId(addr)))); });
 });
-await check('Delete needs DELETE typed, then removes it for everyone', async () => {
+await check('Delete: a Member is offered Mark Cancelled instead; nothing is deleted', async () => {
   const id = safeId('22 Sample Road, Testville FL');
   await A.page.click(`.prop-card[data-id="${id}"] .prop-title`); await A.page.click('#delete-btn');
-  assert.ok(await A.page.isDisabled('[data-m-ok]')); await A.page.fill('[data-m-input]', 'delete'); await A.page.click('[data-m-ok]');
-  await A.page.waitForSelector('#view-home:not([hidden])'); assert.equal(await read(id), null);
+  await A.page.waitForSelector('.modal'); assert.match(await A.page.textContent('.modal'), /Only Team Leaders and Managers/);
+  assert.equal(await A.page.locator('.modal [data-m-input]').count(), 0, 'no password box for Members');
+  await A.page.click('[data-m-cancel]'); assert.ok(await read(id));
+  await A.page.click('a.link-btn'); await A.page.waitForSelector('#view-home:not([hidden])');
+});
+await check('Delete: a Manager needs the TC Team Leader password; a wrong one deletes nothing', async () => {
+  const id = safeId('22 Sample Road, Testville FL'), M = await openApp(browser, 'morgan.manager@totalchb.com');
+  await M.page.click(`.prop-card[data-id="${id}"] .prop-title`); await M.page.click('#delete-btn');
+  await M.page.waitForSelector('.modal [data-m-input][type="password"]');
+  await M.page.fill('[data-m-input]', 'not-it'); await M.page.click('[data-m-ok]');
+  await M.page.waitForSelector('[data-m-err]:not([hidden])'); assert.match(await M.page.textContent('[data-m-err]'), /not right/);
+  assert.ok(await read(id), 'still there after a wrong password');
+  await M.page.fill('[data-m-input]', 'sample-pass'); await M.page.click('[data-m-ok]');
+  await M.page.waitForSelector('#view-home:not([hidden])'); assert.equal(await read(id), null);
+  await A.page.waitForFunction(i => !document.querySelector(`.prop-card[data-id="${i}"]`), id, { timeout: 10000 });
+  await M.page.click('#avatar-btn'); await M.page.click('[data-signout]'); await M.page.waitForSelector('#gate:not([hidden])'); await M.context.close();
 });
 await check('presence: same active_users records as before, both people counted', async () => {
   await A.page.waitForFunction(() => document.getElementById('active-count').textContent === '2', null, { timeout: 10000 });
@@ -343,8 +389,8 @@ for (const theme of ['light', 'dark']) for (const [w, h, size] of [[1280, 900, '
     await p.screenshot({ path: name('3-checklist') }); await p.screenshot({ path: name('4-checklist-full'), fullPage: true });
     await p.click('#status-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('5-status-menu') }); await p.keyboard.press('Escape');
     await p.click('#active-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('6-active-users') }); await p.keyboard.press('Escape');
-    await p.click('#delete-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('7-delete-confirm') }); await p.click('[data-m-cancel]');
-    await p.click('#avatar-btn'); await p.click('[data-help]'); await p.waitForTimeout(250); await p.screenshot({ path: name('7b-help') }); await p.keyboard.press('Escape');
+    await p.click('#delete-btn'); await p.waitForSelector('.modal'); await p.waitForTimeout(150); await p.screenshot({ path: name('7-delete-confirm') }); await p.click('[data-m-cancel]');
+    await p.click('#avatar-btn'); await p.click('[data-help]'); await p.waitForSelector('.help-panel h2[data-sec]'); await p.waitForTimeout(250); await p.screenshot({ path: name('7b-help') }); await p.keyboard.press('Escape');
     await p.click('a.link-btn'); await p.click('[data-tab="closed"]'); await p.click('.prop-card .prop-title'); await p.waitForSelector('#locked-note:not([hidden])'); await p.waitForTimeout(500);
     await p.screenshot({ path: name('8-closed') });
     await p.click('a.link-btn'); await p.click('#new-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('9-new-property') }); await p.click('[data-m-cancel]');
