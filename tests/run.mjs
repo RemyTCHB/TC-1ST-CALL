@@ -19,7 +19,8 @@ const srv = createServer((req, res) => {
   res.end(req.method === 'HEAD' ? undefined : readFileSync(file));
 });
 srv.listen(5173, '127.0.0.1', () => {
-  const p = spawn('npx', ['firebase', 'emulators:exec', '--project', 'demo-tc-checklist', '--only', 'auth,firestore', 'node suite.mjs'],
+  const script = process.argv[2] || 'suite.mjs';
+  const p = spawn('npx', ['firebase', 'emulators:exec', '--project', 'demo-tc-checklist', '--only', 'auth,firestore', 'node ' + script],
     { cwd: HERE, stdio: ['ignore', 'pipe', 'pipe'] });
   // emulator chatter is hidden; the suite's own lines are shown
   const show = d => String(d).split('\n').filter(l => /^\s*(pass|FAIL)|^\s{8}|passed, |^[A-Z][a-zA-Z /()'.,0-9-]+$|Error|error:/.test(l) && !/^i\s|emulators|Emulator|⚠|✔/.test(l)).forEach(l => console.log(l));

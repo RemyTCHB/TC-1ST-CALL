@@ -28,6 +28,12 @@ The app is an installable **Progressive Web App** with offline support, so it lo
 
 ---
 
+## User Guide
+
+The team's guide: [`docs/guide/TC_Checklist_User_Guide.pdf`](docs/guide/TC_Checklist_User_Guide.pdf).
+Rebuild it with `python3 docs/guide/build_guide.py` (needs reportlab and Pillow). Its screenshots come from the app on
+the local emulators with made-up properties: `cd tests && node run.mjs guide-shots.mjs`.
+
 ## What It Does
 
 - **Properties home**: every property as a card, with **Open / Closed / Cancelled** tabs and a search across addresses, CRM links and answers. Each card shows its status, how many questions are checked, when it was last updated and by whom, and an Open In CRM button.

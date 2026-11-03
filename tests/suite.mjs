@@ -146,7 +146,7 @@ const lid = safeId(LEGACY_ADDR);
 await check('home lists an existing (old-format) record under Open with its progress', async () => {
   await A.page.waitForSelector(`.prop-card[data-id="${lid}"]`);
   const txt = await A.page.textContent(`.prop-card[data-id="${lid}"]`);
-  assert.match(txt, /100 Test Lane/); assert.match(txt, /3 of 79 Checked/); assert.match(txt, /Open/);
+  assert.match(txt, /100 Test Lane/); assert.match(txt, /4 of 79 Answered/); assert.match(txt, /Open/);
   assert.equal(await A.page.textContent('[data-n="open"]'), '1');
 });
 await check('names come from the hub directory, else from the email', async () => {
@@ -163,8 +163,10 @@ await check('opening it shows every saved answer in its original place', async (
   assert.equal(await A.page.inputValue('[data-ans="0"]'), 'Example Mortgage Co');
   assert.equal(await A.page.inputValue('[data-ans="6"]'), '$111'); assert.equal(await A.page.inputValue('[data-ans="7"]'), '$222');
   assert.equal(await A.page.inputValue('[data-ans="8"]'), LONG);
-  assert.equal(await A.page.getAttribute('[data-chk="5"]', 'aria-checked'), 'true');
-  assert.equal(await A.page.getAttribute('[data-chk="6"]', 'aria-checked'), 'false');
+  assert.equal(await A.page.getAttribute('[data-mark="5"]', 'aria-label'), 'Answered');
+  assert.equal(await A.page.getAttribute('[data-mark="6"]', 'aria-label'), 'Answered');
+  assert.equal(await A.page.getAttribute('[data-mark="7"]', 'aria-label'), 'Open');
+  assert.equal(await A.page.locator('.check, [role="checkbox"]').count(), 0, 'no tick boxes');
   assert.equal(await A.page.inputValue('#crm-link'), legacyRecord().crmLink);
   assert.ok(await A.page.isVisible('#crm-open'));
 });
@@ -172,13 +174,26 @@ await check('two people editing the same property at once: both edits are kept a
   await B.page.goto(`http://localhost:5173/?emulator#/p/${encodeURIComponent(lid)}`); await B.page.waitForSelector('#view-check:not([hidden])');
   await A.page.fill('[data-ans="1"]', 'A typed this payoff');            // Mortgage section (open by default)
   await B.page.fill('[data-ans="2"]', 'B typed this foreclosure note');
-  await B.page.click('[data-chk="3"]');
+  await B.page.fill('[data-ans="3"]', 'B: none in 24 months');
   await A.page.waitForFunction(() => document.querySelector('[data-ans="2"]').value === 'B typed this foreclosure note', null, { timeout: 10000 });
   await B.page.waitForFunction(() => document.querySelector('[data-ans="1"]').value === 'A typed this payoff', null, { timeout: 10000 });
-  await A.page.waitForFunction(() => document.querySelector('[data-chk="3"]').getAttribute('aria-checked') === 'true', null, { timeout: 10000 });
+  await A.page.waitForFunction(() => document.querySelector('[data-mark="3"]').getAttribute('aria-label') === 'Answered', null, { timeout: 10000 });
   const d = await read(lid);
-  assert.equal(d.answers.ans_1, 'A typed this payoff'); assert.equal(d.answers.ans_2, 'B typed this foreclosure note'); assert.equal(d.checks.chk_3, true);
+  assert.equal(d.answers.ans_1, 'A typed this payoff'); assert.equal(d.answers.ans_2, 'B typed this foreclosure note'); assert.equal(d.answers.ans_3, 'B: none in 24 months');
   assert.equal(d.answers.ans_8, LONG); assert.equal(d.answers.ans_0, 'Example Mortgage Co');
+});
+await check('done = the box has text: clearing it makes it open again; an old tick still counts; ticks are never written', async () => {
+  const mark = n => A.page.getAttribute(`[data-mark="${n}"]`, 'aria-label');
+  assert.equal(await mark(2), 'Answered');
+  await A.page.fill('[data-ans="2"]', '   '); assert.equal(await mark(2), 'Open', 'spaces alone are not an answer');
+  await A.page.fill('[data-ans="2"]', ''); assert.equal(await mark(2), 'Open');
+  await A.page.fill('[data-ans="0"]', ''); assert.equal(await mark(0), 'Answered', 'question 0 was ticked before, so it stays done');
+  await A.page.fill('[data-ans="0"]', 'Example Mortgage Co'); await A.page.fill('[data-ans="2"]', 'B typed this foreclosure note');
+  await A.page.click('#p-address');
+  await A.page.waitForFunction(() => document.getElementById('save-text').textContent === 'All Saved' || document.getElementById('save-text').textContent === 'Saved', null, { timeout: 8000 });
+  assert.match(await A.page.textContent('#p-count'), /^7 of 79 Answered$/);
+  assert.equal(await A.page.textContent('[data-sec-count="0"]'), '6 / 7');
+  const d = await read(lid); assert.deepEqual(d.checks, legacyRecord().checks, 'stored ticks untouched');
 });
 await check('the record keeps its original shape (79 checks, 81 answers, same field types) plus approved fields only', async () => {
   const d = await read(lid);
@@ -213,7 +228,7 @@ await check('Mark Closed: confirm, logged with who and when, view-only, moves to
   const d = await read(lid);
   assert.equal(d.status, 'closed'); assert.equal(d.statusBy, 'alex.tester@totalchb.com'); assert.equal(typeof d.statusAt, 'number');
   assert.equal(d.statusLog.length, 1); assert.equal(d.statusLog[0].status, 'closed');
-  assert.equal(await A.page.getAttribute('[data-ans="0"]', 'readonly'), ''); assert.ok(await A.page.isDisabled('[data-chk="0"]'));
+  assert.equal(await A.page.getAttribute('[data-ans="0"]', 'readonly'), ''); assert.equal(await A.page.getAttribute('[data-ans="6"]', 'readonly'), '');
   await B.page.waitForSelector('#locked-note:not([hidden])');
   await A.page.click('#activity-btn'); assert.match(await A.page.textContent('.menu'), /Marked Closed/); await A.page.keyboard.press('Escape');
   await A.page.click('a.link-btn'); await A.page.waitForSelector('#view-home:not([hidden])');
@@ -238,6 +253,13 @@ await check('New Property with the old unsaved draft: same full shape as the ori
   assert.equal(d.status, undefined);
   assert.equal(await A.page.evaluate(() => localStorage.getItem('tchb_unsaved_draft')), null);
   assert.equal(await A.page.inputValue('[data-ans="1"]'), 'Draft payoff answer');
+  // the escrow question is done when any of its three boxes has text
+  const mark5 = () => A.page.getAttribute('[data-mark="5"]', 'aria-label');
+  assert.equal(await mark5(), 'Open');
+  await A.page.fill('[data-ans="6"]', '$90'); assert.equal(await mark5(), 'Answered', 'HOI alone');
+  await A.page.fill('[data-ans="6"]', ''); await A.page.fill('[data-ans="7"]', '$120'); assert.equal(await mark5(), 'Answered', 'Taxes alone');
+  await A.page.fill('[data-ans="7"]', ''); assert.equal(await mark5(), 'Open');
+  await A.page.fill('[data-ans="5"]', 'About $400 a month'); assert.equal(await mark5(), 'Answered', 'its own box');
 });
 await check('New Property with an address that exists opens it instead of making a copy', async () => {
   await A.page.click('a.link-btn'); await A.page.click('#new-btn'); await A.page.fill('[data-m-input]', LEGACY_ADDR); await A.page.click('[data-m-ok]');

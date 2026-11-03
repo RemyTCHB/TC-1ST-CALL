@@ -329,17 +329,15 @@ h1.title .accent { color: var(--tchb-red-500); }
 .q:last-child { border-bottom: none; }
 .q.n1 { margin-left: 32px; }
 .q.n2 { margin-left: 64px; }
-.check { width: 28px; height: 28px; flex: none; border-radius: 8px; border: 2px solid var(--border-strong); background: var(--surface-card);
-  cursor: pointer; display: flex; align-items: center; justify-content: center; color: #fff; padding: 0; margin-top: 1px; }
-.check svg { opacity: 0; width: 16px; height: 16px; stroke-width: 3; }
-.check[aria-checked='true'] { background: var(--tchb-green-500); border-color: var(--tchb-green-500); }
-.check[aria-checked='true'] svg { opacity: 1; animation: pop 260ms var(--ease-out); }
-.check:hover:not(:disabled) { border-color: var(--tchb-green-500); }
+/* the Done marker: not clickable; green once the question's box has text */
+.mark { width: 24px; height: 24px; flex: none; border-radius: 999px; border: 2px solid var(--border-strong); background: var(--surface-card);
+  display: flex; align-items: center; justify-content: center; color: #fff; margin-top: 2px; transition: background 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+.mark svg { opacity: 0; width: 14px; height: 14px; stroke-width: 3; }
+.q.done .mark { background: var(--tchb-green-500); border-color: var(--tchb-green-500); box-shadow: 0 0 10px color-mix(in srgb, var(--tchb-green-500) 30%, transparent); }
+.q.done .mark svg { opacity: 1; animation: pop 260ms var(--ease-out); }
 .q { transition: background 160ms var(--ease-out); border-radius: 10px; }
-.check:disabled { cursor: default; }
 .q-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
-.q-text { font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1.35; color: var(--tchb-indigo-700); cursor: pointer; overflow-wrap: anywhere; }
-.q.done .q-text { color: var(--text-muted); text-decoration: line-through; text-decoration-color: var(--border-strong); }
+.q-text { font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1.35; color: var(--tchb-indigo-700); overflow-wrap: anywhere; }
 .ans-wrap { position: relative; }
 textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px; line-height: 1.45; padding-right: 44px; font-size: 15px; }
 .ans-link { position: absolute; right: 6px; top: 6px; width: 32px; height: 32px; border-radius: 999px; display: flex; align-items: center;
@@ -351,7 +349,6 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   font-weight: 700; font-size: 13px; color: var(--text-muted); pointer-events: none; }
 .escrow input { padding-left: 64px; font-size: 15px; }
 .sec-note { margin: 14px 0 4px; }
-body.locked .q-text { cursor: default; }
 
 /* ---------------------------------------------------------------- menus, popovers, modals, toasts */
 .scrim { position: fixed; inset: 0; z-index: 50; }
@@ -463,7 +460,7 @@ body.locked .q-text { cursor: default; }
   .ps-sec h2 { font-family: var(--font-display); font-size: 13pt; color: #fff; background: #4d458a; padding: 4px 10px; border-radius: 4px; margin: 0 0 6px; break-after: avoid; }
   .ps-q { display: flex; gap: 8px; padding: 5px 0; border-bottom: 1px dashed #c9c7d4; break-inside: avoid; }
   .ps-q.n1 { margin-left: 18px; } .ps-q.n2 { margin-left: 36px; }
-  .ps-box { width: 12px; height: 12px; flex: none; border: 1.5px solid #47445a; border-radius: 2px; margin-top: 3px; position: relative; }
+  .ps-box { width: 12px; height: 12px; flex: none; border: 1.5px solid #47445a; border-radius: 999px; margin-top: 3px; position: relative; }
   .ps-box.on { background: #109648; border-color: #109648; }
   .ps-box.on::after { content: ''; position: absolute; left: 3px; top: 0; width: 3px; height: 7px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
   .ps-q .t { font-weight: 700; }
@@ -526,7 +523,7 @@ body.locked .q-text { cursor: default; }
         <div class="stats">
           <div class="stat"><b id="st-open">0</b><span>Open</span></div>
           <div class="stat"><b class="green" id="st-closed">0</b><span>Closed</span></div>
-          <div class="stat"><b id="st-avg">0%</b><span>Avg Checked (Open)</span></div>
+          <div class="stat"><b id="st-avg">0%</b><span>Avg Answered (Open)</span></div>
         </div>
       </div>
       <div id="draft-note" class="note gold" hidden>
@@ -555,7 +552,7 @@ body.locked .q-text { cursor: default; }
           <div class="eyebrow-row"><span class="eyebrow">Property Context</span><span id="p-tag"></span></div>
           <h1 id="p-address" class="title"></h1>
           <div id="p-meta" class="meta"></div></div>
-          <div class="stat"><b id="p-stat">0<span class="slash">/</span>79</b><span>Questions Checked</span></div>
+          <div class="stat"><b id="p-stat">0<span class="slash">/</span>79</b><span>Questions Answered</span></div>
         </div>
         <div class="crm-row">
           <label class="field"><span>CRM Lead Link</span>
@@ -628,7 +625,7 @@ import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChang
 import { getFirestore, connectFirestoreEmulator, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, runTransaction, arrayUnion } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 // =============================================================== the checklist (FROZEN: order = saved data keys)
-// Saved records key every check box as chk_<n> and every answer box as ans_<n>, numbered in page order exactly as
+// Saved records key every question as chk_<n> (its old tick) and every answer box as ans_<n>, numbered in page order exactly as
 // the original app did: each question's own answer box follows it, and the HOI and Taxes boxes (ans_6, ans_7) follow
 // the Monthly Escrow answer. Never reorder, insert or remove a question: add new ones only at the very end.
 const SECTIONS = [
@@ -901,12 +898,17 @@ let tab = 'open', query = '';
 const statusOf = d => (d && (d.status === 'closed' || d.status === 'cancelled')) ? d.status : 'open';
 const STATUS = { open: { label: 'Open', icon: 'circle' }, closed: { label: 'Closed', icon: 'check-circle' }, cancelled: { label: 'Cancelled', icon: 'ban' } };
 const tagHtml = st => `<span class="tag s-${st}">${icon(STATUS[st].icon)}${STATUS[st].label}</span>`;
-const checkedCount = d => { let n = 0; for (let i = 0; i < CHECK_COUNT; i++) if (d && d.checks && d.checks['chk_' + i]) n++; return n; };
+// A question is done when its answer box has text (the escrow question: its own box, HOI or Taxes), or when it was
+// ticked in the version that had tick boxes. Ticks are no longer written; the old ones stay stored, untouched.
+const hasText = (d, n) => !!(d && d.answers && typeof d.answers['ans_' + n] === 'string' && d.answers['ans_' + n].trim());
+const isDone = (d, q) => !!(d && d.checks && d.checks['chk_' + q.chk]) || hasText(d, q.ans) || (q.escrow || []).some(x => hasText(d, x.ans));
+const ALL_QS = SECTIONS.flatMap(s => s.qs);
+const doneCount = d => ALL_QS.filter(q => isDone(d, q)).length;
 const updatedLine = d => { const t = tsOf(d && d.updatedAt); if (!t) return '';
   return 'Updated ' + whenShort(t) + (d.updatedBy ? ' by ' + nameOf(d.updatedBy) : ''); };
 
 // =============================================================== saving: field by field, never the whole record
-// Each change is sent as its own field (checks.chk_5, answers.ans_6, crmLink), so two people editing the same property
+// Each change is sent as its own field (answers.ans_6, crmLink), so two people editing the same property
 // never overwrite each other. Failed saves show Not Saved and retry; nothing is silently dropped.
 let pending = null;          // { id, fields: {path: value} }
 let inFlight = null, saveTimer = null, retryTimer = null, retryDelay = 2000, slowTimer = null;
@@ -1079,20 +1081,20 @@ function renderHome() {
     .sort((a, b) => tsOf(b[1].updatedAt) - tsOf(a[1].updatedAt) || a[1].address.localeCompare(b[1].address));
   const openOnes = all.filter(([, d]) => statusOf(d) === 'open');
   $('st-open').textContent = counts.open; $('st-closed').textContent = counts.closed;
-  $('st-avg').textContent = (openOnes.length ? Math.round(openOnes.reduce((n, [, d]) => n + checkedCount(d), 0) / openOnes.length / CHECK_COUNT * 100) : 0) + '%';
+  $('st-avg').textContent = (openOnes.length ? Math.round(openOnes.reduce((n, [, d]) => n + doneCount(d), 0) / openOnes.length / CHECK_COUNT * 100) : 0) + '%';
   const list = $('prop-list');
   if (!rows.length) {
     list.innerHTML = q ? `<div class="empty"><h3>No Matches</h3><p>Nothing in ${STATUS[tab].label} matches “${esc(query.trim())}”.</p></div>`
       : `<div class="empty"><h3>No ${STATUS[tab].label} Properties</h3><p>${tab === 'open' ? 'Press New Property to start a first-call checklist.' : 'Properties marked ' + STATUS[tab].label + ' show here.'}</p></div>`;
   } else list.innerHTML = rows.map(([id, d, hit]) => {
-    const n = checkedCount(d), pct = Math.round(n / CHECK_COUNT * 100);
+    const n = doneCount(d), pct = Math.round(n / CHECK_COUNT * 100);
     const snippet = hit.text && !hit.first ? (() => { const a = Math.max(0, hit.at - 40), s = hit.text.slice(a, hit.at + q.length + 60);
       const i = hit.at - a; return `<div class="hit">${esc(hit.label)}: ${a ? '…' : ''}${esc(s.slice(0, i))}<mark>${esc(s.slice(i, i + q.length))}</mark>${esc(s.slice(i + q.length))}${a + s.length < hit.text.length ? '…' : ''}</div>`; })() : '';
     return `<div class="card prop-card s-${statusOf(d)}" role="link" tabindex="0" data-id="${esc(id)}">
       <div class="ring${n === CHECK_COUNT ? ' full' : ''}" style="--p:${pct}" aria-hidden="true"><b>${pct}%</b></div>
       <div class="grow"><div class="prop-title">${esc(d.address)}</div>
         <div class="tag-row">${tagHtml(statusOf(d))}<span class="meta">${esc(updatedLine(d))}</span></div>
-        <div class="prog-row"><div class="progress${n === CHECK_COUNT ? ' full' : ''}"><i style="width:${pct}%"></i></div><span>${n} of ${CHECK_COUNT} Checked</span></div>${snippet}</div>
+        <div class="prog-row"><div class="progress${n === CHECK_COUNT ? ' full' : ''}"><i style="width:${pct}%"></i></div><span>${n} of ${CHECK_COUNT} Answered</span></div>${snippet}</div>
       ${isWebLink(d.crmLink) ? `<div class="side"><a class="btn outline sm" href="${esc(d.crmLink.trim())}" target="_blank" rel="noopener" data-crm>${icon('ext', 'sm')}Open In CRM</a></div>` : ''}
     </div>`;
   }).join('');
@@ -1143,26 +1145,19 @@ function buildSections() {
     <div class="sec-bar"><i></i></div>
     <div class="sec-body">${s.note ? `<div class="note gold sec-note">${icon('alert')}<span>${esc(s.note)}</span></div>` : ''}
     ${s.qs.map(q => `<div class="q n${q.nest}" data-q="${q.chk}">
-      <button class="check" type="button" role="checkbox" aria-checked="false" data-chk="${q.chk}" aria-label="${esc(q.text)}">${icon('check')}</button>
-      <div class="q-main"><div class="q-text" data-toggle="${q.chk}">${esc(q.text)}</div>
+      <span class="mark" data-mark="${q.chk}" role="img" aria-label="Open">${icon('check')}</span>
+      <div class="q-main"><div class="q-text">${esc(q.text)}</div>
         <div class="ans-wrap"><textarea class="input ans" rows="1" data-ans="${q.ans}" placeholder="Add answer/notes or paste a link..." aria-label="Answer: ${esc(q.text)}"></textarea>
           <a class="ans-link" data-link="${q.ans}" target="_blank" rel="noopener" title="Open link in new tab" hidden>${icon('ext', 'sm')}</a></div>
         ${q.escrow ? `<div class="escrow">${q.escrow.map(x => `<label><span>${esc(x.label)}</span><input class="input" type="text" data-ans="${x.ans}" placeholder="Amount..." aria-label="${esc(x.label)} amount"></label>`).join('')}</div>` : ''}
       </div></div>`).join('')}</div></div>`).join('');
   host.querySelectorAll('.sec-head').forEach(h => h.onclick = () => setOpen(h.parentElement, h.parentElement.dataset.open !== 'true'));
-  host.addEventListener('click', e => {
-    const t = e.target.closest('[data-chk],[data-toggle]'); if (!t || isLocked()) return;
-    const n = t.dataset.chk || t.dataset.toggle, box = host.querySelector(`[data-chk="${n}"]`);
-    const on = box.getAttribute('aria-checked') !== 'true';
-    setCheck(n, on); queueField('checks.chk_' + n, on, 0);
-    const d = records[openId]; if (d) { d.checks = { ...(d.checks || {}), ['chk_' + n]: on }; updateCounts(d); }
-  });
   host.addEventListener('input', e => {
     const el = e.target.closest('[data-ans]'); if (!el) return;
     if (el.tagName === 'TEXTAREA') grow(el);
     linkFor(el);
     queueField('answers.ans_' + el.dataset.ans, el.value, 700);
-    const d = records[openId]; if (d) d.answers = { ...(d.answers || {}), ['ans_' + el.dataset.ans]: el.value };
+    const d = records[openId]; if (d) { d.answers = { ...(d.answers || {}), ['ans_' + el.dataset.ans]: el.value }; updateCounts(d); }
   });
   host.addEventListener('focusout', e => { if (e.target.closest('[data-ans]') && pending) flushNow(); });
 }
@@ -1172,7 +1167,7 @@ const linkFor = el => { const a = $('sections').querySelector(`[data-link="${el.
   if (isWebLink(el.value)) { a.href = el.value.trim(); a.hidden = false; } else a.hidden = true; };
 const setOpen = (sec, open) => { sec.dataset.open = String(open); sec.querySelector('.sec-head').setAttribute('aria-expanded', String(open));
   if (open) sec.querySelectorAll('textarea').forEach(grow); };
-const setCheck = (n, on) => { const box = $('sections').querySelector(`[data-chk="${n}"]`); box.setAttribute('aria-checked', String(on)); box.closest('.q').classList.toggle('done', on); };
+const setDone = (n, on) => { const m = $('sections').querySelector(`[data-mark="${n}"]`); m.setAttribute('aria-label', on ? 'Answered' : 'Open'); m.closest('.q').classList.toggle('done', on); };
 const isLocked = () => !!openId && statusOf(records[openId]) !== 'open';
 $('expand-btn').onclick = () => document.querySelectorAll('.sec').forEach(s => setOpen(s, true));
 $('collapse-btn').onclick = () => document.querySelectorAll('.sec').forEach(s => setOpen(s, false));
@@ -1206,8 +1201,6 @@ function applyRecord(force = false) {
   const crm = $('crm-link');
   if (focused !== crm && !isPending('crmLink')) crm.value = d.crmLink || '';
   crm.readOnly = locked; crmButton();
-  for (let i = 0; i < CHECK_COUNT; i++) if (!isPending('checks.chk_' + i)) setCheck(i, !!(d.checks && d.checks['chk_' + i]));
-  document.querySelectorAll('#sections [data-chk]').forEach(b => b.disabled = locked);
   document.querySelectorAll('#sections [data-ans]').forEach(el => {
     const v = (d.answers && typeof d.answers['ans_' + el.dataset.ans] === 'string') ? d.answers['ans_' + el.dataset.ans] : '';
     if (el !== focused && !isPending('answers.ans_' + el.dataset.ans) && (force || el.value !== v)) { el.value = v; if (el.tagName === 'TEXTAREA') grow(el); linkFor(el); }
@@ -1215,13 +1208,23 @@ function applyRecord(force = false) {
   });
   updateCounts(d);
 }
-function updateCounts(d) {
-  const n = checkedCount(d);
-  $('p-count').textContent = `${n} of ${CHECK_COUNT} Checked`;
+// What's on screen: the saved record plus your own typing that hasn't been sent yet, so a teammate's update
+// arriving in between never makes a box you just filled look open.
+function withPending(d) {
+  if (!d || !pending || pending.id !== openId) return d;
+  const answers = { ...(d.answers || {}) };
+  for (const [k, v] of Object.entries(pending.fields)) if (k.startsWith('answers.')) answers[k.slice(8)] = v;
+  return { ...d, answers };
+}
+function updateCounts(raw) {
+  const d = withPending(raw);
+  ALL_QS.forEach(q => setDone(q.chk, isDone(d, q)));
+  const n = doneCount(d);
+  $('p-count').textContent = `${n} of ${CHECK_COUNT} Answered`;
   $('p-stat').innerHTML = `${n}<span class="slash">/</span>${CHECK_COUNT}`;
   $('p-progress').querySelector('i').style.width = Math.round(n / CHECK_COUNT * 100) + '%';
   $('p-progress').classList.toggle('full', n === CHECK_COUNT);
-  SECTIONS.forEach((s, si) => { const c = s.qs.filter(q => d.checks && d.checks['chk_' + q.chk]).length;
+  SECTIONS.forEach((s, si) => { const c = s.qs.filter(q => isDone(d, q)).length;
     const el = document.querySelector(`[data-sec-count="${si}"]`); el.textContent = `${c} / ${s.qs.length}`; el.classList.toggle('green', c === s.qs.length);
     const sec = el.closest('.sec'); sec.classList.toggle('complete', c === s.qs.length); sec.querySelector('.sec-bar > i').style.width = Math.round(c / s.qs.length * 100) + '%'; });
 }
@@ -1273,16 +1276,15 @@ $('print-btn').onclick = () => {
   if (pending) flushNow();
   const d = records[openId]; if (!d) return;
   const ansOf = n => (d.answers && typeof d.answers['ans_' + n] === 'string') ? d.answers['ans_' + n] : '';
-  const chkOf = n => !!(d.checks && d.checks['chk_' + n]);
-  const secs = SECTIONS.filter(s => s.qs.some(q => chkOf(q.chk) || ansOf(q.ans).trim() || (q.escrow || []).some(x => ansOf(x.ans).trim())));
+  const secs = SECTIONS.filter(s => s.qs.some(q => isDone(d, q)));
   const st = statusOf(d), t = now();
   $('print-sheet').innerHTML = `<div class="ps-head"><span class="logo-mark"><img src="logo-light.png" alt="Total Cash Home Buyers"></span><h1>TC First Call Checklist</h1></div>
     <dl class="ps-kv"><dt>Property Address</dt><dd>${esc(d.address)}</dd><dt>CRM Lead Link</dt><dd>${esc(d.crmLink || '—')}</dd>
       <dt>Status</dt><dd>${STATUS[st].label}${d.statusBy ? ' (by ' + esc(nameOf(d.statusBy)) + (d.statusAt ? ', ' + esc(whenShort(d.statusAt)) : '') + ')' : ''}</dd>
-      <dt>Checked</dt><dd>${checkedCount(d)} of ${CHECK_COUNT}</dd><dt>Last Updated</dt><dd>${esc(updatedLine(d).replace(/^Updated /, '') || '—')}</dd>
+      <dt>Answered</dt><dd>${doneCount(d)} of ${CHECK_COUNT}</dd><dt>Last Updated</dt><dd>${esc(updatedLine(d).replace(/^Updated /, '') || '—')}</dd>
       <dt>Printed</dt><dd>${esc(whenShort(t))} by ${esc(nameOf(currentUser.email))}</dd></dl>
     ${secs.length ? secs.map(s => `<div class="ps-sec"><h2>${esc(s.title)}</h2>${s.note ? `<div class="ps-note">${esc(s.note)}</div>` : ''}
-      ${s.qs.map(q => `<div class="ps-q n${q.nest}"><span class="ps-box${chkOf(q.chk) ? ' on' : ''}"></span><div><div class="t">${esc(q.text)}</div>
+      ${s.qs.map(q => `<div class="ps-q n${q.nest}"><span class="ps-box${isDone(d, q) ? ' on' : ''}"></span><div><div class="t">${esc(q.text)}</div>
         ${ansOf(q.ans).trim() ? `<div class="a">${esc(ansOf(q.ans))}</div>` : ''}
         ${q.escrow ? `<div class="a">${q.escrow.map(x => esc(x.label) + ': ' + (esc(ansOf(x.ans)) || '—')).join('   ·   ')}</div>` : ''}</div></div>`).join('')}</div>`).join('')
       : '<p>Nothing has been filled in yet.</p>'}`;
