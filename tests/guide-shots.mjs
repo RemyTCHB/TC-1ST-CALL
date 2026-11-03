@@ -93,7 +93,7 @@ await page.click('[data-tab="closed"]'); await snap(page, '04-closed-tab'); awai
 await page.click('#active-btn'); await snap(page, '05-active'); await page.keyboard.press('Escape');
 await page.click('#avatar-btn'); await snap(page, '06-avatar'); await page.keyboard.press('Escape');
 await page.setViewportSize({ width: 1280, height: 1180 });
-await page.click('#avatar-btn'); await page.click('[data-help]'); await page.waitForSelector('.modal.help'); await snap(page, '16-help');
+await page.click('#avatar-btn'); await page.click('[data-help]'); await page.waitForSelector('.help-panel h2[data-sec]'); await snap(page, '16-help');
 await page.keyboard.press('Escape'); await page.setViewportSize({ width: 1280, height: 860 });
 await page.click('#new-btn'); await page.fill('[data-m-input]', '12 Example Bay St, Sampleton FL 33006'); await snap(page, '07-new-property'); await page.click('[data-m-cancel]');
 await openMain(page);
@@ -102,7 +102,7 @@ await page.evaluate(() => window.scrollTo(0, document.querySelector('.sec').getB
 await snap(page, '09-mortgage-section');
 await page.evaluate(() => window.scrollTo(0, 0));
 await page.click('#status-btn'); await snap(page, '10-status-menu'); await page.keyboard.press('Escape');
-await page.click('#delete-btn'); await page.fill('[data-m-input]', 'DELETE'); await snap(page, '11-delete'); await page.click('[data-m-cancel]');
+await page.click('#delete-btn'); await page.waitForSelector('.modal'); await snap(page, '11b-delete-member'); await page.click('[data-m-cancel]');
 await page.evaluate(() => { window.print = () => {}; }); await page.click('#print-btn'); await page.waitForTimeout(300);
 await page.emulateMedia({ media: 'print' }); await page.setViewportSize({ width: 900, height: 1160 });
 await snap(page, '12-print', { fullPage: false }); await page.emulateMedia({ media: 'screen' }); await page.setViewportSize({ width: 1280, height: 860 });
@@ -110,6 +110,24 @@ await page.click('a.link-btn'); await page.click('[data-tab="closed"]'); await p
 await page.evaluate(() => window.scrollTo(0, 60)); await snap(page, '13-closed-view');
 await page.evaluate(() => window.scrollTo(0, 0)); await page.click('#activity-btn'); await snap(page, '14-activity'); await page.keyboard.press('Escape');
 await context.close();
+
+// ---------------------------------------------------------------- a manager deleting (made-up password)
+{
+  const c2 = await browser.newContext({ viewport: { width: 1280, height: 860 }, colorScheme: 'light', deviceScaleFactor: 2, serviceWorkers: 'block' });
+  await c2.route('**/*', route => {
+    const u = new URL(route.request().url());
+    if (['localhost', '127.0.0.1'].includes(u.hostname)) return route.continue();
+    if (u.hostname === 'www.gstatic.com' && u.pathname.startsWith('/firebasejs/12.15.0/'))
+      return route.fulfill({ status: 200, contentType: 'text/javascript', body: readFileSync(join(HERE, 'node_modules/firebase', u.pathname.split('/').pop())) });
+    if (u.hostname.startsWith('fonts.')) return route.continue();
+    return route.abort();
+  });
+  const p2 = await c2.newPage(); await p2.goto('http://localhost:5173/?emulator#/'); await p2.waitForFunction(() => window.__emuSignIn);
+  await p2.evaluate(() => window.__emuSignIn('morgan.manager@totalchb.com')); await p2.waitForSelector('.prop-card'); await p2.waitForTimeout(800);
+  await openMain(p2); await p2.click('#delete-btn'); await p2.waitForSelector('[data-m-input][type="password"]');
+  await p2.fill('[data-m-input]', 'example'); await snap(p2, '11-delete'); await p2.click('[data-m-cancel]');
+  await c2.close();
+}
 
 // ---------------------------------------------------------------- dark and phone
 ({ context, page } = await open({ theme: 'dark' })); await snap(page, '15-home-dark'); await context.close();

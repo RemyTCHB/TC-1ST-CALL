@@ -1,9 +1,11 @@
 """Builds the branded TC Checklist user guide (PDF) for the team.
 
-    python3 docs/guide/build_guide.py  ->  guides/TC_Checklist_Team_Guide.pdf and guides/TC_Checklist_Manager_Guide.pdf
+    python3 docs/guide/build_guide.py  ->  guides/TC_Checklist_{Team,Team_Leader,Manager}_Guide.pdf and help/guides.json
 
-The Help button in the app (photo menu → Help & Guides) opens these: everyone gets the Team Guide, Managers also
-get the Manager Guide (the Team Guide plus the manager section). Same look and building blocks as the Title Commitment Agent's guide. Screenshots in docs/guide/shots/ come from the app
+The app's Help (photo menu → Help) shows the guide for the person's role inside the app, from help/guides.json, like
+the Team Hub's: the Team Guide (Members), the Team Leader Guide and the Manager Guide (adds the manager section).
+Team Leaders and Managers see their delete passwords in a slot the page fills from the server after sign-in; the
+passwords are never written into these files. The PDFs are the same guides, for printing. Same look and building blocks as the Title Commitment Agent's guide. Screenshots in docs/guide/shots/ come from the app
 on the local Firebase emulators with made-up sample properties and people, never real ones:
     cd tests && node run.mjs guide-shots.mjs
 Fonts: Baloo 2 and Nunito Sans (SIL Open Font License), the same as the app. Needs reportlab and Pillow.
@@ -11,6 +13,8 @@ Fonts: Baloo 2 and Nunito Sans (SIL Open Font License), the same as the app. Nee
 
 from __future__ import annotations
 
+import json
+import re
 from datetime import date
 from pathlib import Path
 
@@ -42,9 +46,13 @@ ROOT = HERE.parent.parent
 SHOTS = HERE / "shots"
 CROPS = HERE / ".crops"  # cropped copies of the screenshots, rebuilt each time (gitignored)
 GUIDES_DIR = ROOT / "guides"  # published with the app; the Help button opens these
-OUTS = {"team": GUIDES_DIR / "TC_Checklist_Team_Guide.pdf", "manager": GUIDES_DIR / "TC_Checklist_Manager_Guide.pdf"}
-AUD = "team"  # which guide is being built: "team" (everyone) or "manager" (Team Guide + the manager section)
-KIND = {"team": "Team Guide", "manager": "Manager Guide"}
+ROLES = ("member", "lead", "manager")   # the Team Hub's roles: Member, Team Leader, Manager
+OUTS = {"member": GUIDES_DIR / "TC_Checklist_Team_Guide.pdf", "lead": GUIDES_DIR / "TC_Checklist_Team_Leader_Guide.pdf",
+        "manager": GUIDES_DIR / "TC_Checklist_Manager_Guide.pdf"}
+AUD = "member"  # which guide is being built
+KIND = {"member": "Team Guide", "lead": "Team Leader Guide", "manager": "Manager Guide"}
+HELP_DIR = ROOT / "help"  # the in-app Help: help/guides.json and help/img/ (published with the app)
+MODE = "pdf"  # "pdf" or "html" (the in-app Help); the same text builds both
 LOGO = ROOT / "logo-light.png"
 APP = "TC Checklist"
 
@@ -208,6 +216,110 @@ def pair(left: str, right: str, caption: str, height: float = 4.3) -> KeepTogeth
     return KeepTogether([Spacer(1, 4), t, P(caption, "cap")])
 
 
+# ---------------------------------------------------------------- the same blocks as HTML (in-app Help)
+class H(str):
+    """A piece of the in-app Help page."""
+
+
+HTML_SECS: list = []
+
+
+def htm(text: str) -> str:
+    """ReportLab markup → HTML (the guide text is written with <b>, <br/> and <font color>)."""
+    text = re.sub(r'<font name="[^"]*" color="(#[0-9A-Fa-f]{6})">', r'<span style="color:\1;font-weight:700">', text)
+    text = re.sub(r'<font[^>]*>', '<span>', text)
+    return text.replace('</font>', '</span>')
+
+
+def h_img(name: str, crop=None, maxw: int = 1400, phone: bool = False) -> tuple[str, int, int]:
+    (HELP_DIR / "img").mkdir(parents=True, exist_ok=True)
+    im = PILImage.open(SHOTS / f"{name}.jpg").convert("RGB")
+    if crop:
+        w, h = im.size
+        im = im.crop((int(crop[0] * w), int(crop[1] * h), int(crop[2] * w), int(crop[3] * h)))
+    mw = 600 if phone else maxw
+    if im.width > mw:
+        im = im.resize((mw, round(im.height * mw / im.width)), PILImage.LANCZOS)
+    tag = name + ("-" + "-".join(f"{c:.2f}" for c in crop) if crop else "")
+    out = HELP_DIR / "img" / f"{tag}.jpg"
+    im.save(out, quality=80, optimize=True, progressive=True)
+    return f"help/img/{out.name}", im.width, im.height
+
+
+def hP(text: str, style: str = "p"):
+    if style == "h1":
+        return H("") if text == "Contents" else H(f'<h2 data-sec id="sec-ref"><span class="num">★</span>{htm(text)}</h2>')
+    if style == "h2":
+        return H(f"<h3>{htm(text)}</h3>")
+    return H(f'<p class="{style}">{htm(text)}</p>')
+
+
+def hsection(n, title: str, lead: str = "", need: float = 0) -> list:
+    HTML_SECS.append({"id": f"sec-{n}", "n": str(n), "title": title})
+    out = [H(f'<h2 data-sec id="sec-{n}"><span class="num">{n}</span>{htm(title)}</h2>')]
+    if lead:
+        out.append(H(f'<p class="lead">{htm(lead)}</p>'))
+    return out
+
+
+def hsteps(items: list[str]):
+    return H("<ol>" + "".join(f"<li>{htm(t)}</li>" for t in items) + "</ol>")
+
+
+def hbullets(items: list[str]) -> list:
+    return [H("<ul>" + "".join(f"<li>{htm(t)}</li>" for t in items) + "</ul>")]
+
+
+def hbox(text: str, kind: str = "tip", title: str = ""):
+    label = {"tip": "Tip", "warn": "Important", "bad": "Watch out", "good": "Good to know"}[kind]
+    return H(f'<div class="box {kind}"><b>{htm(title or label)}.</b> {htm(text)}</div>')
+
+
+def htable(head: list[str], rows: list[list[str]], widths=None, first_bold: bool = True):
+    th = "".join(f"<th>{htm(h)}</th>" for h in head)
+    tr = "".join("<tr>" + "".join(f"<td>{'<b>' + htm(c) + '</b>' if (i == 0 and first_bold) else htm(c)}</td>"
+                                  for i, c in enumerate(r)) + "</tr>" for r in rows)
+    return H(f'<div class="tbl"><table><thead><tr>{th}</tr></thead><tbody>{tr}</tbody></table></div>')
+
+
+def hshot(name: str, caption: str, width: float = 1.0, crop=None, max_h: float = 0):
+    src, w, h = h_img(name, crop)
+    css = f' style="width:{round(width * 100)}%"' if width < 0.95 else ""
+    return H(f'<figure><img src="{src}" width="{w}" height="{h}" loading="lazy" alt=""{css}>'
+             f'<figcaption>{htm(caption)}</figcaption></figure>')
+
+
+def hpair(left: str, right: str, caption: str, height: float = 0):
+    imgs = "".join(f'<img src="{a}" width="{w}" height="{h}" loading="lazy" alt="">'
+                   for a, w, h in (h_img(n, phone=True) for n in (left, right)))
+    return H(f'<figure class="pair">{imgs}<figcaption>{htm(caption)}</figcaption></figure>')
+
+
+_PDF = {"P": P, "section": section, "steps": steps, "bullets": bullets, "box": box, "table": table, "shot": shot, "pair": pair}
+_HTML = {"P": hP, "section": hsection, "steps": hsteps, "bullets": hbullets, "box": hbox, "table": htable, "shot": hshot,
+         "pair": hpair}
+
+
+def P(*a, **k): return (_HTML if MODE == "html" else _PDF)["P"](*a, **k)                    # noqa: E302, E704
+def section(*a, **k): return (_HTML if MODE == "html" else _PDF)["section"](*a, **k)        # noqa: E302, E704
+def steps(*a, **k): return (_HTML if MODE == "html" else _PDF)["steps"](*a, **k)            # noqa: E302, E704
+def bullets(*a, **k): return (_HTML if MODE == "html" else _PDF)["bullets"](*a, **k)        # noqa: E302, E704
+def box(*a, **k): return (_HTML if MODE == "html" else _PDF)["box"](*a, **k)                # noqa: E302, E704
+def table(*a, **k): return (_HTML if MODE == "html" else _PDF)["table"](*a, **k)            # noqa: E302, E704
+def shot(*a, **k): return (_HTML if MODE == "html" else _PDF)["shot"](*a, **k)              # noqa: E302, E704
+def pair(*a, **k): return (_HTML if MODE == "html" else _PDF)["pair"](*a, **k)              # noqa: E302, E704
+
+
+def pw_slot() -> list:
+    """Where Team Leaders and Managers see their delete passwords. In the app the page fills it from the server after
+    sign-in; the PDF never holds a password."""
+    if MODE == "html":
+        return [H('<div data-tc-pw></div>')]
+    return [box("Open <b>Help</b> in the app (click your initials → Help) to see the delete passwords you may use. They "
+                "show there after you sign in, and are never printed in this guide or sent by email.", "warn",
+                "Your passwords")]
+
+
 # ---------------------------------------------------------------- pages
 def cover(c, doc) -> None:
     c.saveState()
@@ -239,7 +351,8 @@ def cover(c, doc) -> None:
         y -= 19
     c.setFont("Nunito-Bold", 11)
     c.setFillColor(INK)
-    c.drawString(MARGIN, PAGE_H - 6.35 * inch, "For: Transaction Coordinators and Dispo" if AUD == "team" else "For: Managers and the owner")
+    c.drawString(MARGIN, PAGE_H - 6.35 * inch, {"member": "For: Transaction Coordinators and Dispo", "lead": "For: Team Leaders",
+                                                 "manager": "For: Managers and the owner"}[AUD])
     c.setFont("Nunito", 10)
     c.setFillColor(MUTED)
     c.drawString(MARGIN, PAGE_H - 6.62 * inch, f"Version 2.0 · {date.today():%B %Y} · tc.totalchb.com")
@@ -286,7 +399,9 @@ def num(title: str) -> int:
     return secs().index(title) + 1
 
 
-def cards3(cards: list[tuple[str, str]]) -> Table:
+def cards3(cards: list[tuple[str, str]]):
+    if MODE == "html":
+        return H('<div class="cards">' + "".join(f"<div><b>{htm(t)}</b>{htm(x)}</div>" for t, x in cards) + "</div>")
     cw = (WIDTH - 0.3 * inch) / 3
     row = []
     for title, text in cards:
@@ -315,14 +430,19 @@ def story() -> list:
     t.setStyle(TableStyle([("LINEBELOW", (0, 0), (-1, -1), 0.4, LINE), ("TOPPADDING", (0, 0), (-1, -1), 3),
                            ("BOTTOMPADDING", (0, 0), (-1, -1), 3), ("LEFTPADDING", (0, 0), (-1, -1), 2)]))
     s += [t, Spacer(1, 14),
-          box(f"Read sections 1–{num('Getting The Newest Version')} and keep the Quick Reference Card handy. "
-              "Managers have a Manager Guide with one more section." if AUD == "team" else
-              f"This is the Team Guide plus section {num('For Managers And The Owner')}, For Managers And The Owner. "
-              "Your team has the Team Guide.", "tip", "Who reads what"),
+          box({"member": lambda: f"Read sections 1–{num('Getting The Newest Version')} and keep the Quick Reference "
+                                 "Card handy. Team Leaders and Managers have their own guides, with the delete passwords.",
+               "lead": lambda: f"This is the Team Guide with what Team Leaders need: deleting a property with the TC "
+                               f"Team Leader password (section {num('Deleting A Property')}).",
+               "manager": lambda: f"This is the Team Guide plus the delete passwords (section "
+                                  f"{num('Deleting A Property')}) and section {num('For Managers And The Owner')}, "
+                                  "For Managers And The Owner."}[AUD](),
+              "tip", "Who reads what"),
           box("TC Checklist now looks and works like the Universal Team Hub. There are no tick boxes: a question is done as soon as its answer box has text. It opens on a <b>Properties</b> list "
               "with <b>Open / Closed / Cancelled</b> tabs and a search box; edits save as you type and appear live "
               "for everyone; a property can be marked <b>Closed</b> or <b>Cancelled</b>; <b>Print / PDF</b> shows "
-              "every answer in full; and names come from the Team Hub. Every question, and every answer already "
+              "every answer in full; names come from the Team Hub; Help opens your role's guide inside the app; and deleting "
+              "uses the Team Hub's delete passwords. Every question, and every answer already "
               "saved, is exactly where it was.", "good", "What's new in version 2")]
     s.append(PageBreak())
 
@@ -376,13 +496,14 @@ def story() -> list:
                    "computer."],
         ["Sun / moon", "Light or dark look. It follows your device at first; your choice is remembered on that "
                        "browser."],
-        ["Your initials", "Your name, email and user type, <b>Help &amp; Guides</b>, and <b>Sign Out</b>."],
+        ["Your initials", "Your name, email and role (from the Team Hub), <b>Help</b>, and <b>Sign Out</b>."],
     ], [0.2, 0.8])]
-    s += [P("Help & Guides", "h2"),
-          P("Click your initials, then <b>Help &amp; Guides</b>. It shows the guides for your user type (from the Team "
-            "Hub): everyone gets the Team Guide, and Managers also get the Manager Guide. <b>Open</b> shows a guide "
-            "in a new tab; <b>Download</b> saves a copy. Quick tips and a short reference are underneath."),
-          shot("16-help", "Help & Guides, for a team member.", 0.62, crop=(0.24, 0.0, 0.76, 1.0), max_h=4.3)]
+    s += [P("Help", "h2"),
+          P("Click your initials, then <b>Help</b>. It opens the guide for your role inside the app, like the Team Hub: "
+            "the <b>Team Guide</b> for Members, the <b>Team Leader Guide</b> or the <b>Manager Guide</b> (your role "
+            "comes from the Team Hub). Pick a section on the left, or scroll. <b>PDF</b> downloads a copy to print. "
+            "Team Leaders and Managers also see the delete passwords they may use."),
+          shot("16-help", "Help: the guide for your role, with its contents.", 1.0, crop=(0.0, 0.0, 1.0, 1.0), max_h=4.3)]
     s += [shot("05-active", "Click Active to see who's online.", 0.5, crop=(0.6, 0.0, 0.98, 0.38)),
           shot("15-home-dark", "The dark look.", 1.0, crop=(0, 0, 1, 0.62))]
 
@@ -494,9 +615,26 @@ def story() -> list:
     s += section(num("Deleting A Property"), "Deleting A Property")
     s += [P("Deleting removes the property and every answer for the whole team, for good. Most of the time, "
             "<b>Mark Cancelled</b> is the better choice: it's off the Open list but still there if you need it."),
-          steps(["Open the property and click <b>Delete</b>.", "Type <b>DELETE</b> in the box.",
-                 "Click <b>Delete</b>."]),
-          shot("11-delete", "Deleting asks you to type DELETE first.", 0.7, crop=(0.3, 0.27, 0.7, 0.73))]
+          P("Deleting follows the Team Hub's rules: only <b>Team Leaders</b> and <b>Managers</b> can delete a "
+            "property, with the <b>TC Team Leader password</b> (the same one as in the Team Hub). Anyone with their "
+            "own delete password uses that instead, and Remy only confirms.")]
+    if AUD == "member":
+        s += [P("If you click <b>Delete</b>, the app explains this and offers <b>Mark Cancelled Instead</b>."),
+              shot("11b-delete-member", "A Member clicking Delete.", 0.6, crop=(0.28, 0.3, 0.72, 0.7)),
+              box("If a property really has to go (say, a mistyped address), ask your Team Leader to delete it.", "tip")]
+    else:
+        s += [steps(["Open the property and click <b>Delete</b>.",
+                     "Type the <b>TC Team Leader password</b> (or your own delete password, if you have one). The "
+                     "passwords you may use are below.",
+                     "Click <b>Delete</b>. A wrong password is refused, and nothing is deleted."]),
+              shot("11-delete", "Deleting asks for the password.", 0.6, crop=(0.28, 0.27, 0.72, 0.73)),
+              P("Your delete passwords", "h2")]
+        s += pw_slot()
+        s += [box("Keep the passwords to yourself, and never put them in a note, a message or an email. They're the same "
+                  "in the Team Hub. Members can't see them.", "warn")]
+        if AUD == "manager":
+            s += [box("The passwords are set in the Team Hub's Vercel setting <b>HUB_DELETE_PASSWORDS</b>. Change one "
+                      "there and both apps use it straight away.", "tip", "Changing a password")]
 
     # ---- 11
     s += section(num("On A Phone"), "On A Phone", need=5.5)
@@ -526,6 +664,10 @@ def story() -> list:
             ["The connection", "TC Checklist signs its requests to the hub with its own secret "
                                "(<b>HUB_SYNC_SECRET</b> here, <b>TC_CHECKLIST_SYNC_SECRET</b> in the hub). It can only "
                                "read the team list."],
+            ["Roles and passwords", "Roles (Member, Team Leader, Manager) come from the Team Hub's directory, and "
+                                    "decide which guide Help shows and who may delete. Deleting uses the Team Hub's "
+                                    "delete passwords: the TC Team Leader password, or a person's own. They live only "
+                                    "in the hub's setting HUB_DELETE_PASSWORDS and are checked on the server."],
             ["Data", "Every property and answer lives in the company's Firebase project. Delete is permanent; there is "
                      "no recycle bin."],
             ["Changing the questions", "Ask the developer. New questions can only be added at the end of the list, "
@@ -554,6 +696,10 @@ def story() -> list:
                                     "delete the wrong one."],
         ["The badge says Not Saved.", "Check your internet connection. It keeps retrying; click the badge to try "
                                       "now. Don't close the page until it's green."],
+        ["I can't delete a property.", "Only Team Leaders and Managers can, with the TC Team Leader password. Mark it "
+                                       "Cancelled, or ask your Team Leader."] if AUD == "member" else
+        ["It says the password is not right.", "Check it in Help (your initials → Help → Deleting A Property). It's "
+                                               "the TC Team Leader password, the same as in the Team Hub."],
         ["Where did the tick boxes go?", "You don't need them: typing an answer marks the question done. Put "
                                         "No or N/A if there's nothing to say."],
         ["A question shows done but its box is empty.", "It was ticked in the earlier version, which still counts."],
@@ -583,9 +729,10 @@ def story() -> list:
         ("Deal closed", "Status → Mark Closed → confirm."),
         ("Deal fell through", "Status → Mark Cancelled → confirm."),
         ("Work on it again", "Open it → Reopen."),
-        ("Remove a mistake", "Delete → type DELETE → Delete. Permanent."),
+        ("Remove a mistake", "Ask your Team Leader, or Status → Mark Cancelled." if AUD == "member" else
+                             "Delete → TC Team Leader password → Delete. Permanent."),
         ("Something looks old", "Ctrl+Shift+R (Cmd+Shift+R on a Mac). Phone: close and reopen."),
-        ("Find this guide", "Click your initials → Help & Guides."),
+        ("Find this guide", "Click your initials → Help."),
     ]
     s.append(table(["I want to…", "Do this"], [[a, b] for a, b in ref], [0.25, 0.75]))
     badge = Table([[Para('<font name="Nunito-Bold" color="#109648">All Saved</font><br/>Everything is saved for '
@@ -599,6 +746,10 @@ def story() -> list:
                                ("LINEAFTER", (0, 0), (1, 0), 4, colors.white), ("TOPPADDING", (0, 0), (-1, -1), 8),
                                ("BOTTOMPADDING", (0, 0), (-1, -1), 8), ("LEFTPADDING", (0, 0), (-1, -1), 9),
                                ("ROUNDEDCORNERS", [8, 8, 8, 8])]))
+    if MODE == "html":
+        badge = H('<div class="cards"><div><b style="color:#109648">All Saved</b>Everything is saved for the team.</div>'
+                  '<div><b>Saving…</b>On its way; waits if you\'re offline.</div>'
+                  '<div><b style="color:#BD2239">Not Saved – Retry</b>Didn\'t reach the server. Retrying; click to try now.</div></div>')
     s += [P("The saving badge", "h2"), badge, Spacer(1, 8)]
     st = Table([[Para('<font name="Nunito-Bold" color="#4D458A">Open</font><br/>Being worked. Every property '
                       'starts here.', S["cell"]),
@@ -610,6 +761,10 @@ def story() -> list:
                             ("LINEAFTER", (0, 0), (1, 0), 4, colors.white), ("TOPPADDING", (0, 0), (-1, -1), 8),
                             ("BOTTOMPADDING", (0, 0), (-1, -1), 8), ("LEFTPADDING", (0, 0), (-1, -1), 9),
                             ("ROUNDEDCORNERS", [8, 8, 8, 8])]))
+    if MODE == "html":
+        st = H('<div class="cards"><div><b>Open</b>Being worked. Every property starts here.</div>'
+               '<div><b style="color:#109648">Closed</b>The deal closed. View-only until reopened.</div>'
+               '<div><b style="color:#767388">Cancelled</b>The deal fell through. View-only until reopened.</div></div>')
     s += [P("Statuses", "h2"), st]
     return s
 
@@ -629,8 +784,41 @@ def build_one(aud: str) -> Path:
     return out
 
 
+def flat(items) -> list:
+    out = []
+    for x in items:
+        if isinstance(x, (list, tuple)):
+            out += flat(x)
+        else:
+            out.append(x)
+    return out
+
+
+def build_help() -> Path:
+    """help/guides.json: { member, lead, manager }: { title, sections: [{ id, n, title }], html }, with help/img/*.jpg."""
+    global AUD, MODE
+    img = HELP_DIR / "img"
+    if img.exists():
+        for f in img.glob("*.jpg"):
+            f.unlink()
+    out = {}
+    MODE = "html"
+    try:
+        for aud in ROLES:
+            AUD = aud
+            HTML_SECS.clear()
+            html = "".join(x for x in flat(story()) if isinstance(x, H))
+            secs_ = list(HTML_SECS) + [{"id": "sec-ref", "n": "★", "title": "Quick Reference Card"}]
+            out[aud] = {"title": KIND[aud], "sections": secs_, "html": html}
+    finally:
+        MODE = "pdf"
+    target = HELP_DIR / "guides.json"
+    target.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    return target
+
+
 def build() -> list[Path]:
-    return [build_one(a) for a in ("team", "manager")]
+    return [build_one(a) for a in ROLES] + [build_help()]
 
 
 if __name__ == "__main__":

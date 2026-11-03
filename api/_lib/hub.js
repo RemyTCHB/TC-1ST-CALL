@@ -46,4 +46,28 @@ const slim = people => (Array.isArray(people) ? people : []).filter(p => p && p.
   .map(p => ({ name: String(p.name || '').trim(), email: String(p.email).toLowerCase(), photo: String(p.photo || ''),
     role: ROLES.includes(p.role) ? p.role : 'member', dept: String(p.dept || '').toUpperCase() }));
 
-module.exports = { verifyIdToken, sign, slim, PROJECT_ID };
+/** A signed POST to the Universal Team Hub (HUB_URL, default https://hub.totalchb.com) with TC Checklist's own secret.
+ *  Returns { status, body }; 503 when the connection isn't set up. */
+async function hubPost(path, obj, fetchImpl = fetch) {
+  const secret = process.env.HUB_SYNC_SECRET;
+  if (!secret) return { status: 503, body: { error: 'The Team Hub connection is not set up yet.' } };
+  const body = JSON.stringify(obj || {}), base = (process.env.HUB_URL || 'https://hub.totalchb.com').replace(/\/+$/, '');
+  const r = await fetchImpl(base + path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...sign(secret, body) }, body });
+  let b = {}; try { b = await r.json(); } catch (e) { b = {}; }
+  return { status: r.status, body: b && typeof b === 'object' ? b : {} };
+}
+
+/** The request's JSON body, however Vercel hands it over. */
+async function jsonBody(req) {
+  if (req.body && typeof req.body === 'object' && !Buffer.isBuffer(req.body)) return req.body;
+  let raw = typeof req.body === 'string' ? req.body : Buffer.isBuffer(req.body) ? req.body.toString('utf8') : '';
+  if (!raw && typeof req[Symbol.asyncIterator] === 'function') { const chunks = []; for await (const c of req) chunks.push(c); raw = Buffer.concat(chunks).toString('utf8'); }
+  return raw ? JSON.parse(raw) : {};
+}
+
+const send = (res, code, body) => {
+  res.statusCode = code; res.setHeader('Content-Type', 'application/json'); res.setHeader('Cache-Control', 'private, no-store');
+  res.end(JSON.stringify(body));
+};
+
+module.exports = { verifyIdToken, sign, slim, hubPost, jsonBody, send, PROJECT_ID };
