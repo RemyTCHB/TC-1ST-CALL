@@ -28,11 +28,16 @@ The app is an installable **Progressive Web App** with offline support, so it lo
 
 ---
 
-## User Guide
+## Guides
 
-The team's guide: [`docs/guide/TC_Checklist_User_Guide.pdf`](docs/guide/TC_Checklist_User_Guide.pdf).
-Rebuild it with `python3 docs/guide/build_guide.py` (needs reportlab and Pillow). Its screenshots come from the app on
-the local emulators with made-up properties: `cd tests && node run.mjs guide-shots.mjs`.
+In the app: click your photo → **Help & Guides**. It shows the guides for your user type, taken from the Universal Team
+Hub's team directory: everyone gets the **Team Guide** ([`guides/TC_Checklist_Team_Guide.pdf`](guides/TC_Checklist_Team_Guide.pdf)),
+and Managers also get the **Manager Guide** ([`guides/TC_Checklist_Manager_Guide.pdf`](guides/TC_Checklist_Manager_Guide.pdf)),
+which adds the section for managers and the owner. Anyone not in the hub's directory counts as a Member.
+
+Rebuild both with `python3 docs/guide/build_guide.py` (needs reportlab and Pillow). Their screenshots come from the app on
+the local emulators with made-up properties: `cd tests && node run.mjs guide-shots.mjs`. The guides contain no real data
+and are published with the app at `/guides/`.
 
 ## What It Does
 

@@ -92,6 +92,9 @@ await page.fill('#search', 'palm grove'); await snap(page, '03-search'); await p
 await page.click('[data-tab="closed"]'); await snap(page, '04-closed-tab'); await page.click('[data-tab="open"]');
 await page.click('#active-btn'); await snap(page, '05-active'); await page.keyboard.press('Escape');
 await page.click('#avatar-btn'); await snap(page, '06-avatar'); await page.keyboard.press('Escape');
+await page.setViewportSize({ width: 1280, height: 1180 });
+await page.click('#avatar-btn'); await page.click('[data-help]'); await page.waitForSelector('.modal.help'); await snap(page, '16-help');
+await page.keyboard.press('Escape'); await page.setViewportSize({ width: 1280, height: 860 });
 await page.click('#new-btn'); await page.fill('[data-m-input]', '12 Example Bay St, Sampleton FL 33006'); await snap(page, '07-new-property'); await page.click('[data-m-cancel]');
 await openMain(page);
 await snap(page, '08-checklist-top');

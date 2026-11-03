@@ -40,8 +40,10 @@ function sign(secret, body, ts = Math.floor(Date.now() / 1000)) {
   return { 'X-Hub-Timestamp': String(ts), 'X-Hub-Signature': 'sha256=' + crypto.createHmac('sha256', secret).update(ts + '.' + body).digest('hex') };
 }
 
-/** Only what this app shows: name, email and photo. */
+/** Only what this app uses: name, email, photo, and the hub role and department (which guides Help shows). */
+const ROLES = ['manager', 'lead', 'member'];
 const slim = people => (Array.isArray(people) ? people : []).filter(p => p && p.email)
-  .map(p => ({ name: String(p.name || '').trim(), email: String(p.email).toLowerCase(), photo: String(p.photo || '') }));
+  .map(p => ({ name: String(p.name || '').trim(), email: String(p.email).toLowerCase(), photo: String(p.photo || ''),
+    role: ROLES.includes(p.role) ? p.role : 'member', dept: String(p.dept || '').toUpperCase() }));
 
 module.exports = { verifyIdToken, sign, slim, PROJECT_ID };

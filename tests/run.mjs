@@ -7,8 +7,8 @@ import { join, dirname, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url)), ROOT = join(HERE, '..');
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png' };
-const FAKE_TEAM = JSON.stringify({ people: [{ name: 'Alex Tester', email: 'alex.tester@totalchb.com', photo: '' }, { name: 'Morgan Manager', email: 'morgan.manager@totalchb.com', photo: '' }] });
+const TYPES = { '.pdf': 'application/pdf', '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png' };
+const FAKE_TEAM = JSON.stringify({ people: [{ name: 'Alex Tester', email: 'alex.tester@totalchb.com', photo: '', role: 'member', dept: 'TC' }, { name: 'Morgan Manager', email: 'morgan.manager@totalchb.com', photo: '', role: 'manager', dept: '' }] });
 
 const srv = createServer((req, res) => {
   const url = new URL(req.url, 'http://localhost');
