@@ -17,10 +17,13 @@ const safeId = a => encodeURIComponent(a).replace(/\./g, '%2E');
 const T = iso => new Date(iso).toISOString();
 
 // ---------------------------------------------------------------- made-up sample properties
-function rec(address, checked, answers = {}, extra = {}) {
+function rec(address, checked, answers = {}, extra = {}) {   // checked: question numbers that are answered
   const checks = {}, ans = {};
-  for (let i = 0; i < 79; i++) checks['chk_' + i] = checked.includes(i);
+  // done = the answer box has text, so the sample questions listed in `done` get a sample answer (no ticks stored)
+  const FILL = ['Yes', 'No', 'Confirmed with seller', 'N/A', 'Seller to send by Friday', 'Sample answer'];
+  for (let i = 0; i < 79; i++) checks['chk_' + i] = false;
   for (let i = 0; i < 81; i++) ans['ans_' + i] = answers[i] || '';
+  for (const q of checked) { const a = q <= 5 ? q : q + 2; if (!ans['ans_' + a]) ans['ans_' + a] = FILL[q % FILL.length]; }
   return { address, crmLink: 'https://app.gohighlevel.com/v2/location/sample/contacts/detail/demo', checks, answers: ans, ...extra };
 }
 const MAIN = '1420 Sample Palm Dr, Exampleton FL 33000';

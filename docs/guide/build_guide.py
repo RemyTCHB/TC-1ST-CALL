@@ -304,7 +304,7 @@ def story() -> list:
     s += [t, Spacer(1, 14),
           box("Everyone: read sections 1–12 and keep the Quick Reference Card handy. Managers and the owner: also "
               "read section 13.", "tip", "Who reads what"),
-          box("TC Checklist now looks and works like the Universal Team Hub. It opens on a <b>Properties</b> list "
+          box("TC Checklist now looks and works like the Universal Team Hub. There are no tick boxes: a question is done as soon as its answer box has text. It opens on a <b>Properties</b> list "
               "with <b>Open / Closed / Cancelled</b> tabs and a search box; edits save as you type and appear live "
               "for everyone; a property can be marked <b>Closed</b> or <b>Cancelled</b>; <b>Print / PDF</b> shows "
               "every answer in full; and names come from the Team Hub. Every question, and every answer already "
@@ -317,8 +317,8 @@ def story() -> list:
                  "keeps each answer with the property, and shares it live with the whole team.")
     s += [cards3([
         ("One list per property", "Mortgage, Pictures, Emergency Contact, HOA, SFHs, Land, Income Producing "
-                                  "Properties and Mobile Homes: 79 questions, each with a check and an answer box."),
-        ("Live for everyone", "Every check and answer saves as you type and shows on your teammates' screens at "
+                                  "Properties and Mobile Homes: 79 questions, each with its own answer box."),
+        ("Live for everyone", "Every answer saves as you type and shows on your teammates' screens at "
                               "once. Two people can work the same property without overwriting each other."),
         ("Open to Closed", "Every property starts Open. Mark it Closed or Cancelled when the deal ends; it moves to "
                            "its own tab and becomes view-only."),
@@ -327,7 +327,7 @@ def story() -> list:
     s += bullets([
         "<b>A Properties page</b> with every first call the team has started, searchable by address, CRM link or any "
         "answer.",
-        "<b>For every property</b>: the CRM lead link, how many questions are checked, when it was last updated and "
+        "<b>For every property</b>: the CRM lead link, how many questions are answered, when it was last updated and "
         "by whom, and its status.",
         "<b>A printable record</b> of the call, with every answer in full.",
         "<b>An Eastern-time clock</b> from the server, so every time shown is the same for everyone.",
@@ -377,7 +377,7 @@ def story() -> list:
         ["Search", "Type any part of an address, a CRM link or an answer. It searches the tab you're on and shows "
                    "where it matched."],
         ["A property card", "The address, its status, when it was last updated and by whom, a ring and a bar with "
-                            "how many of the 79 questions are checked (green at 100%), and <b>Open In CRM</b>."],
+                            "how many of the 79 questions are answered (green at 100%), and <b>Open In CRM</b>."],
     ], [0.27, 0.73])]
     s += [shot("03-search", "Searching for an HOA name finds the property and shows the answer it matched.", 1.0,
                crop=(0, 0.26, 1, 0.6))]
@@ -406,22 +406,29 @@ def story() -> list:
     s += section(6, "Working The First Call", need=5.0)
     s += [shot("08-checklist-top", "A property: its details at the top, then the sections.", 1.0)]
     s += [steps([
-        "Work down the sections. Each one shows how many of its questions are checked (for example <b>6 / 7</b>), "
+        "Work down the sections. Each one shows how many of its questions are answered (for example <b>6 / 7</b>), "
         "with a bar that fills as you go. A finished section turns green.",
         "Click a section's title to open or close it. <b>Expand All</b> and <b>Collapse All</b> are at the top.",
-        "Tick the box when a question is covered. Clicking the question's text ticks it too.",
         "Type the seller's answer in the box under the question. It grows to fit long answers.",
+        "As soon as a box has text, the question is done: its circle turns green with a check. Empty it, and the "
+        "question is open again. There's nothing to tick.",
         "Paste a link (photos, a statement, a listing) and an open-link button appears in the box.",
         "Under <b>What is The Monthly Escrow Payments</b>, put the <b>HOI</b> and <b>Taxes</b> amounts in their own "
         "boxes.",
     ]), shot("09-mortgage-section", "Mortgage Questions with answers, including the HOI and Taxes boxes.", 1.0,
              crop=(0, 0.1, 1, 0.98), max_h=4.4)]
-    s += [box("<b>Mobile Homes</b>: treat it like an SFH with all those questions, then add the Mobile Homes "
+    s += [box("<b>An answer is what marks a question done.</b> If the seller has nothing to add, type a short "
+              "answer such as <b>No</b>, <b>N/A</b> or <b>Not yet</b>, so the team can see it was asked. Spaces alone "
+              "don't count.", "good", "Done = answered"),
+          box("The escrow question is done when any of its boxes has text: its own answer, <b>HOI</b> or "
+              "<b>Taxes</b>. Questions that were ticked in the earlier version still count as done, even if their box "
+              "is empty.", "tip", "Good to know"),
+          box("<b>Mobile Homes</b>: treat it like an SFH with all those questions, then add the Mobile Homes "
               "ones.", "tip")]
 
     # ---- 7
     s += section(7, "Saving And Working Together",
-                 "There is no Save button. Every check and answer saves on its own, a moment after you stop typing.")
+                 "There is no Save button. Every answer saves on its own, a moment after you stop typing.")
     s += [table(["The badge says", "What it means"], [
         ["All Saved (green)", "Everything is saved for the whole team."],
         ["Saving…", "A change is on its way. If you're offline it waits and goes as soon as you're back."],
@@ -454,7 +461,7 @@ def story() -> list:
         "In the print window, pick your printer, or <b>Save as PDF</b> as the destination.",
     ])]
     s += bullets([
-        "The top shows the address, CRM link, status, how many questions are checked, when it was last updated and "
+        "The top shows the address, CRM link, status, how many questions are answered, when it was last updated and "
         "when it was printed.",
         "<b>Every answer prints in full</b>, however long.",
         "Sections with nothing filled in are left out, to keep it short.",
@@ -508,7 +515,7 @@ def story() -> list:
     s += section(14, "Good Habits")
     s += bullets([
         "<b>Start the property before the call</b>, with the CRM link, so the team can find it.",
-        "<b>Type answers, not just ticks.</b> A tick says the question was asked; the answer is what the team needs.",
+        "<b>Answer every question you ask</b>, even with a short No or N/A, so the team can see it was covered.",
         "<b>Put amounts in their own boxes</b> (HOI, Taxes) and payoff details in full.",
         "<b>Watch the badge.</b> Green All Saved means the team has it.",
         "<b>Mark it Closed or Cancelled</b> when the deal ends, so Open stays a true to-do list.",
@@ -526,6 +533,9 @@ def story() -> list:
                                     "delete the wrong one."],
         ["The badge says Not Saved.", "Check your internet connection. It keeps retrying; click the badge to try "
                                       "now. Don't close the page until it's green."],
+        ["Where did the tick boxes go?", "You don't need them: typing an answer marks the question done. Put "
+                                        "No or N/A if there's nothing to say."],
+        ["A question shows done but its box is empty.", "It was ticked in the earlier version, which still counts."],
         ["I can't type in a property.", "It's Closed or Cancelled, so it's view-only. Click Reopen if it needs work."],
         ["A teammate's answer isn't showing.", "It appears within a second or two. If not, check the badge and your "
                                                "connection, then reload."],
@@ -545,7 +555,7 @@ def story() -> list:
     ref = [
         ("Start a first call", "Properties → New Property → type the address → Create → paste the CRM Lead Link."),
         ("Find a property", "Properties → pick the tab → type in Search (address, CRM link or any answer)."),
-        ("Record an answer", "Tick the question → type the answer under it. It saves by itself."),
+        ("Record an answer", "Type it in the box under the question. It saves by itself, and the circle turns green."),
         ("Escrow amounts", "Monthly Escrow Payments → HOI and Taxes boxes."),
         ("See everything", "Expand All. Close it up again with Collapse All."),
         ("Print or PDF", "Print / PDF → printer, or Save as PDF."),
