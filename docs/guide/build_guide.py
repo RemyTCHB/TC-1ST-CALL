@@ -537,7 +537,11 @@ def story() -> list:
     s += [shot("03-search", "Searching for an HOA name finds the property and shows the answer it matched.", 1.0,
                crop=(0, 0.26, 1, 0.6))]
     s += [box("Click anywhere on a card to open its checklist. <b>Open In CRM</b> opens the lead in GoHighLevel in "
-              "a new tab instead.", "tip")]
+              "a new tab instead.", "tip"),
+          box("<b>Moving between properties</b>: on a property, <b>Previous</b> and <b>Next</b> step through the list you "
+              "opened it from (the same tab and search, in the same order), and <b>Jump To</b> lists them all with a search "
+              "box, so you don't need to go back to Properties. The list stays in the same order while you work, even as "
+              "answers save.", "tip")]
 
     # ---- 5
     s += section(num("Starting A New Property"), "Starting A New Property", "Start one as soon as the first call is booked.")

@@ -159,6 +159,22 @@ svg.i.lg { width: 22px; height: 22px; }
   padding: 6px 14px; font-family: var(--font-display); font-weight: 700; font-size: 13px; }
 .imp-bar button:hover { background: rgba(255, 255, 255, 0.26); }
 .imp-bar button[disabled] { opacity: 0.7; cursor: default; }
+/* moving between properties on the checklist page */
+.nav-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+.prop-nav { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.prop-nav .btn[disabled] { opacity: 0.4; }
+#nav-pos { font-variant-numeric: tabular-nums; }
+svg.i.flip { transform: scaleX(-1); }
+.menu.jump { width: 420px; padding-top: 8px; }
+.menu.jump .input { margin: 0 4px 6px; width: calc(100% - 8px); font-size: 15px; padding: 9px 12px; }
+.jump-list { max-height: min(360px, 55vh); overflow-y: auto; }
+.menu.jump .jump-list > button { display: flex; align-items: center; gap: 10px; width: 100%; border: none; cursor: pointer; text-align: left; padding: 8px 10px;
+  border-radius: 9px; background: transparent; color: var(--text-body); }
+.menu.jump .jump-list > button:hover, .menu.jump .jump-list > button:focus-visible { background: var(--glass-hover); outline: none; }
+.menu.jump .jump-list > button[aria-current='true'] { background: var(--tchb-indigo-050); }
+.menu.jump .jump-list .ring { width: 36px; height: 36px; } .menu.jump .jump-list .ring b { width: 28px; height: 28px; font-size: 10px; }
+.menu.jump .jump-list .addr { flex: 1; min-width: 0; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--tchb-indigo-700); overflow-wrap: anywhere; }
+.menu.jump .muted { padding: 10px 12px; }
 /* Team Members (the hub's window, read-only here) */
 .tm-scrim { position: fixed; inset: 0; z-index: 60; background: rgba(10, 12, 24, 0.4); }
 .tm { position: fixed; z-index: 61; left: 50%; top: 24px; transform: translateX(-50%); width: calc(100% - 32px); max-width: 1060px;
@@ -612,7 +628,9 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   .escrow { grid-template-columns: 1fr; }
   .actions-row .btn { padding: 8px 10px; }
   .actions-row .spacer { display: none; }
-  .menu, .menu.pop, .menu.acct, .menu.sync { left: 8px !important; right: 8px !important; top: auto !important; bottom: 8px !important; width: auto; max-height: 70vh; }
+  .prop-nav .lbl { display: none; }
+  .prop-nav #nav-prev, .prop-nav #nav-next { padding: 8px 12px; }
+  .menu, .menu.pop, .menu.acct, .menu.sync, .menu.jump { left: 8px !important; right: 8px !important; top: auto !important; bottom: 8px !important; width: auto; max-height: 70vh; }
   .modal { padding: 20px; }
   .toasts { bottom: 16px; }
 }
@@ -724,7 +742,15 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
 
     <!-- Checklist -->
     <section id="view-check" class="list" hidden>
-      <a class="link-btn" href="#/"><svg class="i sm"><use href="#i-back"/></svg>Back To Properties</a>
+      <div class="nav-row">
+        <a class="link-btn" href="#/"><svg class="i sm"><use href="#i-back"/></svg>Back To Properties</a>
+        <!-- move between properties without going back: the list you came from (same tab, search and order) -->
+        <div class="prop-nav" id="prop-nav">
+          <button id="nav-prev" class="btn ghost sm" type="button" title="Previous property"><svg class="i sm"><use href="#i-back"/></svg><span class="lbl">Previous</span></button>
+          <button id="nav-jump" class="btn outline sm" type="button" aria-haspopup="true" title="Jump to another property"><span class="lbl">Jump To ·&nbsp;</span><span id="nav-pos"></span><svg class="i sm"><use href="#i-chev"/></svg></button>
+          <button id="nav-next" class="btn ghost sm" type="button" title="Next property"><span class="lbl">Next</span><svg class="i sm flip"><use href="#i-back"/></svg></button>
+        </div>
+      </div>
       <div class="card prop-head">
         <div class="head-row"><div>
           <div class="eyebrow-row"><span class="eyebrow">Property Context</span><span id="p-tag"></span></div>
@@ -1513,12 +1539,12 @@ function route() {
 }
 window.addEventListener('hashchange', route);
 const goTo = id => { location.hash = '#/p/' + encodeURIComponent(id); };
-function renderAll() { if (!loaded) return; if (openId) applyRecord(); else renderHome(); if (currentUser) { renderAvatar(); showImpBar(); } }
+function renderAll() { if (!loaded) return; if (openId) { applyRecord(); renderNav(); } else renderHome(); if (currentUser) { renderAvatar(); showImpBar(); } }
 
 // =============================================================== properties home
 function showHome() {
   if (pending) flushNow();
-  openId = null; document.body.classList.remove('locked');
+  openId = null; navIds = null; document.body.classList.remove('locked');
   $('view-check').hidden = true; $('view-home').hidden = false; fadeIn('view-home');
   renderHome();
 }
@@ -1533,6 +1559,36 @@ function searchHit(d, q) {
     if (i >= 0) return { ok: true, label, text: s, at: i, first: label === '' }; }
   return { ok: false };
 }
+// The properties on the current tab, matching the search, in the Properties page's order: [[id, record, hit], …]
+function listRows(t = tab, q = query.trim().toLowerCase()) {
+  return Object.entries(records).filter(([, d]) => d && d.address && statusOf(d) === t).map(([id, d]) => [id, d, searchHit(d, q)]).filter(r => r[2].ok)
+    .sort((a, b) => tsOf(b[1].updatedAt) - tsOf(a[1].updatedAt) || a[1].address.localeCompare(b[1].address));
+}
+// Previous / Next / Jump To on a property step through the list it was opened from, fixed when it opened (so saving an
+// answer doesn't move it). Opened from a link instead: its own tab's list.
+let navIds = null;
+function navList() { return (navIds || []).filter(id => records[id] && records[id].address); }
+function renderNav() {
+  const ids = navList(), i = ids.indexOf(openId), n = ids.length;
+  $('nav-pos').textContent = i >= 0 ? (i + 1) + ' of ' + n : n + ' Properties';
+  $('nav-prev').disabled = i <= 0; $('nav-next').disabled = i < 0 || i >= n - 1;
+}
+$('nav-prev').onclick = () => { const ids = navList(), i = ids.indexOf(openId); if (i > 0) goTo(ids[i - 1]); };
+$('nav-next').onclick = () => { const ids = navList(), i = ids.indexOf(openId); if (i >= 0 && i < ids.length - 1) goTo(ids[i + 1]); };
+$('nav-jump').onclick = e => {
+  const ids = navList();
+  const item = id => { const d = records[id], n = doneCount(d), pct = Math.round(n / CHECK_COUNT * 100);
+    return `<button type="button" data-jump="${esc(id)}"${id === openId ? ' aria-current="true"' : ''}><span class="ring${n === CHECK_COUNT ? ' full' : ''}" style="--p:${pct}" aria-hidden="true"><b>${pct}%</b></span><span class="addr">${esc(d.address)}</span>${tagHtml(statusOf(d))}</button>`; };
+  const m = openMenu(e.currentTarget, `<input class="input" type="search" data-jump-q placeholder="Search these ${ids.length} properties" autocomplete="off">
+    <div class="jump-list">${ids.map(item).join('') || '<div class="muted">No Properties</div>'}</div>`, 'jump');
+  const q = m.querySelector('[data-jump-q]');
+  q.oninput = () => { const t = q.value.trim().toLowerCase(); m.querySelectorAll('[data-jump]').forEach(b => { b.hidden = !!t && !searchHit(records[b.dataset.jump], t).ok; }); };
+  q.onkeydown = ev => { if (ev.key === 'Enter') { const b = [...m.querySelectorAll('[data-jump]')].find(x => !x.hidden); if (b) b.click(); } };
+  m.querySelectorAll('[data-jump]').forEach(b => b.onclick = () => { closeMenu(); if (b.dataset.jump !== openId) goTo(b.dataset.jump); });
+  const cur = m.querySelector('[aria-current="true"]'); if (cur) cur.scrollIntoView({ block: 'nearest' });
+  if (!matchMedia('(max-width: 639px)').matches) setTimeout(() => q.focus(), 30);
+};
+
 function renderHome() {
   const all = Object.entries(records).filter(([, d]) => d && d.address);
   const counts = { open: 0, closed: 0, cancelled: 0 };
@@ -1540,8 +1596,7 @@ function renderHome() {
   document.querySelectorAll('[data-n]').forEach(el => el.textContent = counts[el.dataset.n]);
   document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === tab)));
   const q = query.trim().toLowerCase();
-  const rows = all.filter(([, d]) => statusOf(d) === tab).map(([id, d]) => [id, d, searchHit(d, q)]).filter(r => r[2].ok)
-    .sort((a, b) => tsOf(b[1].updatedAt) - tsOf(a[1].updatedAt) || a[1].address.localeCompare(b[1].address));
+  const rows = listRows(tab, q);
   const openOnes = all.filter(([, d]) => statusOf(d) === 'open');
   $('st-open').textContent = counts.open; $('st-closed').textContent = counts.closed;
   const avg = openOnes.length ? Math.round(openOnes.reduce((n, [, d]) => n + doneCount(d), 0) / openOnes.length / CHECK_COUNT * 100) : 0;
@@ -1640,6 +1695,11 @@ function showChecklist(id) {
   if (pending && pending.id !== id) flushNow();
   const fresh = openId !== id;
   openId = id;
+  if (!navIds || !navIds.includes(id)) {   // fix the list when a property opens: the one it came from, else its own tab
+    navIds = listRows().map(r => r[0]);
+    if (!navIds.includes(id) && records[id]) navIds = listRows(statusOf(records[id]), '').map(r => r[0]);
+  }
+  renderNav();
   $('view-home').hidden = true; $('view-check').hidden = false; if (fresh) fadeIn('view-check');
   if (fresh) {
     document.querySelectorAll('.sec').forEach((s, i) => setOpen(s, i === 0));

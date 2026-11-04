@@ -42,6 +42,12 @@ Everything is built from one script: `python3 docs/guide/build_guide.py` writes 
 (+ `help/img/`). Screenshots come from the app on the local emulators with made-up data:
 `cd tests && node run.mjs guide-shots.mjs`.
 
+## Moving Between Properties
+
+On a property, **Previous**, **Jump To · 3 of 26** and **Next** step through the list it was opened from (the same tab,
+search and order as the Properties page), fixed when it opened so saving an answer doesn't reorder it. Opened from a
+link, it uses that property's own tab. Jump To is a searchable list; Enter opens the first match.
+
 ## Header
 
 The header follows the Universal Team Hub's header standard (hub repo, `docs/HEADER.md`): a 1280px page with 24px
