@@ -100,7 +100,7 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 1280, 1180, 10
   // menus
   await page.click('#avatar-btn'); await page.waitForSelector('.menu.acct'); await noSideways(page, tag + ' photo menu');
   const items = await page.$$eval('.menu.acct > button', b => b.map(x => x.textContent.replace(/\s+/g, ' ').trim()));
-  assert.deepEqual(items.map(x => x.replace(/\s*\d+$/, '')), phone ? ['My Settings', "Who's Online", 'Help', 'Sign Out'] : ['My Settings', 'Help', 'Sign Out']);
+  assert.deepEqual(items.map(x => x.replace(/\s*\d+$/, '')), phone ? ['My Settings', 'Team Members', "Who's Online", 'Help', 'Sign Out'] : ['My Settings', 'Team Members', 'Help', 'Sign Out']);
   if (phone) assert.equal(await page.$$eval('.menu.acct [data-theme-btn]', b => b.map(x => x.textContent.trim()).join(',')), 'Light,Dark');
   await shot(page, `${tag}-5-photo-menu`); await page.keyboard.press('Escape');
   await page.click('#live-pill'); await page.waitForSelector('.menu.sync'); assert.match(await page.textContent('.menu.sync'), /Live: Everything Is Saved/);
@@ -146,14 +146,14 @@ for (const [who, role] of [['morgan.manager@totalchb.com', 'Manager'], ['lee.lea
 // Login As User (Remy only): the picker, then the amber bar, desktop and phone
 for (const width of [1280, 390]) {
   const { context, page } = await open({ width, height: width < 640 ? 844 : 900, who: 'systems@totalchb.com' });
-  await page.click('#avatar-btn'); await page.click('[data-loginas]'); await page.waitForSelector('[data-as="alex.tester@totalchb.com"]');
-  await shot(page, `loginas-${width}-1-picker`);
-  await page.click('[data-as="alex.tester@totalchb.com"]'); await page.waitForSelector('.modal h2:has-text("Login As Alex Tester?")'); await shot(page, `loginas-${width}-2-confirm`);
+  await page.click('#avatar-btn'); await shot(page, `loginas-${width}-0-menu`); await page.click('[data-team]'); await page.waitForSelector('.tm [data-as="alex.tester@totalchb.com"]');
+  await noSideways(page, width + ' team members'); await shot(page, `loginas-${width}-1-team-members`);
+  await page.click('.tm [data-as="alex.tester@totalchb.com"]'); await page.waitForSelector('.modal h2:has-text("Login As Alex Tester?")'); await shot(page, `loginas-${width}-2-confirm`);
   await page.click('.modal [data-m-ok]'); await page.waitForSelector('#imp-bar:not([hidden])', { timeout: 15000 }); await page.waitForTimeout(600);
   await noSideways(page, width + ' login as'); await shot(page, `loginas-${width}-3-viewing-as`);
   await page.evaluate(() => window.scrollTo(0, 700)); await page.waitForTimeout(400); await noSideways(page, width + ' login as scrolled'); await shot(page, `loginas-${width}-4-scrolled`);
   await page.click('#imp-back'); await page.waitForSelector('#imp-bar[hidden]', { state: 'attached', timeout: 15000 });
-  ok(`${width}: Login As User picker, amber bar, Back To Remy`);
+  ok(`${width}: Team Members with Login As User, amber bar, Back To Remy`);
   await context.close();
 }
 

@@ -54,8 +54,9 @@ emulator output).
 
 ## Login As User (Remy Only)
 
-Like the Team Hub: Remy (systems@totalchb.com) opens the photo menu → **Login As User** → picks a name, and sees and
-works in TC Checklist exactly as that person does (their role, Help, passwords and delete rights). An amber bar shows
+Like the Team Hub: the photo menu has **Team Members** for managers (who's on the team, from the hub's directory,
+read-only here: roles and departments are changed in the Team Hub). Remy (systems@totalchb.com) gets **Login As User**
+on each person there, and sees and works in TC Checklist exactly as that person does (their role, Help, passwords and delete rights). An amber bar shows
 "Viewing TC Checklist as …" with **Back To Remy**. `api/login-as.js` checks Remy's sign-in and signs him in as them with a
 one-time Firebase sign-in marked `imp` (never from a borrowed sign-in); `{ back: true }` returns him without Google.
 While viewing as someone, saves add `updatedVia` (Remy's email) next to `updatedBy`, and the property shows "(via …)";
