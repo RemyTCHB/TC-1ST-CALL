@@ -3,3 +3,4 @@ tests/out/
 *.log
 docs/guide/.crops/
 docs/guide/__pycache__/
+node_modules/

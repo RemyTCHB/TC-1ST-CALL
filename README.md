@@ -52,6 +52,19 @@ It slims when scrolled, and the Open / Closed / Cancelled tabs line pins under i
 themes and all three roles, with made-up data: `cd tests && node run.mjs header-shots.mjs` (`VERBOSE=1` shows the
 emulator output).
 
+## Login As User (Remy Only)
+
+Like the Team Hub: Remy (systems@totalchb.com) opens the photo menu → **Login As User** → picks a name, and sees and
+works in TC Checklist exactly as that person does (their role, Help, passwords and delete rights). An amber bar shows
+"Viewing TC Checklist as …" with **Back To Remy**. `api/login-as.js` checks Remy's sign-in and signs him in as them with a
+one-time Firebase sign-in marked `imp` (never from a borrowed sign-in); `{ back: true }` returns him without Google.
+While viewing as someone, saves add `updatedVia` (Remy's email) next to `updatedBy`, and the property shows "(via …)";
+the next ordinary save removes it. Presence isn't written for them. The person must have signed in once.
+
+Vercel setting (name only): `TC_FIREBASE_SERVICE_ACCOUNT`, the whole JSON key of a service account in the
+`tc-1st-call-checklist` Firebase project. Without it, Login As User answers "not set up yet" and nothing else changes.
+It's the only function that needs a package (`firebase-admin`, in `package.json`).
+
 ## Deleting A Property
 
 Deleting follows the Team Hub's rules and uses its delete passwords (owner, 2026-11-03): Remy confirms; anyone with their

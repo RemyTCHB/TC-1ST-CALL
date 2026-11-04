@@ -143,5 +143,19 @@ for (const [who, role] of [['morgan.manager@totalchb.com', 'Manager'], ['lee.lea
   await context.close();
 }
 
+// Login As User (Remy only): the picker, then the amber bar, desktop and phone
+for (const width of [1280, 390]) {
+  const { context, page } = await open({ width, height: width < 640 ? 844 : 900, who: 'systems@totalchb.com' });
+  await page.click('#avatar-btn'); await page.click('[data-loginas]'); await page.waitForSelector('[data-as="alex.tester@totalchb.com"]');
+  await shot(page, `loginas-${width}-1-picker`);
+  await page.click('[data-as="alex.tester@totalchb.com"]'); await page.waitForSelector('.modal h2:has-text("Login As Alex Tester?")'); await shot(page, `loginas-${width}-2-confirm`);
+  await page.click('.modal [data-m-ok]'); await page.waitForSelector('#imp-bar:not([hidden])', { timeout: 15000 }); await page.waitForTimeout(600);
+  await noSideways(page, width + ' login as'); await shot(page, `loginas-${width}-3-viewing-as`);
+  await page.evaluate(() => window.scrollTo(0, 700)); await page.waitForTimeout(400); await noSideways(page, width + ' login as scrolled'); await shot(page, `loginas-${width}-4-scrolled`);
+  await page.click('#imp-back'); await page.waitForSelector('#imp-bar[hidden]', { state: 'attached', timeout: 15000 });
+  ok(`${width}: Login As User picker, amber bar, Back To Remy`);
+  await context.close();
+}
+
 await browser.close(); await env.cleanup();
 console.log(`  ${n} passed, ${n} checks`);
