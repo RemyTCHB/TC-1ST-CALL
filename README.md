@@ -42,6 +42,16 @@ Everything is built from one script: `python3 docs/guide/build_guide.py` writes 
 (+ `help/img/`). Screenshots come from the app on the local emulators with made-up data:
 `cd tests && node run.mjs guide-shots.mjs`.
 
+## Header
+
+The header follows the Universal Team Hub's header standard (hub repo, `docs/HEADER.md`): a 1280px page with 24px
+sides (16px on phones), the logo and one **Live clock** (Eastern time from the server, coloured by the save status;
+click it for the details, Retry Now or OK), then Active, light/dark and the photo menu (My Settings, Help, Sign Out).
+It slims when scrolled, and the Open / Closed / Cancelled tabs line pins under it. On phones (under 640px) it is one row
+(logo, time, photo) and Active and light/dark move into the photo menu. Checks and screenshots for every width, both
+themes and all three roles, with made-up data: `cd tests && node run.mjs header-shots.mjs` (`VERBOSE=1` shows the
+emulator output).
+
 ## Deleting A Property
 
 Deleting follows the Team Hub's rules and uses its delete passwords (owner, 2026-11-03): Remy confirms; anyone with their

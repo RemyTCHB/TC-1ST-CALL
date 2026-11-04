@@ -198,7 +198,7 @@ await check('Help: a Manager gets the Manager Guide with the TC and own password
     assert.match(await M.page.textContent('.help-panel [data-tc-pw]'), /TC Team Leader password/);
     if (own) { await M.page.evaluate(() => document.querySelector('[data-tc-pw]').scrollIntoView()); await M.page.waitForTimeout(300);
       await M.page.screenshot({ path: join(OUT, 'light-desktop-7c-help-manager.png') }); }
-    await M.page.keyboard.press('Escape'); await M.page.click('#avatar-btn'); await M.page.click('[data-signout]'); await M.page.waitForSelector('#gate:not([hidden])');
+    await M.page.keyboard.press('Escape'); await M.page.click('#avatar-btn'); await M.page.click('[data-signout]'); await M.page.click('[data-m-ok]'); await M.page.waitForSelector('#gate:not([hidden])');
     await M.context.close();
   }
 });
@@ -246,7 +246,7 @@ await check('done = the box has text: clearing it makes it open again; an old ti
   await A.page.fill('[data-ans="0"]', ''); assert.equal(await mark(0), 'Answered', 'question 0 was ticked before, so it stays done');
   await A.page.fill('[data-ans="0"]', 'Example Mortgage Co'); await A.page.fill('[data-ans="2"]', 'B typed this foreclosure note');
   await A.page.click('#p-address');
-  await A.page.waitForFunction(() => document.getElementById('save-text').textContent === 'All Saved' || document.getElementById('save-text').textContent === 'Saved', null, { timeout: 8000 });
+  await A.page.waitForFunction(() => ['idle', 'saved'].includes(document.getElementById('live-pill').dataset.state), null, { timeout: 8000 });
   assert.match(await A.page.textContent('#p-count'), /^7 of 79 Answered$/);
   assert.equal(await A.page.textContent('[data-sec-count="0"]'), '6 / 7');
   const d = await read(lid); assert.deepEqual(d.checks, legacyRecord().checks, 'stored ticks untouched');
@@ -295,7 +295,7 @@ await check('Reopen puts it back to Open and editable', async () => {
   await A.page.click(`.prop-card[data-id="${lid}"] .prop-title`); await A.page.click('#reopen-btn'); await A.page.click('[data-m-ok]');
   await A.page.waitForSelector('#locked-note', { state: 'hidden' });
   const d = await read(lid); assert.equal(d.status, 'open'); assert.equal(d.statusLog.length, 2);
-  await A.page.fill('[data-ans="3"]', 'No late payments'); await A.page.waitForFunction(() => document.getElementById('save-text').textContent !== 'Saving…', null, { timeout: 8000 });
+  await A.page.fill('[data-ans="3"]', 'No late payments'); await A.page.waitForFunction(() => document.getElementById('live-pill').dataset.state !== 'saving', null, { timeout: 8000 });
   await A.page.click('a.link-btn');
 });
 await check('New Property with the old unsaved draft: same full shape as the original app, draft cleared', async () => {
@@ -347,7 +347,7 @@ await check('Delete: a Manager needs the TC Team Leader password; a wrong one de
   await M.page.fill('[data-m-input]', 'sample-pass'); await M.page.click('[data-m-ok]');
   await M.page.waitForSelector('#view-home:not([hidden])'); assert.equal(await read(id), null);
   await A.page.waitForFunction(i => !document.querySelector(`.prop-card[data-id="${i}"]`), id, { timeout: 10000 });
-  await M.page.click('#avatar-btn'); await M.page.click('[data-signout]'); await M.page.waitForSelector('#gate:not([hidden])'); await M.context.close();
+  await M.page.click('#avatar-btn'); await M.page.click('[data-signout]'); await M.page.click('[data-m-ok]'); await M.page.waitForSelector('#gate:not([hidden])'); await M.context.close();
 });
 await check('presence: same active_users records as before, both people counted', async () => {
   await A.page.waitForFunction(() => document.getElementById('active-count').textContent === '2', null, { timeout: 10000 });
@@ -356,7 +356,7 @@ await check('presence: same active_users records as before, both people counted'
   assert.equal(p.find(x => x.email === 'bea.sample@totalchb.com') ? 1 : 0, 1);
 });
 await check('Sign Out sets this device offline (lastActive 0) and returns to sign-in', async () => {
-  await B.page.click('#avatar-btn'); await B.page.click('[data-signout]'); await B.page.waitForSelector('#gate:not([hidden])');
+  await B.page.click('#avatar-btn'); await B.page.click('[data-signout]'); await B.page.click('[data-m-ok]'); await B.page.waitForSelector('#gate:not([hidden])');
   const p = await readPresence(), b = p.find(x => x.email === 'bea.sample@totalchb.com');
   assert.ok(Object.values(b.sessions).every(s => s.lastActive === 0));
 });
@@ -388,7 +388,7 @@ for (const theme of ['light', 'dark']) for (const [w, h, size] of [[1280, 900, '
     assert.ok(await noHScroll(p), 'checklist scrolls sideways');
     await p.screenshot({ path: name('3-checklist') }); await p.screenshot({ path: name('4-checklist-full'), fullPage: true });
     await p.click('#status-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('5-status-menu') }); await p.keyboard.press('Escape');
-    await p.click('#active-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('6-active-users') }); await p.keyboard.press('Escape');
+    if (size === 'phone') { await p.click('#avatar-btn'); await p.click('[data-online]'); } else await p.click('#active-btn'); await p.waitForTimeout(150); await p.screenshot({ path: name('6-active-users') }); await p.keyboard.press('Escape');
     await p.click('#delete-btn'); await p.waitForSelector('.modal'); await p.waitForTimeout(150); await p.screenshot({ path: name('7-delete-confirm') }); await p.click('[data-m-cancel]');
     await p.click('#avatar-btn'); await p.click('[data-help]'); await p.waitForSelector('.help-panel h2[data-sec]'); await p.waitForTimeout(250); await p.screenshot({ path: name('7b-help') }); await p.keyboard.press('Escape');
     await p.click('a.link-btn'); await p.click('[data-tab="closed"]'); await p.click('.prop-card .prop-title'); await p.waitForSelector('#locked-note:not([hidden])'); await p.waitForTimeout(500);
