@@ -367,6 +367,58 @@ await check('a non-totalchb.com account is turned away', async () => {
 });
 await check('no console errors', () => { const errs = [...A.errors, ...B.errors].filter(e => !/ERR_FAILED|net::|Failed to load resource/.test(e)); assert.deepEqual(errs, []); });
 
+// ---------------------------------------------------------------- moving between properties (Previous / Next / Jump To)
+console.log('\nMoving between properties');
+await (async () => {
+  const addr = i => `${i}0 Nav Sample Way, Exampleton FL 3304${i}`, ids = [1, 2, 3].map(i => safeId(addr(i)));
+  const closedAddr = '99 Nav Closed Ct, Exampleton FL 33049', closedId = safeId(closedAddr);
+  await env.withSecurityRulesDisabled(async c => { const f = c.firestore();
+    for (const i of [1, 2, 3]) await setDoc(doc(f, CL(ids[i - 1])), { ...legacyRecord(), address: addr(i), updatedAt: `2026-10-0${i}T15:00:00.000Z` });
+    await setDoc(doc(f, CL(closedId)), { ...legacyRecord(), address: closedAddr, status: 'closed', statusAt: 1, statusBy: 'morgan.manager@totalchb.com' }); });
+  const N = await openApp(browser, 'morgan.manager@totalchb.com'), p = N.page;
+  const pos = () => p.textContent('#nav-pos'), at = () => p.evaluate(() => decodeURIComponent(location.hash.replace('#/p/', '')));
+  const order = [ids[2], ids[1], ids[0]];   // newest first, like the Properties page
+  await check('opened from a search: Previous / Next step through that list in the page\'s order', async () => {
+    await p.fill('#search', 'nav sample'); await p.waitForTimeout(200);
+    assert.deepEqual(await p.$$eval('.prop-card', c => c.map(x => x.dataset.id)), order);
+    await p.click(`.prop-card[data-id="${order[0]}"] .prop-title`); await p.waitForSelector('#view-check:not([hidden])');
+    assert.equal(await pos(), '1 of 3'); assert.ok(await p.isDisabled('#nav-prev')); assert.ok(await p.isEnabled('#nav-next'));
+    await p.click('#nav-next'); await p.waitForFunction(() => document.getElementById('nav-pos').textContent === '2 of 3');
+    assert.equal(await at(), order[1]);
+    assert.equal(await pos(), '2 of 3'); assert.equal(await p.textContent('#p-address'), addr(2));
+  });
+  await check('answering a question doesn\'t reorder the list while you step through it', async () => {
+    await p.fill('[data-ans="3"]', 'Answered while stepping through');
+    await p.waitForFunction(() => ['idle', 'saved'].includes(document.getElementById('live-pill').dataset.state), null, { timeout: 8000 });
+    assert.equal(await pos(), '2 of 3');
+    await p.click('#nav-next'); await p.waitForFunction(() => document.getElementById('nav-pos').textContent === '3 of 3');
+    assert.equal(await at(), order[2]); assert.ok(await p.isDisabled('#nav-next'));
+    await p.click('#nav-prev'); await p.waitForFunction(() => document.getElementById('nav-pos').textContent === '2 of 3');
+  });
+  await check('Jump To: the same list, the open one marked, searchable, Enter opens the first match', async () => {
+    await p.click('#nav-jump'); await p.waitForSelector('.menu.jump');
+    assert.deepEqual(await p.$$eval('.menu.jump [data-jump]', b => b.map(x => x.dataset.jump)), order);
+    assert.equal(await p.getAttribute(`.menu.jump [data-jump="${order[1]}"]`, 'aria-current'), 'true');
+    await p.fill('[data-jump-q]', '10 nav'); assert.deepEqual(await p.$$eval('.menu.jump [data-jump]:not([hidden])', b => b.map(x => x.dataset.jump)), [ids[0]]);
+    await p.press('[data-jump-q]', 'Enter'); await p.waitForFunction(() => document.getElementById('nav-pos').textContent === '3 of 3');
+    assert.equal(await p.textContent('#p-address'), addr(1));
+  });
+  await check('opened from a link: its own tab\'s list (a Closed property steps through Closed)', async () => {
+    await p.goto('http://localhost:5173/?emulator#/p/' + encodeURIComponent(closedId)); await p.waitForSelector('#view-check:not([hidden])');
+    await p.waitForFunction(() => /of \d+$/.test(document.getElementById('nav-pos').textContent));
+    await p.click('#nav-jump'); await p.waitForSelector('.menu.jump');
+    const tags = await p.$$eval('.menu.jump [data-jump] .tag', t => t.map(x => x.textContent.trim().toLowerCase()));
+    assert.ok(tags.length >= 1 && tags.every(t => t === 'closed'), tags.join(',')); await p.keyboard.press('Escape');
+    await p.click('a.link-btn'); await p.waitForSelector('#view-home:not([hidden])');
+  });
+  await check('moving between properties: no console errors, no sideways scroll on a phone', async () => {
+    await p.setViewportSize({ width: 360, height: 800 }); await p.click(`.prop-card .prop-title`); await p.waitForSelector('#view-check:not([hidden])');
+    assert.ok(await noHScroll(p)); assert.ok(await p.isVisible('#nav-next'));
+    const errs = N.errors.filter(e => !/ERR_FAILED|net::|Failed to load resource/.test(e)); assert.deepEqual(errs, []);
+  });
+  await N.context.close();
+})();
+
 // ---------------------------------------------------------------- Login As User (Remy only, like the Team Hub)
 console.log('\nLogin As User (Remy only)');
 await (async () => {

@@ -143,6 +143,18 @@ for (const [who, role] of [['morgan.manager@totalchb.com', 'Manager'], ['lee.lea
   await context.close();
 }
 
+// moving between properties: Previous / Jump To / Next, desktop and phone
+for (const [width, theme] of [[1280, 'light'], [390, 'light'], [360, 'dark']]) {
+  const { context, page } = await open({ width, height: width < 640 ? 844 : 900, theme });
+  await page.click('.prop-card:nth-child(3) .prop-title'); await page.waitForSelector('#view-check:not([hidden])'); await page.waitForTimeout(400);
+  assert.equal(await page.textContent('#nav-pos'), '3 of 12');
+  await noSideways(page, width + ' nav'); await shot(page, `nav-${width}-${theme}-1-bar`);
+  await page.click('#nav-jump'); await page.waitForSelector('.menu.jump'); await noSideways(page, width + ' jump'); await shot(page, `nav-${width}-${theme}-2-jump`);
+  await page.keyboard.press('Escape'); await page.click('#nav-next'); await page.waitForFunction(() => document.getElementById('nav-pos').textContent === '4 of 12');
+  ok(`${width} ${theme}: Previous / Jump To / Next`);
+  await context.close();
+}
+
 // Login As User (Remy only): the picker, then the amber bar, desktop and phone
 for (const width of [1280, 390]) {
   const { context, page } = await open({ width, height: width < 640 ? 844 : 900, who: 'systems@totalchb.com' });
