@@ -200,8 +200,6 @@ svg.i.lg { width: 22px; height: 22px; }
 .header.slim .header-row { padding-top: 6px; padding-bottom: 6px; }
 .brand { display: flex; align-items: center; gap: 14px; text-decoration: none; min-width: 0; }
 .brand .logo-mark { height: 64px; }
-.brand .app-name { font-family: var(--font-display); font-weight: 800; font-size: 20px; color: var(--tchb-indigo-700);
-  white-space: nowrap; padding-left: 14px; border-left: 1px solid var(--border-strong); line-height: 1.1; }
 .header .spacer { flex: 1; }
 /* the Live clock: one pill that is both the clock and the save status (the hub's) */
 .live-pill { position: relative; overflow: hidden; flex: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; height: 40px;
@@ -329,14 +327,20 @@ h1.title { font-weight: 800; font-size: 40px; line-height: 1.15; color: var(--tc
 .stats { display: flex; gap: 28px; align-items: center; }
 .stat { display: flex; flex-direction: column; gap: 2px; align-items: center; text-align: center; }
 .stat b { font-family: var(--font-display); font-weight: 800; font-size: 32px; line-height: 1; color: var(--tchb-indigo-700); font-variant-numeric: tabular-nums; }
-.stats .stat > b { font-size: 24px; }
+.stats .stat > b { font-size: 32px; }
+/* the tabs line is the page's main control: bigger tabs, numbers and ring */
+.tabs-line .seg { padding: 5px; }
+.tabs-line .seg button { padding: 11px 22px; font-size: 17px; }
+.tabs-line .seg button .n { font-size: 14px; }
+.stats { gap: 36px; }
+.stats .ring { width: 68px; height: 68px; } .stats .ring b { width: 54px; height: 54px; font-size: 16px; }
 .stat.ring-stat { flex-direction: row; gap: 10px; text-align: left; }
 .stat.ring-stat > span { line-height: 1.3; }
 .stat b.green { color: var(--tchb-green-600); }
 .stat b.muted { color: var(--text-muted); }
 .stat b .slash { color: var(--tchb-gray-300); margin: 0 2px; }
 .stat span { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
-.stats .stat > span { font-size: 12px; }
+.stats .stat > span { font-size: 14px; }
 h1.title .accent { color: var(--tchb-red-500); }
 
 /* ---------------------------------------------------------------- properties home */
@@ -556,9 +560,6 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   .hg .cards { grid-template-columns: 1fr; }
 }
 
-/* ---------------------------------------------------------------- narrow windows: the app's name gives way first */
-@media (max-width: 900px) and (min-width: 640px) { .brand .app-name { display: none; } }
-
 /* ---------------------------------------------------------------- phones (under 640px, the hub's) */
 @media (max-width: 639px) {
   /* row 1: logo, Live clock (time only), photo; Active and light/dark move into the photo menu */
@@ -569,7 +570,6 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   .brand .logo-mark { height: 40px; }
   :root .brand .logo-mark .logo-l, :root[data-theme] .brand .logo-mark .logo-d { display: none; }
   .brand .logo-mark .logo-m { display: block; width: 40px; height: 40px; border-radius: 10px; }
-  .brand .app-name { display: none; }
   #active-btn, .h-right .seg.theme { display: none; }
   .live-pill { font-size: 12px; padding: 0 12px 0 10px; gap: 6px; }
   #clock-d { display: none; }
@@ -581,7 +581,11 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   /* the stats take their own row under the tabs, and hide once the tabs pin */
   .tabs-line { gap: 12px; }
   .tabs-line .seg { flex: 1 1 100%; }
-  .tabs-line .seg button { flex: 1 1 auto; justify-content: center; padding: 8px 6px; }
+  .tabs-line .seg button { flex: 1 1 auto; justify-content: center; padding: 9px 6px; font-size: 15px; }
+  .tabs-line .seg button .n { font-size: 12px; }
+  .stats .stat > b { font-size: 26px; }
+  .stats .stat > span { font-size: 12px; }
+  .stats .ring { width: 52px; height: 52px; } .stats .ring b { width: 41px; height: 41px; font-size: 12px; }
   .stats { width: 100%; justify-content: space-around; gap: 12px; }
   .tabs-line.pinned .stats { display: none; }
   #new-btn { width: 100%; }
@@ -670,7 +674,7 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   <header class="header" id="hdr">
     <div class="header-row">
       <div class="h-left">
-        <a class="brand" href="#/" aria-label="TC Checklist home"><span class="logo-mark"><img class="logo-l" src="logo-light.png" alt="Total Cash Home Buyers"><img class="logo-d" src="logo-dark.png" alt="Total Cash Home Buyers"><img class="logo-m" src="logo-mark.png" alt="Total Cash Home Buyers" width="40" height="40"></span><span class="app-name">TC Checklist</span></a>
+        <a class="brand" href="#/" aria-label="TC Checklist home"><span class="logo-mark"><img class="logo-l" src="logo-light.png" alt="Total Cash Home Buyers"><img class="logo-d" src="logo-dark.png" alt="Total Cash Home Buyers"><img class="logo-m" src="logo-mark.png" alt="Total Cash Home Buyers" width="40" height="40"></span></a>
         <!-- the Live clock: Eastern time from the server's clock, coloured by the save status; opens the save details -->
         <button id="live-pill" class="live-pill" data-state="idle" type="button" aria-haspopup="true" aria-label="Save status: Live. Show details" title="Every change is saved for the whole team"><span class="dot"></span><span class="t"><span id="clock-d"></span><span id="clock-t">&nbsp;</span></span></button>
       </div>
@@ -691,7 +695,7 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   <main class="main">
     <!-- Properties home -->
     <section id="view-home" class="list" hidden>
-      <h1 class="title page-title">TC <span class="accent">Properties</span></h1>
+      <h1 class="title page-title">TC <span class="accent">Checklist</span></h1>
       <div id="draft-note" class="note gold" hidden>
         <svg class="i"><use href="#i-alert"/></svg>
         <span class="grow">This device has an unsaved checklist from before (started without an address).</span>
