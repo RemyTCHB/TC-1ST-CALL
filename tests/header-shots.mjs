@@ -70,11 +70,13 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 1280, 1180, 10
   const h = await page.evaluate(() => {
     const box = id => { const r = document.getElementById(id).getBoundingClientRect(); return { h: Math.round(r.height), w: Math.round(r.width), top: Math.round(r.top), vis: getComputedStyle(document.getElementById(id)).display !== 'none' }; };
     const logo = document.querySelector('.brand .logo-mark').getBoundingClientRect();
+    const shown = [...document.querySelectorAll('.brand .logo-mark img')].filter(i => getComputedStyle(i).display !== 'none').map(i => i.className);
     return { pill: box('live-pill'), active: box('active-btn'), avatar: box('avatar-btn'), logo: Math.round(logo.height),
-      text: document.getElementById('live-pill').innerText.trim(), state: document.getElementById('live-pill').dataset.state };
+      shown, text: document.getElementById('live-pill').innerText.trim(), state: document.getElementById('live-pill').dataset.state };
   });
   assert.equal(h.pill.h, 40, 'clock pill is 40px high'); assert.equal(h.avatar.h, 40);
   assert.equal(h.logo, phone ? 40 : 64, 'logo height');
+  assert.deepEqual(h.shown, [phone ? 'logo-m' : theme === 'dark' ? 'logo-d' : 'logo-l'], 'phones show the round mark, desktops the full logo for the theme');
   assert.equal(h.state, 'idle');
   if (phone) { assert.match(h.text, /^\d{1,2}:\d\d:\d\d [AP]M E[SD]T$/, 'time only on phones: ' + h.text); assert.ok(!h.active.vis, 'Active moves into the menu on phones');
     assert.equal(h.pill.top, h.avatar.top, 'one row on phones'); }
