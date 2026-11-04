@@ -375,9 +375,15 @@ await (async () => {
   const call = async (body, token) => { const r = await fetch('http://localhost:5173/api/login-as', { method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) }, body: JSON.stringify(body) }); return { code: r.status, body: await r.json() }; };
   const R = await openApp(browser, REMY);
-  await check('only Remy has Login As User in the photo menu', async () => {
-    await A.page.click('#avatar-btn'); assert.equal(await A.page.$('[data-loginas]'), null); await A.page.keyboard.press('Escape');
-    await R.page.click('#avatar-btn'); assert.ok(await R.page.$('[data-loginas]')); await R.page.keyboard.press('Escape');
+  await check('Team Members (from the hub, read-only) for managers and Remy; Login As User on each person only for Remy', async () => {
+    await A.page.click('#avatar-btn'); assert.equal(await A.page.$('[data-team]'), null, 'members: no Team Members'); await A.page.keyboard.press('Escape');
+    const M2 = await openApp(browser, 'morgan.manager@totalchb.com');
+    await M2.page.click('#avatar-btn'); await M2.page.click('[data-team]'); await M2.page.waitForSelector('.tm');
+    const t = await M2.page.textContent('.tm'); assert.match(t, /Managers/); assert.match(t, /Alex Tester/); assert.match(t, /Edit In Team Hub/);
+    assert.equal(await M2.page.$('.tm [data-as]'), null, 'managers: no Login As'); await M2.context.close();
+    await R.page.click('#avatar-btn'); await R.page.click('[data-team]'); await R.page.waitForSelector(`.tm [data-as="${ALEX}"]`);
+    assert.equal(await R.page.$(`.tm [data-as="${REMY}"]`), null, 'not on himself');
+    await R.page.click('[data-tm-close]'); assert.equal(await R.page.$('.tm'), null);
   });
   await check('the server refuses: no sign-in, anyone but Remy, other domains, unknown people, Back To Remy without Login As', async () => {
     const remyTok = await R.page.evaluate(() => window.__emuToken()), alexTok = await A.page.evaluate(() => window.__emuToken());
@@ -390,12 +396,11 @@ await (async () => {
     assert.equal((await call({ back: true }, alexTok)).code, 403);
   });
   await check('Remy logs in as a member: the amber bar, their role, their delete rights', async () => {
-    await R.page.click('#avatar-btn'); await R.page.click('[data-loginas]'); await R.page.waitForSelector(`[data-as="${ALEX}"]`);
-    await R.page.fill('[data-as-q]', 'alex'); assert.ok(await R.page.isVisible(`[data-as="${ALEX}"]`)); assert.ok(await R.page.isHidden('[data-as="morgan.manager@totalchb.com"]'));
-    await R.page.click(`[data-as="${ALEX}"]`); await R.page.waitForSelector('.modal h2:has-text("Login As Alex Tester?")'); await R.page.click('.modal [data-m-ok]');
+    await R.page.click('#avatar-btn'); await R.page.click('[data-team]'); await R.page.waitForSelector(`.tm [data-as="${ALEX}"]`);
+    await R.page.click(`.tm [data-as="${ALEX}"]`); await R.page.waitForSelector('.modal h2:has-text("Login As Alex Tester?")'); await R.page.click('.modal [data-m-ok]');
     await R.page.waitForSelector('#imp-bar:not([hidden])', { timeout: 15000 });
     assert.equal(await R.page.textContent('#imp-text'), `Viewing TC Checklist as Alex Tester (${ALEX})`);
-    await R.page.click('#avatar-btn'); const menu = await R.page.textContent('.menu'); assert.match(menu, /Member · TC/); assert.equal(await R.page.$('[data-loginas]'), null, 'no Login As from a borrowed sign-in');
+    await R.page.click('#avatar-btn'); const menu = await R.page.textContent('.menu'); assert.match(menu, /Member · TC/); assert.equal(await R.page.$('[data-team]'), null, 'viewing as a member: no Team Members');
     await R.page.keyboard.press('Escape');
     const imp = await R.page.evaluate(() => window.__emuToken());
     assert.equal((await call({ email: 'morgan.manager@totalchb.com' }, imp)).code, 403, 'no Login As from a borrowed sign-in (server)');
@@ -411,10 +416,10 @@ await (async () => {
   });
   await check('Back To Remy: his own sign-in again, without Google', async () => {
     await R.page.click('#imp-back'); await R.page.waitForSelector('#imp-bar[hidden]', { state: 'attached', timeout: 15000 });
-    await R.page.waitForFunction(() => !!window.__emuToken);
+    await R.page.waitForSelector('#app:not([hidden])'); await R.page.waitForSelector('.prop-card');
     const tok = await R.page.evaluate(() => window.__emuToken()), email = JSON.parse(Buffer.from(tok.split('.')[1], 'base64url').toString()).email;
     assert.equal(email, REMY);
-    await R.page.click('#avatar-btn'); assert.ok(await R.page.$('[data-loginas]')); await R.page.keyboard.press('Escape');
+    await R.page.click('#avatar-btn'); await R.page.click('[data-team]'); await R.page.waitForSelector('.tm [data-as]'); await R.page.click('[data-tm-close]');
   });
   await check('the next ordinary save clears the "via" note', async () => {
     await R.page.click(`.prop-card[data-id="${id}"] .prop-title`); await R.page.waitForSelector('#view-check:not([hidden])');

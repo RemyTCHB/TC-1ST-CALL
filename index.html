@@ -159,22 +159,47 @@ svg.i.lg { width: 22px; height: 22px; }
   padding: 6px 14px; font-family: var(--font-display); font-weight: 700; font-size: 13px; }
 .imp-bar button:hover { background: rgba(255, 255, 255, 0.26); }
 .imp-bar button[disabled] { opacity: 0.7; cursor: default; }
-/* the Login As User picker */
-.as-list { display: flex; flex-direction: column; gap: 2px; max-height: 50vh; overflow-y: auto; margin: 0 -8px; }
-.as-list button { display: flex; align-items: center; gap: 10px; width: 100%; border: none; background: transparent; cursor: pointer; text-align: left;
-  padding: 8px; border-radius: 9px; }
-.as-list button:hover, .as-list button:focus-visible { background: var(--glass-hover); outline: none; }
-.as-list .who { display: flex; flex-direction: column; min-width: 0; }
-.as-list .who b { font-family: var(--font-display); font-size: 14px; color: var(--text-body); }
-.as-list .who span { font-size: 12px; color: var(--text-muted); overflow-wrap: anywhere; }
-.as-list .avatar { cursor: pointer; }
+/* Team Members (the hub's window, read-only here) */
+.tm-scrim { position: fixed; inset: 0; z-index: 60; background: rgba(10, 12, 24, 0.4); }
+.tm { position: fixed; z-index: 61; left: 50%; top: 24px; transform: translateX(-50%); width: calc(100% - 32px); max-width: 1060px;
+  max-height: calc(100vh - 48px); display: flex; flex-direction: column; background: var(--surface-card); border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-raised); overflow: hidden; }
+.tm-head { display: flex; align-items: flex-start; gap: 12px; padding: 18px 20px 12px; border-bottom: 1px solid var(--border-default); }
+.tm-head .grow, .tm-foot .grow { flex: 1; min-width: 0; }
+.tm-head h2 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 24px; color: var(--tchb-indigo-700); }
+.tm-head p { margin: 2px 0 0; font-size: 13px; color: var(--text-muted); }
+.tm-x { width: 40px; height: 40px; flex: none; border: none; background: transparent; border-radius: 10px; cursor: pointer; color: var(--tchb-gray-500);
+  display: flex; align-items: center; justify-content: center; }
+.tm-x:hover { background: var(--tchb-gray-100); }
+.tm-body { flex: 1; min-height: 0; overflow-y: auto; padding: 8px 20px 16px; }
+.tm-group { padding: 16px 0 6px; font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tchb-red-500); }
+.tm-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 10px 0; border-top: 1px solid var(--border-default); }
+.tm-who { display: flex; align-items: center; gap: 10px; flex: 1 1 190px; min-width: 0; }
+.avatar.tm-av { width: 40px; height: 40px; font-size: 13px; cursor: default; border: none; }
+.tm-id { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.tm-id b { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--text-body); }
+.tm-id > span { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tm-loginas { align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; padding: 3px 10px; border-radius: 999px; cursor: pointer;
+  font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: #b45309; background: #fff1e0;
+  border: 1px solid rgba(180, 83, 9, 0.35); }
+.tm-loginas:hover { filter: brightness(0.96); }
+.tm-loginas[disabled] { opacity: 0.6; cursor: default; }
+.tm-loginas svg.i { width: 12px; height: 12px; }
+.tm-chip { width: 140px; padding: 8px 12px; border-radius: 999px; font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--tchb-indigo-700);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: var(--glass-bg); background-image: var(--glass-sheen);
+  border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); }
+.tm-foot { display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-top: 1px solid var(--border-default); }
+@media (max-width: 639px) {
+  .tm { top: auto; bottom: 0; left: 0; transform: none; width: 100%; max-height: 92vh; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+  .tm-who { flex: 1 1 100%; }
+  .tm-chip { width: auto; flex: 1 1 0; text-align: center; }
+  .tm-row .tm-chip:first-of-type { margin-left: 50px; }
+}
 /* scrolled: only the padding slims, and the bar goes nearly solid; the logo, clock and photo keep their size */
 .header.slim { background: color-mix(in srgb, var(--surface-card) 94%, transparent); }
 .header.slim .header-row { padding-top: 6px; padding-bottom: 6px; }
 .brand { display: flex; align-items: center; gap: 14px; text-decoration: none; min-width: 0; }
 .brand .logo-mark { height: 64px; }
-.brand .app-name { font-family: var(--font-display); font-weight: 800; font-size: 20px; color: var(--tchb-indigo-700);
-  white-space: nowrap; padding-left: 14px; border-left: 1px solid var(--border-strong); line-height: 1.1; }
 .header .spacer { flex: 1; }
 /* the Live clock: one pill that is both the clock and the save status (the hub's) */
 .live-pill { position: relative; overflow: hidden; flex: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; height: 40px;
@@ -302,14 +327,20 @@ h1.title { font-weight: 800; font-size: 40px; line-height: 1.15; color: var(--tc
 .stats { display: flex; gap: 28px; align-items: center; }
 .stat { display: flex; flex-direction: column; gap: 2px; align-items: center; text-align: center; }
 .stat b { font-family: var(--font-display); font-weight: 800; font-size: 32px; line-height: 1; color: var(--tchb-indigo-700); font-variant-numeric: tabular-nums; }
-.stats .stat > b { font-size: 24px; }
+.stats .stat > b { font-size: 32px; }
+/* the tabs line is the page's main control: bigger tabs, numbers and ring */
+.tabs-line .seg { padding: 5px; }
+.tabs-line .seg button { padding: 11px 22px; font-size: 17px; }
+.tabs-line .seg button .n { font-size: 14px; }
+.stats { gap: 36px; }
+.stats .ring { width: 68px; height: 68px; } .stats .ring b { width: 54px; height: 54px; font-size: 16px; }
 .stat.ring-stat { flex-direction: row; gap: 10px; text-align: left; }
 .stat.ring-stat > span { line-height: 1.3; }
 .stat b.green { color: var(--tchb-green-600); }
 .stat b.muted { color: var(--text-muted); }
 .stat b .slash { color: var(--tchb-gray-300); margin: 0 2px; }
 .stat span { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
-.stats .stat > span { font-size: 12px; }
+.stats .stat > span { font-size: 14px; }
 h1.title .accent { color: var(--tchb-red-500); }
 
 /* ---------------------------------------------------------------- properties home */
@@ -529,9 +560,6 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   .hg .cards { grid-template-columns: 1fr; }
 }
 
-/* ---------------------------------------------------------------- narrow windows: the app's name gives way first */
-@media (max-width: 900px) and (min-width: 640px) { .brand .app-name { display: none; } }
-
 /* ---------------------------------------------------------------- phones (under 640px, the hub's) */
 @media (max-width: 639px) {
   /* row 1: logo, Live clock (time only), photo; Active and light/dark move into the photo menu */
@@ -542,7 +570,6 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   .brand .logo-mark { height: 40px; }
   :root .brand .logo-mark .logo-l, :root[data-theme] .brand .logo-mark .logo-d { display: none; }
   .brand .logo-mark .logo-m { display: block; width: 40px; height: 40px; border-radius: 10px; }
-  .brand .app-name { display: none; }
   #active-btn, .h-right .seg.theme { display: none; }
   .live-pill { font-size: 12px; padding: 0 12px 0 10px; gap: 6px; }
   #clock-d { display: none; }
@@ -554,7 +581,11 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   /* the stats take their own row under the tabs, and hide once the tabs pin */
   .tabs-line { gap: 12px; }
   .tabs-line .seg { flex: 1 1 100%; }
-  .tabs-line .seg button { flex: 1 1 auto; justify-content: center; padding: 8px 6px; }
+  .tabs-line .seg button { flex: 1 1 auto; justify-content: center; padding: 9px 6px; font-size: 15px; }
+  .tabs-line .seg button .n { font-size: 12px; }
+  .stats .stat > b { font-size: 26px; }
+  .stats .stat > span { font-size: 12px; }
+  .stats .ring { width: 52px; height: 52px; } .stats .ring b { width: 41px; height: 41px; font-size: 12px; }
   .stats { width: 100%; justify-content: space-around; gap: 12px; }
   .tabs-line.pinned .stats { display: none; }
   #new-btn { width: 100%; }
@@ -643,7 +674,7 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   <header class="header" id="hdr">
     <div class="header-row">
       <div class="h-left">
-        <a class="brand" href="#/" aria-label="TC Checklist home"><span class="logo-mark"><img class="logo-l" src="logo-light.png" alt="Total Cash Home Buyers"><img class="logo-d" src="logo-dark.png" alt="Total Cash Home Buyers"><img class="logo-m" src="logo-mark.png" alt="Total Cash Home Buyers" width="40" height="40"></span><span class="app-name">TC Checklist</span></a>
+        <a class="brand" href="#/" aria-label="TC Checklist home"><span class="logo-mark"><img class="logo-l" src="logo-light.png" alt="Total Cash Home Buyers"><img class="logo-d" src="logo-dark.png" alt="Total Cash Home Buyers"><img class="logo-m" src="logo-mark.png" alt="Total Cash Home Buyers" width="40" height="40"></span></a>
         <!-- the Live clock: Eastern time from the server's clock, coloured by the save status; opens the save details -->
         <button id="live-pill" class="live-pill" data-state="idle" type="button" aria-haspopup="true" aria-label="Save status: Live. Show details" title="Every change is saved for the whole team"><span class="dot"></span><span class="t"><span id="clock-d"></span><span id="clock-t">&nbsp;</span></span></button>
       </div>
@@ -664,7 +695,7 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   <main class="main">
     <!-- Properties home -->
     <section id="view-home" class="list" hidden>
-      <h1 class="title page-title">TC <span class="accent">Properties</span></h1>
+      <h1 class="title page-title">TC <span class="accent">Checklist</span></h1>
       <div id="draft-note" class="note gold" hidden>
         <svg class="i"><use href="#i-alert"/></svg>
         <span class="grow">This device has an unsaved checklist from before (started without an address).</span>
@@ -1205,14 +1236,14 @@ $('avatar-btn').onclick = e => {
       <button type="button" data-theme-btn="light">${icon('sun', 'sm')}Light</button><button type="button" data-theme-btn="dark">${icon('moon', 'sm')}Dark</button></div>` : '')
     + `<div class="row">${avatarHtml(em, '')}<div class="who"><b>${esc(nameOf(em))}</b><span>${esc(em)}</span><span class="type">${esc(typeLine(em))}</span></div></div><hr>
     <button type="button" data-mysettings>${icon('settings', 'sm')}My Settings</button>
-    ${em.toLowerCase() === ADMIN && !impBy ? `<button type="button" data-loginas>${icon('users', 'sm')}Login As User</button>` : ''}
+    ${roleOf(em) === 'manager' || em.toLowerCase() === ADMIN ? `<button type="button" data-team>${icon('users', 'sm')}Team Members</button>` : ''}
     ${phone ? `<button type="button" data-online>${icon('users', 'sm')}<span class="grow">Who's Online</span><span class="cnt">${presence.length}</span></button>` : ''}
     <button type="button" data-help>${icon('help', 'sm')}Help</button>
     <button type="button" data-signout>${icon('logout', 'sm')}Sign Out</button>`, 'acct');
   m.querySelectorAll('[data-theme-btn]').forEach(b => { b.onclick = () => setTheme(b.dataset.themeBtn); });
   setTheme(document.documentElement.dataset.theme || 'light');
   m.querySelector('[data-mysettings]').onclick = () => { closeMenu(); openMySettings(); };
-  const la = m.querySelector('[data-loginas]'); if (la) la.onclick = () => { closeMenu(); openLoginAs(); };
+  const tm = m.querySelector('[data-team]'); if (tm) tm.onclick = () => { closeMenu(); openTeam(); };
   const on = m.querySelector('[data-online]'); if (on) on.onclick = () => { closeMenu(); openActive(anchor); };
   m.querySelector('[data-help]').onclick = () => { closeMenu(); openHelp(); };
   m.querySelector('[data-signout]').onclick = async () => { closeMenu();
@@ -1235,25 +1266,43 @@ async function swapSignIn(body) {
   await signInWithCustomToken(auth, b.token);
   location.hash = '#/'; location.reload();   // start clean as the new person
 }
-function openLoginAs() {
-  const me = currentUser.email.toLowerCase();
-  const people = Object.keys(team).filter(e => e !== me && e.endsWith(DOMAIN)).sort((a, b) => nameOf(a).localeCompare(nameOf(b)));
-  const row = e => `<button type="button" data-as="${esc(e)}">${avatarHtml(e)}<span class="who"><b>${esc(nameOf(e))}</b><span>${esc(e)} · ${esc(typeLine(e))}</span></span></button>`;
-  modal({ title: 'Login As User', confirm: 'Close', cancel: '',
-    body: `<p class="hint">See and work in TC Checklist exactly as they do. Anything you change is saved as them, noted "via Remy".</p>
-      <input class="input" data-as-q type="search" placeholder="Search names" autocomplete="off">
-      <div class="as-list" data-as-list>${people.length ? people.map(row).join('') : '<p class="hint">No team names yet. They come from the Team Hub.</p>'}</div>` });
-  const box = [...document.querySelectorAll('.modal')].pop(), q = box.querySelector('[data-as-q]');
-  q.oninput = () => { const t = q.value.trim().toLowerCase(); box.querySelectorAll('[data-as]').forEach(b => { b.hidden = !!t && !b.textContent.toLowerCase().includes(t); }); };
-  setTimeout(() => q.focus(), 30);
-  box.querySelectorAll('[data-as]').forEach(b => b.onclick = async () => {
+// Team Members (managers, like the Team Hub's): who's on the team, from the hub's directory. Read-only here: roles and
+// departments are changed in the Team Hub. Remy gets Login As User on each person, as in the hub.
+const HUB_URL = 'https://hub.totalchb.com';
+function openTeam() {
+  const me = currentUser.email.toLowerCase(), canLoginAs = me === ADMIN && !impBy;
+  const ks = Object.keys(team).filter(e => e.endsWith(DOMAIN)), byName = (a, b) => nameOf(a).localeCompare(nameOf(b));
+  const isM = k => roleOf(k) === 'manager', deptOf = k => String((team[k] || {}).dept || '').toUpperCase();
+  const depts = [...new Set(ks.filter(k => !isM(k)).map(deptOf).filter(Boolean))].sort();
+  const groups = [['Managers', ks.filter(isM).sort(byName)],
+    ...depts.map(d => [d, ks.filter(k => !isM(k) && deptOf(k) === d).sort((a, b) => (roleOf(b) === 'lead') - (roleOf(a) === 'lead') || byName(a, b))]),
+    ['No Department', ks.filter(k => !isM(k) && !deptOf(k)).sort(byName)]].filter(g => g[1].length);
+  const row = k => `<div class="tm-row">
+      <div class="tm-who">${avatarHtml(k, 'tm-av')}<div class="tm-id"><b>${esc(nameOf(k))}</b><span>${esc(k)}</span>
+        ${canLoginAs && k !== ADMIN ? `<button type="button" class="tm-loginas" data-as="${esc(k)}" title="Sign in as this person to see and work in TC Checklist from their view">${icon('logout', 'sm')}Login As User</button>` : ''}</div></div>
+      <span class="tm-chip">${esc(ROLE_LABEL[roleOf(k)])}</span>${isM(k) ? '' : `<span class="tm-chip">${esc(deptOf(k) || 'No Dept')}</span>`}</div>`;
+  const scrim = document.createElement('div'); scrim.className = 'tm-scrim';
+  scrim.innerHTML = `<div class="tm" role="dialog" aria-modal="true" aria-label="Team Members">
+    <div class="tm-head"><div class="grow"><h2>Team Members</h2>
+      <p>Who's on the team, from the Team Hub: roles and main departments. To change them, use Team Members in the Team Hub.${canLoginAs ? ' Login As User lets you see and work in TC Checklist from someone\'s view.' : ''}</p></div>
+      <button type="button" class="tm-x" data-tm-close title="Close" aria-label="Close">${icon('x', 'sm')}</button></div>
+    <div class="tm-body">${groups.length ? groups.map(([g, rows]) => `<div class="tm-group">${esc(g)}</div>` + rows.map(row).join('')).join('')
+      : '<p class="hint">No team names yet. They come from the Team Hub.</p>'}</div>
+    <div class="tm-foot"><a class="btn outline sm" href="${HUB_URL}" target="_blank" rel="noopener">${icon('ext', 'sm')}Edit In Team Hub</a><span class="grow"></span>
+      <button type="button" class="btn secondary sm" data-tm-close>Close</button></div></div>`;
+  document.body.appendChild(scrim);
+  const close = () => { scrim.remove(); document.removeEventListener('keydown', keys); };
+  const keys = e => { if (e.key === 'Escape' && !document.querySelector('.modal-scrim')) close(); };
+  document.addEventListener('keydown', keys);
+  scrim.addEventListener('click', e => { if (e.target === scrim) close(); });
+  scrim.querySelectorAll('[data-tm-close]').forEach(b => b.onclick = close);
+  scrim.querySelectorAll('[data-as]').forEach(b => b.onclick = async () => {
     const k = b.dataset.as, n = nameOf(k);
-    box.querySelector('[data-m-ok]').click();
     const ok = await modal({ title: 'Login As ' + n + '?', confirm: 'Login As ' + n.split(' ')[0],
       body: `<p>You will see and work in TC Checklist exactly as ${esc(n)} does. Anything you change is saved as them, noted "via Remy". Use <b>Back To Remy</b> at the top to come back.</p>` });
     if (!ok) return;
-    toast('Signing In As ' + n + '…');
-    try { await swapSignIn({ email: k }); } catch (e) { toast(e.message || 'Could not sign in as them.', { error: true }); }
+    b.disabled = true; b.lastChild.textContent = 'Signing In…';
+    try { await swapSignIn({ email: k }); } catch (e) { b.disabled = false; b.lastChild.textContent = 'Login As User'; toast(e.message || 'Could not sign in as them.', { error: true }); }
   });
 }
 $('imp-back').onclick = async () => {
