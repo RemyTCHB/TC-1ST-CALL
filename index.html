@@ -140,32 +140,50 @@ svg.i.lg { width: 22px; height: 22px; }
 .gate .err { color: var(--status-error); font-weight: 700; font-size: 14px; }
 
 /* ---------------------------------------------------------------- header (hub layout) */
-.header { position: sticky; top: 0; z-index: 40; background: var(--header-bg);
+.header { position: sticky; top: 0; z-index: 40; background: var(--header-bg); transition: background 200ms var(--ease-out);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-default); }
-.header-row { max-width: 1280px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; gap: 14px; }
+/* three groups in one wrapping row (the hub's header standard): left and right share the room, the middle sits between */
+.header-row { max-width: 1280px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+  transition: padding 200ms var(--ease-out); }
+.h-left, .h-right { flex: 1 1 0; min-width: max-content; display: flex; align-items: center; gap: 14px; }
+.h-right { justify-content: flex-end; gap: 10px; }
+.h-mid { flex: none; }
+.h-mid:empty { display: none; }
+/* scrolled: only the padding slims, and the bar goes nearly solid; the logo, clock and photo keep their size */
+.header.slim { background: color-mix(in srgb, var(--surface-card) 94%, transparent); }
+.header.slim .header-row { padding-top: 6px; padding-bottom: 6px; }
 .brand { display: flex; align-items: center; gap: 14px; text-decoration: none; min-width: 0; }
 .brand .logo-mark { height: 64px; }
 .brand .app-name { font-family: var(--font-display); font-weight: 800; font-size: 20px; color: var(--tchb-indigo-700);
   white-space: nowrap; padding-left: 14px; border-left: 1px solid var(--border-strong); line-height: 1.1; }
 .header .spacer { flex: 1; }
-.clock { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; line-height: 1.15; font-family: var(--font-display);
-  font-variant-numeric: tabular-nums; padding: 6px 16px; border-radius: 999px; white-space: pre; }
-.clock b { font-weight: 700; font-size: 13px; letter-spacing: 0.03em; color: var(--tchb-indigo-700); white-space: pre; }
-.clock span { font-size: 12px; letter-spacing: 0.03em; color: var(--text-muted); font-weight: 600; white-space: pre; }
-.save-badge { display: inline-flex; align-items: center; gap: 7px; border: 1px solid transparent; border-radius: 999px; padding: 7px 14px;
-  font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase;
-  white-space: nowrap; cursor: default; position: relative; overflow: hidden;
-  background: var(--tchb-green-050); color: var(--tchb-green-600); border-color: color-mix(in srgb, var(--tchb-green-500) 35%, transparent);
+/* the Live clock: one pill that is both the clock and the save status (the hub's) */
+.live-pill { position: relative; overflow: hidden; flex: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; height: 40px;
+  padding: 0 16px 0 14px; border-radius: 999px; border: 1px solid transparent; font-family: var(--font-display); font-weight: 700; font-size: 13px;
+  letter-spacing: 0.03em; font-variant-numeric: tabular-nums; white-space: nowrap; background: var(--tchb-gray-100); color: var(--tchb-gray-700); }
+.live-pill:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.live-pill .t { position: relative; }
+.live-pill .dot { width: 8px; height: 8px; flex: none; border-radius: 999px; background: var(--tchb-gray-500); }
+.live-pill[data-state='idle'], .live-pill[data-state='saved'] { background: var(--tchb-green-050); color: var(--tchb-green-600);
+  border-color: color-mix(in srgb, var(--tchb-green-500) 35%, transparent);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--tchb-green-500) 10%, transparent), 0 2px 14px color-mix(in srgb, var(--tchb-green-500) 28%, transparent); }
-.save-badge::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%) no-repeat;
-  background-size: 60% 100%; animation: sheen 4.5s ease-in-out infinite; }
-:root[data-theme='dark'] .save-badge::after { background-image: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.16) 50%, transparent 70%); }
-.save-badge .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--tchb-green-500); animation: ping 2.2s ease-out infinite; }
-.save-badge.saving { background: var(--tchb-indigo-050); color: var(--tchb-indigo-700); border-color: transparent; box-shadow: none; }
-.save-badge.saving .dot { background: var(--tchb-indigo-500); animation: none; }
-.save-badge.error { background: var(--tchb-red-050); color: var(--tchb-red-500); border-color: transparent; box-shadow: none; cursor: pointer; }
-.save-badge.error .dot { background: var(--status-error); animation: none; }
-.save-badge.saving::after, .save-badge.error::after { display: none; }
+.live-pill[data-state='idle'] .dot, .live-pill[data-state='saved'] .dot { background: var(--tchb-green-500); animation: ping 2.2s ease-out infinite; }
+.live-pill[data-state='idle']::after, .live-pill[data-state='saved']::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%) no-repeat; background-size: 60% 100%;
+  animation: sheen 4.5s ease-in-out infinite; }
+:root[data-theme='dark'] .live-pill::after { background-image: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.16) 50%, transparent 70%); }
+.live-pill[data-state='saving'] { background: var(--tchb-indigo-050); color: var(--tchb-indigo-700); }
+.live-pill[data-state='saving'] .dot { background: var(--tchb-indigo-500); }
+.live-pill[data-state='error'], .live-pill[data-state='slow'], .live-pill[data-state='refused'] { background: var(--tchb-red-050); color: var(--status-error); }
+.live-pill[data-state='error'] .dot, .live-pill[data-state='slow'] .dot, .live-pill[data-state='refused'] .dot { background: var(--status-error); }
+/* the save details popover */
+.menu.sync { width: 320px; }
+.sync-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px 4px; }
+.sync-head .dot { width: 9px; height: 9px; flex: none; border-radius: 999px; }
+.sync-head b { font-family: var(--font-display); font-size: 15px; color: var(--tchb-indigo-700); }
+.menu.sync p { margin: 0; padding: 2px 12px 6px; font-size: 13px; line-height: 1.45; color: var(--text-body); overflow-wrap: anywhere; }
+.menu.sync p.saved { padding: 0 12px 8px; font-size: 12px; color: var(--text-muted); }
+.menu.sync .btn { margin: 2px 8px 6px; width: calc(100% - 16px); }
 .pill-btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 999px;
   cursor: pointer; font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--tchb-indigo-700); white-space: nowrap; }
 .pill-btn .count { min-width: 24px; height: 22px; padding: 0 7px; border-radius: 999px; display: inline-flex; align-items: center;
@@ -192,12 +210,13 @@ svg.i.lg { width: 22px; height: 22px; }
   display: flex; align-items: center; gap: 8px; white-space: nowrap; transition: background 160ms var(--ease-out); }
 .seg button .n { font-family: var(--font-body); font-weight: 700; font-size: 12px; opacity: 0.7; }
 .seg button[aria-pressed='true'] { background: var(--surface-card); box-shadow: var(--shadow-button); }
-.seg.theme button { padding: 7px 10px; }
+.seg.theme button { width: 40px; height: 32px; padding: 0; justify-content: center; }
 
 /* ---------------------------------------------------------------- page */
-.main { max-width: 1280px; margin: 0 auto; padding: 32px 24px 96px; display: flex; flex-direction: column; gap: 20px; }
-.hero { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; }
-.hero-text { display: flex; flex-direction: column; gap: 6px; flex: 1 1 420px; min-width: 0; }
+.main { max-width: 1280px; margin: 0 auto; padding: 36px 24px 96px; display: flex; flex-direction: column; gap: 24px; }
+#view-home { gap: 24px; }
+/* the page title: centred, no eyebrow or lede (the hub's) */
+h1.page-title { text-align: center; font-size: 44px; line-height: 1.1; }
 .eyebrow-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .eyebrow { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--tchb-red-500); white-space: nowrap; }
@@ -255,14 +274,23 @@ h1.title { font-weight: 800; font-size: 40px; line-height: 1.15; color: var(--tc
 .empty h3 { font-size: 20px; margin-bottom: 6px; }
 .empty p { margin: 0; color: var(--text-muted); }
 
-/* ---------------------------------------------------------------- hero stats (the hub's) */
-.stats { display: flex; gap: 28px; align-items: flex-end; }
-.stat { display: flex; flex-direction: column; gap: 2px; align-items: flex-end; }
+/* ---------------------------------------------------------------- the tabs line: tabs left, stats right (the hub's) */
+.tabs-line { position: sticky; top: var(--hdr-h, 92px); z-index: 30; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 12px 24px; margin: 0 -12px; padding: 8px 12px; border: 1px solid transparent; border-radius: var(--radius-lg);
+  transition: background 160ms var(--ease-out), box-shadow 160ms var(--ease-out); }
+.tabs-line.pinned { background: color-mix(in srgb, var(--surface-card) 84%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-color: var(--border-default); box-shadow: var(--shadow-card); }
+.stats { display: flex; gap: 28px; align-items: center; }
+.stat { display: flex; flex-direction: column; gap: 2px; align-items: center; text-align: center; }
 .stat b { font-family: var(--font-display); font-weight: 800; font-size: 32px; line-height: 1; color: var(--tchb-indigo-700); font-variant-numeric: tabular-nums; }
+.stats .stat > b { font-size: 24px; }
+.stat.ring-stat { flex-direction: row; gap: 10px; text-align: left; }
+.stat.ring-stat > span { line-height: 1.3; }
 .stat b.green { color: var(--tchb-green-600); }
 .stat b.muted { color: var(--text-muted); }
 .stat b .slash { color: var(--tchb-gray-300); margin: 0 2px; }
 .stat span { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+.stats .stat > span { font-size: 12px; }
 h1.title .accent { color: var(--tchb-red-500); }
 
 /* ---------------------------------------------------------------- properties home */
@@ -395,7 +423,22 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
 .log-row .who b { display: block; font-family: var(--font-display); font-size: 14px; color: var(--text-body); }
 
 /* ---------------------------------------------------------------- Help (the Team Hub's in-app guide) */
-.menu .row .who .type { font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tchb-red-500); }
+.menu .row .who .type, .me-row .who .type { font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tchb-red-500); }
+/* the photo menu (the hub's): 16px indigo line icons, Baloo 14px bold items; on phones a Light / Dark switch on top */
+.menu.acct { width: 300px; }
+.menu.acct > button { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--tchb-indigo-700); }
+.menu.acct > button .grow { flex: 1; }
+.menu.acct > button .cnt { min-width: 24px; height: 22px; padding: 0 7px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--tchb-green-050); color: var(--tchb-green-600); font-size: 13px; }
+.menu .theme-words { margin: 4px 4px 6px; background-color: var(--tchb-gray-100); }
+.menu .theme-words button { flex: 1 1 0; justify-content: center; padding: 8px 12px; }
+.menu .theme-words button[aria-pressed='true'], .seg.theme button[aria-pressed='true'] { background: var(--tchb-indigo-700); color: #fff; }
+/* My Settings */
+.me-row { display: flex; align-items: center; gap: 12px; }
+.me-row .avatar { width: 48px; height: 48px; font-size: 16px; cursor: default; }
+.me-row .who { display: flex; flex-direction: column; min-width: 0; }
+.me-row .who b { font-family: var(--font-display); font-size: 16px; color: var(--text-body); }
+.me-row .who span { font-size: 13px; color: var(--text-muted); overflow-wrap: anywhere; }
 .help-scrim { padding: 24px; }
 .help-panel { width: 100%; max-width: 1120px; height: min(860px, calc(100vh - 48px)); display: flex; flex-direction: column; background: var(--surface-card);
   border: 1px solid var(--border-default); border-radius: var(--radius-lg); box-shadow: var(--shadow-raised); overflow: hidden; }
@@ -467,38 +510,45 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   .hg .cards { grid-template-columns: 1fr; }
 }
 
-/* ---------------------------------------------------------------- phones */
-@media (max-width: 760px) {
-  .header { position: relative; }
-  .header-row { padding: 10px 16px 12px; gap: 8px; flex-wrap: wrap; }
-  .brand { flex: 1 1 0; gap: 8px; min-width: 0; }
+/* ---------------------------------------------------------------- narrow windows: the app's name gives way first */
+@media (max-width: 900px) and (min-width: 640px) { .brand .app-name { display: none; } }
+
+/* ---------------------------------------------------------------- phones (under 640px, the hub's) */
+@media (max-width: 639px) {
+  /* row 1: logo, Live clock (time only), photo; Active and light/dark move into the photo menu */
+  .header-row { padding: 10px 16px; gap: 8px; flex-wrap: nowrap; }
+  .header.slim .header-row { padding-top: 6px; padding-bottom: 6px; }
+  .h-left { gap: 8px; min-width: 0; }
+  .h-right { flex: none; min-width: 0; }
   .brand .logo-mark { height: 40px; }
-  .brand .app-name { font-size: 14px; padding-left: 8px; overflow: hidden; text-overflow: ellipsis; }
-  .header .spacer { display: none; }
-  .seg.theme button { padding: 6px 8px; }
-  #avatar-btn { width: 36px; height: 36px; }
-  .clock { order: 5; flex: 1 1 100%; align-items: flex-start; }
-  .clock b { font-size: 13px; }
-  .clock span { font-size: 11.5px; }
-  .save-badge { order: 6; }
-  #active-btn { order: 7; }
-  .pill-btn { height: 34px; padding: 0 10px; font-size: 13px; }
-  .pill-btn .lbl { display: none; }
-  .main { padding: 20px 16px 80px; gap: 16px; }
-  h1.title { font-size: 30px; }
+  .brand .app-name { display: none; }
+  #active-btn, .h-right .seg.theme { display: none; }
+  .live-pill { font-size: 12px; padding: 0 12px 0 10px; gap: 6px; }
+  #clock-d { display: none; }
+  .main { padding: 20px 16px 96px; gap: 16px; }
+  #view-home { gap: 16px; }
+  h1.title, h1.page-title { font-size: 30px; }
   .prop-head { padding: 18px 16px; }
   .prop-head h1.title { font-size: 24px; }
+  /* the stats take their own row under the tabs, and hide once the tabs pin */
+  .tabs-line { gap: 12px; }
+  .tabs-line .seg { flex: 1 1 100%; }
+  .tabs-line .seg button { flex: 1 1 auto; justify-content: center; padding: 8px 6px; }
+  .stats { width: 100%; justify-content: space-around; gap: 12px; }
+  .tabs-line.pinned .stats { display: none; }
   #new-btn { width: 100%; }
-  .toolbar .seg { flex: 1 1 100%; }
-  .toolbar .seg button { flex: 1 1 auto; justify-content: center; padding: 8px 6px; }
-  .prop-card { flex-wrap: wrap; gap: 12px; }
-  .stats { gap: 22px; width: 100%; justify-content: space-between; }
-  .stat { align-items: flex-start; }
-  .stat b { font-size: 26px; }
-  .ring { width: 48px; height: 48px; } .ring b { width: 38px; height: 38px; font-size: 12px; }
-  .clock { padding: 5px 12px; }
-  .prop-card .side { width: 100%; }
-  .prop-card .side .btn { flex: 1; }
+  .ring { width: 44px; height: 44px; } .ring b { width: 35px; height: 35px; font-size: 11px; }
+  /* the phone card: address, Updated line, ring + bar, tags, then a footer with Open In CRM */
+  .prop-card { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 8px 12px; padding: 14px 14px 14px 18px; }
+  .prop-card .grow, .prop-card .tag-row { display: contents; }
+  .prop-card .prop-title { grid-column: 1 / -1; order: 1; }
+  .prop-card .tag-row .meta { grid-column: 1 / -1; order: 2; margin-top: -4px; }
+  .prop-card .ring { order: 3; }
+  .prop-card .prog-row { order: 4; flex-wrap: wrap; gap: 4px 10px; max-width: none; }
+  .prop-card .prog-row .progress { flex: 1 1 120px; }
+  .prop-card .tag-row .tag { grid-column: 1 / -1; order: 5; justify-self: start; }
+  .prop-card .hit { grid-column: 1 / -1; order: 6; }
+  .prop-card .side { grid-column: 1 / -1; order: 7; border-top: 1px solid var(--border-default); padding-top: 10px; justify-content: flex-end; }
   .sec-head { padding: 14px 14px; gap: 10px; }
   .sec-icon { width: 34px; height: 34px; border-radius: 10px; }
   .sec-head h2 { font-size: 16px; }
@@ -510,7 +560,7 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   .escrow { grid-template-columns: 1fr; }
   .actions-row .btn { padding: 8px 10px; }
   .actions-row .spacer { display: none; }
-  .menu, .menu.pop { left: 8px !important; right: 8px !important; top: auto !important; bottom: 8px !important; width: auto; max-height: 70vh; }
+  .menu, .menu.pop, .menu.acct, .menu.sync { left: 8px !important; right: 8px !important; top: auto !important; bottom: 8px !important; width: auto; max-height: 70vh; }
   .modal { padding: 20px; }
   .toasts { bottom: 16px; }
 }
@@ -569,47 +619,48 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
 
 <!-- App -->
 <div id="app" hidden>
-  <header class="header">
+  <header class="header" id="hdr">
     <div class="header-row">
-      <a class="brand" href="#/" aria-label="TC Checklist home"><span class="logo-mark"><img class="logo-l" src="logo-light.png" alt="Total Cash Home Buyers"><img class="logo-d" src="logo-dark.png" alt="Total Cash Home Buyers"></span><span class="app-name">TC Checklist</span></a>
-      <div class="spacer"></div>
-      <div class="clock glass" title="Eastern time, from the server's clock" aria-label="Eastern time"><b id="clock-a">&nbsp;</b><span id="clock-b">&nbsp;</span></div>
-      <button id="save-badge" class="save-badge live" type="button" title="Every change is saved for the whole team"><span class="dot"></span><span id="save-text">All Saved</span></button>
-      <button id="active-btn" class="pill-btn glass" type="button" aria-haspopup="true" title="Who's online now"><span class="live-dot"></span><span class="lbl">Active</span><span class="count" id="active-count">0</span></button>
-      <div class="seg glass theme" role="group" aria-label="Theme">
-        <button type="button" data-theme-btn="light" aria-label="Light theme"><svg class="i sm"><use href="#i-sun"/></svg></button>
-        <button type="button" data-theme-btn="dark" aria-label="Dark theme"><svg class="i sm"><use href="#i-moon"/></svg></button>
+      <div class="h-left">
+        <a class="brand" href="#/" aria-label="TC Checklist home"><span class="logo-mark"><img class="logo-l" src="logo-light.png" alt="Total Cash Home Buyers"><img class="logo-d" src="logo-dark.png" alt="Total Cash Home Buyers"></span><span class="app-name">TC Checklist</span></a>
+        <!-- the Live clock: Eastern time from the server's clock, coloured by the save status; opens the save details -->
+        <button id="live-pill" class="live-pill" data-state="idle" type="button" aria-haspopup="true" aria-label="Save status: Live. Show details" title="Every change is saved for the whole team"><span class="dot"></span><span class="t"><span id="clock-d"></span><span id="clock-t">&nbsp;</span></span></button>
       </div>
-      <button id="avatar-btn" class="avatar" type="button" aria-haspopup="true" aria-label="Your account"></button>
+      <div class="h-mid"></div>
+      <div class="h-right">
+        <button id="active-btn" class="pill-btn glass" type="button" aria-haspopup="true" title="Who's online now"><span class="live-dot"></span><span class="lbl">Active</span><span class="count" id="active-count">0</span></button>
+        <div class="seg glass theme" role="group" aria-label="Theme">
+          <button type="button" data-theme-btn="light" aria-label="Light theme"><svg class="i sm"><use href="#i-sun"/></svg></button>
+          <button type="button" data-theme-btn="dark" aria-label="Dark theme"><svg class="i sm"><use href="#i-moon"/></svg></button>
+        </div>
+        <button id="avatar-btn" class="avatar" type="button" aria-haspopup="true" aria-label="Your account"></button>
+      </div>
     </div>
   </header>
 
   <main class="main">
     <!-- Properties home -->
     <section id="view-home" class="list" hidden>
-      <div class="hero">
-        <div class="hero-text">
-          <div class="eyebrow">TC First Call</div>
-          <h1 class="title">TC <span class="accent">Properties</span></h1>
-          <p class="lede">Every first-call checklist, live for the whole team.</p>
-        </div>
-        <div class="stats">
-          <div class="stat"><b id="st-open">0</b><span>Open</span></div>
-          <div class="stat"><b class="green" id="st-closed">0</b><span>Closed</span></div>
-          <div class="stat"><b id="st-avg">0%</b><span>Avg Answered (Open)</span></div>
-        </div>
-      </div>
+      <h1 class="title page-title">TC <span class="accent">Properties</span></h1>
       <div id="draft-note" class="note gold" hidden>
         <svg class="i"><use href="#i-alert"/></svg>
         <span class="grow">This device has an unsaved checklist from before (started without an address).</span>
         <button id="draft-use" class="btn outline sm" type="button">Start A Property With It</button>
       </div>
-      <div class="toolbar">
+      <!-- the tabs line: tabs on the left, the stats on the right; pins under the header when scrolled -->
+      <div class="tabs-line" id="tabs-line">
         <div class="seg" role="tablist" aria-label="Status">
           <button type="button" data-tab="open" aria-pressed="true">Open <span class="n" data-n="open">0</span></button>
           <button type="button" data-tab="closed" aria-pressed="false">Closed <span class="n" data-n="closed">0</span></button>
           <button type="button" data-tab="cancelled" aria-pressed="false">Cancelled <span class="n" data-n="cancelled">0</span></button>
         </div>
+        <div class="stats">
+          <div class="stat"><b id="st-open">0</b><span>Open</span></div>
+          <div class="stat"><b class="green" id="st-closed">0</b><span>Closed</span></div>
+          <div class="stat ring-stat"><div class="ring" id="st-ring" style="--p:0" aria-hidden="true"><b id="st-avg">0%</b></div><span>Avg Answered<br>(Open)</span></div>
+        </div>
+      </div>
+      <div class="toolbar">
         <label class="search"><svg class="i"><use href="#i-search"/></svg><span class="sr">Search properties</span>
           <input id="search" class="input" type="search" placeholder="Search Address, CRM Link Or Answers" autocomplete="off"></label>
         <button id="new-btn" class="btn primary pill" type="button"><svg class="i"><use href="#i-plus"/></svg>New Property</button>
@@ -670,6 +721,7 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
     <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
     <symbol id="i-phone" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></symbol>
     <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
     <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></symbol>
     <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
     <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
@@ -927,7 +979,7 @@ function openMenu(anchor, html, cls = '') {
   return menu;
 }
 // A hub modal. requireText: the person must type that word to confirm.
-function modal({ title, body = '', confirm = 'Confirm', danger = false, requireText = '', input = null, extra = '' }) {
+function modal({ title, body = '', confirm = 'Confirm', danger = false, requireText = '', input = null, extra = '', cancel = 'Cancel' }) {
   return new Promise(resolve => {
     const scrim = document.createElement('div'); scrim.className = 'modal-scrim';
     scrim.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-label="${esc(title)}">
@@ -935,7 +987,7 @@ function modal({ title, body = '', confirm = 'Confirm', danger = false, requireT
       ${input ? `<label class="field"><span>${esc(input.label)}</span><input class="input" data-m-input type="${input.type === 'password' ? 'password' : 'text'}" autocomplete="${input.type === 'password' ? 'new-password' : 'off'}" placeholder="${esc(input.placeholder || '')}"></label>` : ''}
       ${requireText ? `<label class="field"><span>Type ${esc(requireText)} To Confirm</span><input class="input" data-m-input autocomplete="off" autocapitalize="characters"></label>` : ''}
       ${extra}<p class="err" data-m-err hidden></p>
-      <div class="actions"><button class="btn ghost" type="button" data-m-cancel>Cancel</button>
+      <div class="actions">${cancel ? `<button class="btn ghost" type="button" data-m-cancel>${esc(cancel)}</button>` : ''}
       <button class="btn ${danger ? 'primary' : 'secondary'}" type="button" data-m-ok>${esc(confirm)}</button></div></div>`;
     document.body.appendChild(scrim);
     const ok = scrim.querySelector('[data-m-ok]'), inp = scrim.querySelector('[data-m-input]'), err = scrim.querySelector('[data-m-err]');
@@ -950,7 +1002,7 @@ function modal({ title, body = '', confirm = 'Confirm', danger = false, requireT
     const keys = e => { if (e.key === 'Escape') done(false); if (e.key === 'Enter' && (inp ? document.activeElement === inp : true)) submit(); };
     document.addEventListener('keydown', keys);
     scrim.addEventListener('click', e => { if (e.target === scrim) done(false); });
-    scrim.querySelector('[data-m-cancel]').onclick = () => done(false);
+    if (cancel) scrim.querySelector('[data-m-cancel]').onclick = () => done(false);
     ok.onclick = submit;
     if (inp) { inp.addEventListener('input', () => { err.hidden = true; check(); }); check(); setTimeout(() => inp.focus(), 30); }
     if (input && input.onReady) input.onReady(scrim);
@@ -965,6 +1017,23 @@ const setTheme = t => {
 };
 setTheme(document.documentElement.dataset.theme || 'light');
 document.querySelectorAll('[data-theme-btn]').forEach(b => b.onclick = () => setTheme(b.dataset.themeBtn));
+
+// =============================================================== pinned header and tabs line (the hub's)
+// Past 120px the header slims (padding only); it returns within 40px of the top. The tabs line pins just under the
+// header and gets its glass card once it's pinned.
+(() => {
+  const hdr = $('hdr'), tabs = $('tabs-line');
+  const measure = () => document.documentElement.style.setProperty('--hdr-h', hdr.offsetHeight + 'px');
+  const onScroll = () => {
+    const y = window.scrollY;
+    if (y > 120 && !hdr.classList.contains('slim')) { hdr.classList.add('slim'); }
+    else if (y < 40 && hdr.classList.contains('slim')) { hdr.classList.remove('slim'); }
+    if (tabs.offsetParent) tabs.classList.toggle('pinned', y > 0 && tabs.getBoundingClientRect().top <= hdr.offsetHeight + 1);
+  };
+  if (window.ResizeObserver) new ResizeObserver(() => { measure(); onScroll(); }).observe(hdr);
+  window.addEventListener('scroll', onScroll, { passive: true }); window.addEventListener('resize', () => { measure(); onScroll(); });
+  measure();
+})();
 
 // =============================================================== loading screen
 const splashTimer = setTimeout(() => { $('splash-msg').textContent = 'Almost ready…'; }, 2500);
@@ -993,13 +1062,35 @@ const updatedLine = d => { const t = tsOf(d && d.updatedAt); if (!t) return '';
 // never overwrite each other. Failed saves show Not Saved and retry; nothing is silently dropped.
 let pending = null;          // { id, fields: {path: value} }
 let inFlight = null, saveTimer = null, retryTimer = null, retryDelay = 2000, slowTimer = null;
-let saveState = 'idle';
+let saveState = 'idle', saveDetail = '', lastSaved = 0;
+// The Live clock shows the save status (the hub's): idle/saved = Live (green), saving = indigo, slow = Offline (red),
+// error = Not Saved and retrying (red, Retry Now), refused = Not Saved and can't be retried (red, OK).
+const SAVE_UI = {
+  idle: ['Live', 'Live: Everything Is Saved', 'Every change you make is saved for the whole team as you go.'],
+  saved: ['Live', 'Live: Everything Is Saved', 'Every change you make is saved for the whole team as you go.'],
+  saving: ['Saving', 'Saving…', 'Your latest change is on its way to the server.'],
+  slow: ['Offline', 'Offline', 'TC Checklist can\'t reach the server. Your changes wait here and go through once it can.'],
+  error: ['Not Saved', 'Not Saved', 'Your latest change didn\'t reach the server. It\'s kept here and tried again by itself.'],
+  refused: ['Not Saved', 'Not Saved', 'The server refused your latest change.'] };
 function setSave(state, detail = '') {
-  saveState = state;
-  const b = $('save-badge'), t = $('save-text');
-  b.className = 'save-badge ' + (state === 'slow' ? 'saving' : state === 'saving' || state === 'error' ? state : 'live');
-  t.textContent = state === 'saving' ? 'Saving…' : state === 'saved' ? 'Saved' : state === 'error' ? 'Not Saved – Retry' : state === 'slow' ? 'Saving… (Offline?)' : 'All Saved';
-  b.title = detail || (state === 'idle' || state === 'saved' ? 'Every change is saved for the whole team' : '');
+  saveState = state; saveDetail = detail;
+  const b = $('live-pill'), ui = SAVE_UI[state] || SAVE_UI.idle;
+  b.dataset.state = state;
+  b.setAttribute('aria-label', 'Save status: ' + ui[0] + '. Show details');
+  b.title = detail || ui[2];
+  if (openMenuEl && openMenuEl.menu.classList.contains('sync')) fillSync(openMenuEl.menu);
+}
+function fillSync(m) {
+  const ui = SAVE_UI[saveState] || SAVE_UI.idle, live = saveState === 'idle' || saveState === 'saved';
+  const dot = live ? 'var(--tchb-green-500)' : saveState === 'saving' ? 'var(--tchb-indigo-500)' : 'var(--status-error)';
+  m.innerHTML = `<div class="sync-head"><span class="dot${live ? ' live-dot' : ''}" style="background:${dot}"></span><b>${esc(ui[1])}</b></div>
+    <p>${esc(saveState === 'refused' && saveDetail ? saveDetail : ui[2])}</p>
+    <p class="saved">${lastSaved ? 'Last saved ' + esc(etDate(lastSaved) + ' ' + ET12s.format(new Date(lastSaved)) + ' ' + etZone(lastSaved)) : 'Nothing changed since you opened TC Checklist.'}</p>
+    ${saveState === 'error' ? '<button class="btn secondary sm" type="button" data-sync-retry>Retry Now</button>' : ''}
+    ${saveState === 'refused' ? '<button class="btn outline sm" type="button" data-sync-ok>OK</button>' : ''}`;
+  const r = m.querySelector('[data-sync-retry]'), ok = m.querySelector('[data-sync-ok]');
+  if (r) r.onclick = () => { closeMenu(); retryDelay = 2000; flushNow(); };
+  if (ok) ok.onclick = () => { closeMenu(); setSave('idle'); };
 }
 function queueField(path, value, delay) {
   if (!openId) return;
@@ -1018,19 +1109,19 @@ function flushNow() {
   setSave('saving');
   slowTimer = setTimeout(() => { if (inFlight) setSave('slow', 'No answer from the server yet. Your changes are kept and will be sent when the connection is back.'); }, 8000);
   inFlight = updateDoc(checklistRef(job.id), fields).then(() => {
-    inFlight = null; clearTimeout(slowTimer); retryDelay = 2000;
+    inFlight = null; clearTimeout(slowTimer); retryDelay = 2000; lastSaved = now();
     if (pending) flushNow(); else { setSave('saved'); setTimeout(() => { if (saveState === 'saved') setSave('idle'); }, 1800); }
   }).catch(e => {
     inFlight = null; clearTimeout(slowTimer);
     // keep the failed changes, under any newer ones typed since
     if (pending && pending.id === job.id) pending.fields = { ...job.fields, ...pending.fields }; else if (!pending) pending = job;
-    if (e && e.code === 'not-found') { pending = null; setSave('error', 'This property was deleted.'); toast('Not Saved: This Property Was Deleted', { error: true }); return; }
+    if (e && e.code === 'not-found') { pending = null; setSave('refused', 'This property was deleted, so the change could not be saved.'); toast('Not Saved: This Property Was Deleted', { error: true }); return; }
     const why = (e && (e.code || e.message)) || 'unknown error';
     setSave('error', 'Not saved: ' + why + '. Retrying…');
     retryTimer = setTimeout(flushNow, retryDelay); retryDelay = Math.min(retryDelay * 2, 30000);
   });
 }
-$('save-badge').onclick = () => { if (saveState === 'error') { retryDelay = 2000; flushNow(); } };
+$('live-pill').onclick = e => fillSync(openMenu(e.currentTarget, '', 'sync'));
 window.addEventListener('beforeunload', e => { if (pending || inFlight) { flushNow(); e.preventDefault(); e.returnValue = ''; } });
 const isPending = path => !!(pending && pending.id === openId && path in pending.fields);
 
@@ -1072,14 +1163,31 @@ function renderAvatar() {
   b.innerHTML = esc(initials(nameOf(e))) + (photoOf(e) ? `<img src="${esc(photoOf(e))}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : '');
   b.title = nameOf(e);
 }
+// The photo menu (the hub's): you, then My Settings, Help, Sign Out. On phones, Active and light/dark live here too.
+const isPhone = () => window.matchMedia('(max-width: 639px)').matches;
 $('avatar-btn').onclick = e => {
-  const em = currentUser.email;
-  const m = openMenu(e.currentTarget, `<div class="row">${avatarHtml(em, '')}<div class="who"><b>${esc(nameOf(em))}</b><span>${esc(em)}</span><span class="type">${esc(typeLine(em))}</span></div></div><hr>
+  const em = currentUser.email, phone = isPhone(), anchor = e.currentTarget;
+  const m = openMenu(anchor, (phone ? `<div class="seg theme-words" role="group" aria-label="Theme">
+      <button type="button" data-theme-btn="light">${icon('sun', 'sm')}Light</button><button type="button" data-theme-btn="dark">${icon('moon', 'sm')}Dark</button></div>` : '')
+    + `<div class="row">${avatarHtml(em, '')}<div class="who"><b>${esc(nameOf(em))}</b><span>${esc(em)}</span><span class="type">${esc(typeLine(em))}</span></div></div><hr>
+    <button type="button" data-mysettings>${icon('settings', 'sm')}My Settings</button>
+    ${phone ? `<button type="button" data-online>${icon('users', 'sm')}<span class="grow">Who's Online</span><span class="cnt">${presence.length}</span></button>` : ''}
     <button type="button" data-help>${icon('help', 'sm')}Help</button>
-    <button type="button" data-signout>${icon('logout', 'sm')}Sign Out</button>`);
+    <button type="button" data-signout>${icon('logout', 'sm')}Sign Out</button>`, 'acct');
+  m.querySelectorAll('[data-theme-btn]').forEach(b => { b.onclick = () => setTheme(b.dataset.themeBtn); });
+  setTheme(document.documentElement.dataset.theme || 'light');
+  m.querySelector('[data-mysettings]').onclick = () => { closeMenu(); openMySettings(); };
+  const on = m.querySelector('[data-online]'); if (on) on.onclick = () => { closeMenu(); openActive(anchor); };
   m.querySelector('[data-help]').onclick = () => { closeMenu(); openHelp(); };
-  m.querySelector('[data-signout]').onclick = () => { closeMenu(); logOut(); };
+  m.querySelector('[data-signout]').onclick = async () => { closeMenu();
+    if (await modal({ title: 'Sign Out?', body: '<p>You will need to sign in with your Google account again to see TC Checklist.</p>', confirm: 'Sign Out' })) logOut(); };
 };
+function openMySettings() {
+  const em = currentUser.email;
+  modal({ title: 'My Settings', confirm: 'Close', cancel: '',
+    body: `<div class="me-row">${avatarHtml(em, '')}<div class="who"><b>${esc(nameOf(em))}</b><span>${esc(em)}</span><span class="type">${esc(typeLine(em))}</span></div></div>
+      <p class="hint">Nothing to set here yet. Your name, photo and role come from the Team Hub.</p>` });
+}
 
 // =============================================================== Help (from the photo menu), like the Team Hub's
 // The guide for this person's role (Member, Team Leader or Manager, from the Team Hub's directory), shown inside the app
@@ -1250,12 +1358,13 @@ function startPresence() {
     $('active-count').textContent = presence.length;
   }, () => {});
 }
-$('active-btn').onclick = e => {
+$('active-btn').onclick = e => openActive(e.currentTarget);
+function openActive(anchor) {
   const rows = presence.length ? presence.map(u => `<div class="row"><span class="live-dot"></span>${avatarHtml(u.email)}<div class="who"><b>${esc(nameOf(u.email))}</b></div>
     <div class="dev"><span class="${u.mob ? 'on' : ''}" title="Phone">${icon('phone', 'sm')}</span><span class="${u.desk ? 'on' : ''}" title="Desktop">${icon('desktop', 'sm')}</span></div></div>`).join('')
     : '<div class="muted">No One Else Is Online</div>';
-  openMenu(e.currentTarget, `<div class="label">Online Now · ${presence.length}</div>${rows}`, 'pop');
-};
+  openMenu(anchor, `<div class="label">Online Now · ${presence.length}</div>${rows}`, 'pop');
+}
 
 // =============================================================== routing: #/ (properties) and #/p/<id> (a checklist)
 function route() {
@@ -1303,7 +1412,8 @@ function renderHome() {
     .sort((a, b) => tsOf(b[1].updatedAt) - tsOf(a[1].updatedAt) || a[1].address.localeCompare(b[1].address));
   const openOnes = all.filter(([, d]) => statusOf(d) === 'open');
   $('st-open').textContent = counts.open; $('st-closed').textContent = counts.closed;
-  $('st-avg').textContent = (openOnes.length ? Math.round(openOnes.reduce((n, [, d]) => n + doneCount(d), 0) / openOnes.length / CHECK_COUNT * 100) : 0) + '%';
+  const avg = openOnes.length ? Math.round(openOnes.reduce((n, [, d]) => n + doneCount(d), 0) / openOnes.length / CHECK_COUNT * 100) : 0;
+  $('st-avg').textContent = avg + '%'; $('st-ring').style.setProperty('--p', avg); $('st-ring').classList.toggle('full', avg === 100);
   const list = $('prop-list');
   if (!rows.length) {
     list.innerHTML = q ? `<div class="empty"><h3>No Matches</h3><p>Nothing in ${STATUS[tab].label} matches “${esc(query.trim())}”.</p></div>`
@@ -1582,7 +1692,8 @@ buildSections();
 })();
 
 // =============================================================== clock + server time
-function tick() { const t = now(); $('clock-a').textContent = etDate(t) + '  ' + et24(t); $('clock-b').textContent = etDate(t) + '  ' + ET12s.format(new Date(t)) + ' ' + etZone(t); }
+// one line, 12-hour Eastern: "Wed 11/04/2026 7:42:07 AM EST" (phones hide the date)
+function tick() { const t = now(); $('clock-d').textContent = etDate(t) + ' '; $('clock-t').textContent = ET12s.format(new Date(t)) + ' ' + etZone(t); }
 syncClock().then(tick); tick(); setInterval(tick, 1000); setInterval(syncClock, 15 * 60 * 1000);
 
 // =============================================================== app updates (service worker)

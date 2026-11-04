@@ -91,6 +91,7 @@ await snap(page, '02-home');
 await page.fill('#search', 'palm grove'); await snap(page, '03-search'); await page.fill('#search', '');
 await page.click('[data-tab="closed"]'); await snap(page, '04-closed-tab'); await page.click('[data-tab="open"]');
 await page.click('#active-btn'); await snap(page, '05-active'); await page.keyboard.press('Escape');
+await page.click('#live-pill'); await page.waitForSelector('.menu.sync'); await snap(page, '05b-live'); await page.keyboard.press('Escape');
 await page.click('#avatar-btn'); await snap(page, '06-avatar'); await page.keyboard.press('Escape');
 await page.setViewportSize({ width: 1280, height: 1180 });
 await page.click('#avatar-btn'); await page.click('[data-help]'); await page.waitForSelector('.help-panel h2[data-sec]'); await snap(page, '16-help');

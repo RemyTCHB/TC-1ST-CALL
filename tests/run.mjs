@@ -44,7 +44,9 @@ srv.listen(5173, '127.0.0.1', () => {
   const p = spawn('npx', ['firebase', 'emulators:exec', '--project', 'demo-tc-checklist', '--only', 'auth,firestore', 'node ' + script],
     { cwd: HERE, stdio: ['ignore', 'pipe', 'pipe'] });
   // emulator chatter is hidden; the suite's own lines are shown
-  const show = d => String(d).split('\n').filter(l => /^\s*(pass|FAIL)|^\s{8}|passed, |^[A-Z][a-zA-Z /()'.,0-9-]+$|Error|error:/.test(l) && !/^i\s|emulators|Emulator|⚠|✔/.test(l)).forEach(l => console.log(l));
+  const keep = l => process.env.VERBOSE ? !/^i\s|emulators|Emulator/.test(l)
+    : /^\s*(pass|FAIL)|^\s{8}|passed, |^[A-Z][a-zA-Z /()'.,0-9-]+$|Error|error:/.test(l) && !/^i\s|emulators|Emulator|⚠|✔/.test(l);
+  const show = d => String(d).split('\n').filter(keep).forEach(l => console.log(l));   // VERBOSE=1 shows everything
   p.stdout.on('data', show); p.stderr.on('data', show);
   p.on('exit', code => { srv.close(); process.exit(code); });
 });

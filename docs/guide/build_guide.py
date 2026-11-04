@@ -442,7 +442,8 @@ def story() -> list:
               "with <b>Open / Closed / Cancelled</b> tabs and a search box; edits save as you type and appear live "
               "for everyone; a property can be marked <b>Closed</b> or <b>Cancelled</b>; <b>Print / PDF</b> shows "
               "every answer in full; names come from the Team Hub; Help opens your role's guide inside the app; and deleting "
-              "uses the Team Hub's delete passwords. Every question, and every answer already "
+              "uses the Team Hub's delete passwords. The header matches the Team Hub too: one <b>Live clock</b> that also shows "
+              "whether everything is saved. Every question, and every answer already "
               "saved, is exactly where it was.", "good", "What's new in version 2")]
     s.append(PageBreak())
 
@@ -465,7 +466,8 @@ def story() -> list:
         "<b>For every property</b>: the CRM lead link, how many questions are answered, when it was last updated and "
         "by whom, and its status.",
         "<b>A printable record</b> of the call, with every answer in full.",
-        "<b>An Eastern-time clock</b> from the server, so every time shown is the same for everyone.",
+        "<b>A Live clock</b>: Eastern time from the server, the same for everyone, that turns colour to show whether "
+        "everything is saved.",
     ])
     s += [box("The checklist is a guide for the call, not a contract. Confirm anything important (payoffs, HOA "
               "approvals, zoning) with the source before it goes into a deal.", "warn")]
@@ -477,7 +479,7 @@ def story() -> list:
         "Go to <b>tc.totalchb.com</b> and bookmark it (or install it: section " + str(num("On A Phone")) + ").",
         "Click <b>Sign In With Google</b> and pick your <b>@totalchb.com</b> account.",
         "You stay signed in on that browser.",
-        "On a shared computer, click your initials at the top right, then <b>Sign Out</b>.",
+        "On a shared computer, click your initials at the top right, then <b>Sign Out</b>, and confirm.",
     ]), shot("01-signin", "The sign-in screen. Nothing else is visible until you sign in.", 0.5,
              crop=(0.28, 0.24, 0.72, 0.76))]
     s += [box("A personal Gmail or any other account is turned away with \"Access Denied. @totalchb.com emails "
@@ -488,17 +490,22 @@ def story() -> list:
     s += [shot("02-home", "The header (top) and the Properties page.", 1.0, crop=(0, 0, 1, 0.33))]
     s += [table(["Where", "What it's for"], [
         ["Logo", "Click it from anywhere to go back to the Properties page."],
-        ["Clock", "Eastern time from the server: the date with the 24-hour time on top, the date with AM / PM "
-                  "beneath. It's the same on every device."],
-        ["All Saved", "<b>Green</b>: every change is saved for the whole team. <b>Saving…</b> (purple): a change is "
-                      "on its way. <b>Not Saved – Retry</b> (red): see section " + str(num("Saving And Working Together")) + "."],
+        ["Live clock", "Eastern time from the server, the same on every device (a phone shows the time only). Its "
+                       "colour is the save status: <b>green and glowing</b>, everything is saved; <b>purple</b>, saving; "
+                       "<b>red</b>, offline or not saved (section " + str(num("Saving And Working Together")) + "). Click "
+                       "it for the details and when a change was last saved."],
         ["Active", "How many teammates are online now. Click it to see who, and whether they're on a phone or a "
-                   "computer."],
+                   "computer. On a phone it's <b>Who's Online</b> in your photo menu."],
         ["Sun / moon", "Light or dark look. It follows your device at first; your choice is remembered on that "
-                       "browser."],
-        ["Your initials", "Your name, email and role (from the Team Hub), <b>Help</b>, and <b>Sign Out</b>."],
+                       "browser. On a phone it's the <b>Light / Dark</b> switch at the top of your photo menu."],
+        ["Your initials", "Your name, email and role (from the Team Hub), <b>My Settings</b>, <b>Help</b>, and "
+                          "<b>Sign Out</b> (it asks first)."],
     ], [0.2, 0.8])]
-    s += [P("Help", "h2"),
+    s += [P("When you scroll, the header slims down and stays at the top, and the tabs line stays just under it."),
+          P("My Settings", "h2"),
+          P("Click your initials, then <b>My Settings</b>. It shows your name, email and role. There's nothing to set "
+            "here yet: your name, photo and role come from the Team Hub."),
+          P("Help", "h2"),
           P("Click your initials, then <b>Help</b>. It opens the guide for your role inside the app, like the Team Hub: "
             "the <b>Team Guide</b> for Members, the <b>Team Leader Guide</b> or the <b>Manager Guide</b> (your role "
             "comes from the Team Hub). Pick a section on the left, or scroll. Team Leaders and Managers also see the delete "
@@ -509,6 +516,7 @@ def story() -> list:
             "(without passwords)."),
           shot("16-help", "Help: the guide for your role, with its contents.", 1.0, crop=(0.0, 0.0, 1.0, 1.0), max_h=4.3)]
     s += [shot("05-active", "Click Active to see who's online.", 0.5, crop=(0.6, 0.0, 0.98, 0.38)),
+          shot("05b-live", "Click the Live clock for the save details.", 0.5, crop=(0.0, 0.0, 0.55, 0.3)),
           shot("15-home-dark", "The dark look.", 1.0, crop=(0, 0, 1, 0.62))]
 
     # ---- 4
@@ -518,7 +526,8 @@ def story() -> list:
     s += [table(["Part", "What it shows"], [
         ["Open / Closed / Cancelled", "The three lists. The number on each tab is how many properties it holds. "
                                       "Every property starts in Open."],
-        ["The numbers at the top", "Open and Closed properties, and how far the Open ones are on average."],
+        ["The numbers beside the tabs", "Open and Closed properties, and a ring with how far the Open ones are on "
+                                        "average. The tabs and numbers stay pinned under the header as you scroll."],
         ["Search", "Type any part of an address, a CRM link or an answer. It searches the tab you're on and shows "
                    "where it matched."],
         ["A property card", "The address, its status, when it was last updated and by whom, a ring and a bar with "
@@ -574,11 +583,14 @@ def story() -> list:
     # ---- 7
     s += section(num("Saving And Working Together"), "Saving And Working Together",
                  "There is no Save button. Every answer saves on its own, a moment after you stop typing.")
-    s += [table(["The badge says", "What it means"], [
-        ["All Saved (green)", "Everything is saved for the whole team."],
-        ["Saving…", "A change is on its way. If you're offline it waits and goes as soon as you're back."],
-        ["Not Saved – Retry (red)", "The change didn't reach the server. It keeps trying on its own; click the badge "
-                                    "to try straight away. Nothing you typed is thrown away."],
+    s += [P("The <b>Live clock</b> at the top shows it. Click the clock for the details and when a change was last saved.")]
+    s += [table(["The clock is", "What it means"], [
+        ["Green and glowing (Live)", "Everything is saved for the whole team."],
+        ["Purple (Saving…)", "A change is on its way."],
+        ["Red (Offline)", "No answer from the server yet. Your changes wait here and go through as soon as you're back "
+                          "online."],
+        ["Red (Not Saved)", "The change didn't reach the server. It keeps trying on its own; click the clock, then "
+                            "<b>Retry Now</b> to try straight away. Nothing you typed is thrown away."],
     ], [0.3, 0.7])]
     s += bullets([
         "<b>Teammates see your answers as you type</b>, and you see theirs, without reloading.",
@@ -642,8 +654,9 @@ def story() -> list:
 
     # ---- 11
     s += section(num("On A Phone"), "On A Phone", need=5.5)
-    s += [P("Same link, same sign-in. The header stacks into three rows, buttons fill the width, and menus slide up "
-            "from the bottom. Answer boxes use a larger text size so the phone doesn't zoom in."),
+    s += [P("Same link, same sign-in. The header is one row: the logo, the Live clock (time only) and your initials. "
+            "<b>Who's Online</b> and the <b>Light / Dark</b> switch are in your photo menu. Menus slide up from the "
+            "bottom, and answer boxes use a larger text size so the phone doesn't zoom in."),
           pair("21-phone-home", "22-phone-checklist", "On a phone: the Properties page and a checklist.", 4.4)]
     s += [box("To put it on your home screen: in Safari tap Share → <b>Add to Home Screen</b>; in Chrome open the three-dot menu → "
               "<b>Install app</b> or <b>Add to Home screen</b>.", "tip")]
@@ -684,7 +697,7 @@ def story() -> list:
         "<b>Start the property before the call</b>, with the CRM link, so the team can find it.",
         "<b>Answer every question you ask</b>, even with a short No or N/A, so the team can see it was covered.",
         "<b>Put amounts in their own boxes</b> (HOI, Taxes) and payoff details in full.",
-        "<b>Watch the badge.</b> Green All Saved means the team has it.",
+        "<b>Watch the clock.</b> Green means the team has it.",
         "<b>Mark it Closed or Cancelled</b> when the deal ends, so Open stays a true to-do list.",
         "<b>Cancel rather than delete</b>, unless it's a mistake like a mistyped address.",
         "<b>Keep seller details inside the company.</b> Only share printouts with people on the deal.",
@@ -698,8 +711,8 @@ def story() -> list:
                                                          "open it. For the next call, click New Property."],
         ["I mistyped the address.", "Create it again with the right address, copy anything you'd entered, then "
                                     "delete the wrong one."],
-        ["The badge says Not Saved.", "Check your internet connection. It keeps retrying; click the badge to try "
-                                      "now. Don't close the page until it's green."],
+        ["The clock is red.", "Check your internet connection. It keeps retrying; click the clock, then Retry Now. "
+                              "Don't close the page until it's green."],
         ["I can't delete a property.", "Only Team Leaders and Managers can, with the TC Team Leader password. Mark it "
                                        "Cancelled, or ask your Team Leader."] if AUD == "member" else
         ["It says the password is not right.", "Check it in Help (your initials → Help → Deleting A Property). It's "
@@ -708,7 +721,7 @@ def story() -> list:
                                         "No or N/A if there's nothing to say."],
         ["A question shows done but its box is empty.", "It was ticked in the earlier version, which still counts."],
         ["I can't type in a property.", "It's Closed or Cancelled, so it's view-only. Click Reopen if it needs work."],
-        ["A teammate's answer isn't showing.", "It appears within a second or two. If not, check the badge and your "
+        ["A teammate's answer isn't showing.", "It appears within a second or two. If not, check the clock and your "
                                                "connection, then reload."],
         ["The printout cut something off.", "It shouldn't: every answer prints in full. Make sure you used Print / "
                                             "PDF in the app, not the browser's own print."],
@@ -739,22 +752,22 @@ def story() -> list:
         ("Find this guide", "Click your initials → Help."),
     ]
     s.append(table(["I want to…", "Do this"], [[a, b] for a, b in ref], [0.25, 0.75]))
-    badge = Table([[Para('<font name="Nunito-Bold" color="#109648">All Saved</font><br/>Everything is saved for '
+    badge = Table([[Para('<font name="Nunito-Bold" color="#109648">Green: Live</font><br/>Everything is saved for '
                          'the team.', S["cell"]),
-                    Para('<font name="Nunito-Bold" color="#4D458A">Saving…</font><br/>On its way; waits if '
-                         'you\'re offline.', S["cell"]),
-                    Para('<font name="Nunito-Bold" color="#BD2239">Not Saved – Retry</font><br/>Didn\'t reach the '
-                         'server. Retrying; click to try now.', S["cell"])]], colWidths=[WIDTH / 3] * 3)
+                    Para('<font name="Nunito-Bold" color="#4D458A">Purple: Saving…</font><br/>A change is on its '
+                         'way.', S["cell"]),
+                    Para('<font name="Nunito-Bold" color="#BD2239">Red: Offline / Not Saved</font><br/>Waiting or '
+                         'retrying; click the clock for Retry Now.', S["cell"])]], colWidths=[WIDTH / 3] * 3)
     badge.setStyle(TableStyle([("BACKGROUND", (0, 0), (0, 0), GOOD_BG), ("BACKGROUND", (1, 0), (1, 0), ACCENT_SOFT),
                                ("BACKGROUND", (2, 0), (2, 0), BAD_BG), ("VALIGN", (0, 0), (-1, -1), "TOP"),
                                ("LINEAFTER", (0, 0), (1, 0), 4, colors.white), ("TOPPADDING", (0, 0), (-1, -1), 8),
                                ("BOTTOMPADDING", (0, 0), (-1, -1), 8), ("LEFTPADDING", (0, 0), (-1, -1), 9),
                                ("ROUNDEDCORNERS", [8, 8, 8, 8])]))
     if MODE == "html":
-        badge = H('<div class="cards"><div><b style="color:#109648">All Saved</b>Everything is saved for the team.</div>'
-                  '<div><b>Saving…</b>On its way; waits if you\'re offline.</div>'
-                  '<div><b style="color:#BD2239">Not Saved – Retry</b>Didn\'t reach the server. Retrying; click to try now.</div></div>')
-    s += [P("The saving badge", "h2"), badge, Spacer(1, 8)]
+        badge = H('<div class="cards"><div><b style="color:#109648">Green: Live</b>Everything is saved for the team.</div>'
+                  '<div><b>Purple: Saving…</b>A change is on its way.</div>'
+                  '<div><b style="color:#BD2239">Red: Offline / Not Saved</b>Waiting or retrying; click the clock for Retry Now.</div></div>')
+    s += [P("The Live clock's colours", "h2"), badge, Spacer(1, 8)]
     st = Table([[Para('<font name="Nunito-Bold" color="#4D458A">Open</font><br/>Being worked. Every property '
                       'starts here.', S["cell"]),
                  Para('<font name="Nunito-Bold" color="#109648">Closed</font><br/>The deal closed. View-only until '
