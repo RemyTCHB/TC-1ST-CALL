@@ -113,6 +113,8 @@ svg.i.lg { width: 22px; height: 22px; }
 .logo-mark .logo-d { display: none; }
 :root[data-theme='dark'] .logo-mark .logo-l { display: none; }
 :root[data-theme='dark'] .logo-mark .logo-d { display: block; }
+/* phones show the round mark instead of the full logo (as Dispo Ops does) */
+.logo-mark .logo-m { display: none; }
 
 /* the hub's aurora: soft glows behind everything, the green one follows the pointer */
 .aurora { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; display: block; }
@@ -521,6 +523,8 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   .h-left { gap: 8px; min-width: 0; }
   .h-right { flex: none; min-width: 0; }
   .brand .logo-mark { height: 40px; }
+  :root .brand .logo-mark .logo-l, :root[data-theme] .brand .logo-mark .logo-d { display: none; }
+  .brand .logo-mark .logo-m { display: block; width: 40px; height: 40px; border-radius: 10px; }
   .brand .app-name { display: none; }
   #active-btn, .h-right .seg.theme { display: none; }
   .live-pill { font-size: 12px; padding: 0 12px 0 10px; gap: 6px; }
@@ -622,7 +626,7 @@ textarea.ans { display: block; resize: none; overflow: hidden; min-height: 44px;
   <header class="header" id="hdr">
     <div class="header-row">
       <div class="h-left">
-        <a class="brand" href="#/" aria-label="TC Checklist home"><span class="logo-mark"><img class="logo-l" src="logo-light.png" alt="Total Cash Home Buyers"><img class="logo-d" src="logo-dark.png" alt="Total Cash Home Buyers"></span><span class="app-name">TC Checklist</span></a>
+        <a class="brand" href="#/" aria-label="TC Checklist home"><span class="logo-mark"><img class="logo-l" src="logo-light.png" alt="Total Cash Home Buyers"><img class="logo-d" src="logo-dark.png" alt="Total Cash Home Buyers"><img class="logo-m" src="logo-mark.png" alt="Total Cash Home Buyers" width="40" height="40"></span><span class="app-name">TC Checklist</span></a>
         <!-- the Live clock: Eastern time from the server's clock, coloured by the save status; opens the save details -->
         <button id="live-pill" class="live-pill" data-state="idle" type="button" aria-haspopup="true" aria-label="Save status: Live. Show details" title="Every change is saved for the whole team"><span class="dot"></span><span class="t"><span id="clock-d"></span><span id="clock-t">&nbsp;</span></span></button>
       </div>
