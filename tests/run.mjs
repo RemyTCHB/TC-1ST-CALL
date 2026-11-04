@@ -5,6 +5,7 @@ import { createServer } from 'node:http';
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { join, dirname, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 
 const HERE = dirname(fileURLToPath(import.meta.url)), ROOT = join(HERE, '..');
 const TYPES = { '.pdf': 'application/pdf', '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png' };
@@ -20,6 +21,10 @@ const roleFromAuth = req => {   // the emulator's sign-in token names the person
 const readJson = req => new Promise(r => { let b = ''; req.on('data', c => b += c); req.on('end', () => { try { r(JSON.parse(b || '{}')); } catch (e) { r({}); } }); });
 const json = (res, code, body) => { res.writeHead(code, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(body)); };
 
+// /api/login-as runs the real function (firebase-admin) against the Auth emulator: no key, made-up accounts only.
+process.env.FIREBASE_AUTH_EMULATOR_HOST = '127.0.0.1:9099'; process.env.GCLOUD_PROJECT = 'demo-tc-checklist';
+const loginAs = (req, res) => createRequire(import.meta.url)('../api/login-as.js')(req, res);
+
 const srv = createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   if (url.pathname === '/api/team') { res.writeHead(200, { 'Content-Type': 'application/json' }); return res.end(FAKE_TEAM); }
@@ -29,6 +34,7 @@ const srv = createServer(async (req, res) => {
     if (b.ask) return json(res, 200, { need: 'password', own: false });
     return b.password === FAKE_PASSWORD ? json(res, 200, { ok: true }) : json(res, 403, { error: 'That password is not right.', wrong: true });
   }
+  if (url.pathname === '/api/login-as') return loginAs(req, res);   // the real function, against the Auth emulator
   if (url.pathname === '/api/passwords') {
     const role = roleFromAuth(req);
     return json(res, 200, role === 'member' ? { rows: [], own: [], confirmOnly: false }

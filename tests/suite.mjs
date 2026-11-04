@@ -367,6 +367,72 @@ await check('a non-totalchb.com account is turned away', async () => {
 });
 await check('no console errors', () => { const errs = [...A.errors, ...B.errors].filter(e => !/ERR_FAILED|net::|Failed to load resource/.test(e)); assert.deepEqual(errs, []); });
 
+// ---------------------------------------------------------------- Login As User (Remy only, like the Team Hub)
+console.log('\nLogin As User (Remy only)');
+await (async () => {
+  const REMY = 'systems@totalchb.com', ALEX = 'alex.tester@totalchb.com', ADDR = '77 Login Sample Rd, Exampleton FL 33077', id = safeId(ADDR);
+  await env.withSecurityRulesDisabled(async c => { await setDoc(doc(c.firestore(), CL(id)), { ...legacyRecord(), address: ADDR, updatedBy: 'morgan.manager@totalchb.com' }); });
+  const call = async (body, token) => { const r = await fetch('http://localhost:5173/api/login-as', { method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) }, body: JSON.stringify(body) }); return { code: r.status, body: await r.json() }; };
+  const R = await openApp(browser, REMY);
+  await check('only Remy has Login As User in the photo menu', async () => {
+    await A.page.click('#avatar-btn'); assert.equal(await A.page.$('[data-loginas]'), null); await A.page.keyboard.press('Escape');
+    await R.page.click('#avatar-btn'); assert.ok(await R.page.$('[data-loginas]')); await R.page.keyboard.press('Escape');
+  });
+  await check('the server refuses: no sign-in, anyone but Remy, other domains, unknown people, Back To Remy without Login As', async () => {
+    const remyTok = await R.page.evaluate(() => window.__emuToken()), alexTok = await A.page.evaluate(() => window.__emuToken());
+    assert.equal((await call({ email: ALEX })).code, 401);
+    assert.equal((await call({ email: 'morgan.manager@totalchb.com' }, alexTok)).code, 403, 'a member cannot');
+    assert.equal((await call({ email: 'someone@gmail.com' }, remyTok)).code, 400);
+    assert.equal((await call({ email: REMY }, remyTok)).code, 400, 'not as himself');
+    assert.equal((await call({ email: 'nobody.here@totalchb.com' }, remyTok)).code, 404, 'never signed in to TC Checklist');
+    assert.equal((await call({ back: true }, remyTok)).code, 403);
+    assert.equal((await call({ back: true }, alexTok)).code, 403);
+  });
+  await check('Remy logs in as a member: the amber bar, their role, their delete rights', async () => {
+    await R.page.click('#avatar-btn'); await R.page.click('[data-loginas]'); await R.page.waitForSelector(`[data-as="${ALEX}"]`);
+    await R.page.fill('[data-as-q]', 'alex'); assert.ok(await R.page.isVisible(`[data-as="${ALEX}"]`)); assert.ok(await R.page.isHidden('[data-as="morgan.manager@totalchb.com"]'));
+    await R.page.click(`[data-as="${ALEX}"]`); await R.page.waitForSelector('.modal h2:has-text("Login As Alex Tester?")'); await R.page.click('.modal [data-m-ok]');
+    await R.page.waitForSelector('#imp-bar:not([hidden])', { timeout: 15000 });
+    assert.equal(await R.page.textContent('#imp-text'), `Viewing TC Checklist as Alex Tester (${ALEX})`);
+    await R.page.click('#avatar-btn'); const menu = await R.page.textContent('.menu'); assert.match(menu, /Member · TC/); assert.equal(await R.page.$('[data-loginas]'), null, 'no Login As from a borrowed sign-in');
+    await R.page.keyboard.press('Escape');
+    const imp = await R.page.evaluate(() => window.__emuToken());
+    assert.equal((await call({ email: 'morgan.manager@totalchb.com' }, imp)).code, 403, 'no Login As from a borrowed sign-in (server)');
+    await R.page.click(`.prop-card[data-id="${id}"] .prop-title`); await R.page.waitForSelector('#view-check:not([hidden])');
+    await R.page.click('#delete-btn'); await R.page.waitForSelector('.modal'); assert.match(await R.page.textContent('.modal'), /Ask A Team Leader/i, 'a member cannot delete'); await R.page.click('[data-m-cancel]');
+  });
+  await check('what Remy changes as them is saved as them, "via Remy", and shows on the property', async () => {
+    await R.page.fill('[data-ans="3"]', 'Typed while viewing as Alex');
+    await R.page.waitForFunction(() => ['idle', 'saved'].includes(document.getElementById('live-pill').dataset.state), null, { timeout: 8000 });
+    const d = await read(id);
+    assert.equal(d.answers.ans_3, 'Typed while viewing as Alex'); assert.equal(d.updatedBy, ALEX); assert.equal(d.updatedVia, REMY);
+    await R.page.waitForFunction(() => /\(via /.test(document.getElementById('p-meta').textContent));
+  });
+  await check('Back To Remy: his own sign-in again, without Google', async () => {
+    await R.page.click('#imp-back'); await R.page.waitForSelector('#imp-bar[hidden]', { state: 'attached', timeout: 15000 });
+    await R.page.waitForFunction(() => !!window.__emuToken);
+    const tok = await R.page.evaluate(() => window.__emuToken()), email = JSON.parse(Buffer.from(tok.split('.')[1], 'base64url').toString()).email;
+    assert.equal(email, REMY);
+    await R.page.click('#avatar-btn'); assert.ok(await R.page.$('[data-loginas]')); await R.page.keyboard.press('Escape');
+  });
+  await check('the next ordinary save clears the "via" note', async () => {
+    await R.page.click(`.prop-card[data-id="${id}"] .prop-title`); await R.page.waitForSelector('#view-check:not([hidden])');
+    await R.page.fill('[data-ans="4"]', 'Typed by Remy himself');
+    await R.page.waitForFunction(() => ['idle', 'saved'].includes(document.getElementById('live-pill').dataset.state), null, { timeout: 8000 });
+    const d = await read(id); assert.equal(d.updatedBy, REMY); assert.ok(!('updatedVia' in d));
+  });
+  await check('without the key Login As is off, only this project\'s key counts, and the emulator is never used on Vercel', () => {
+    const { admin } = require(join(ROOT, 'api/_lib/admin.js'));
+    assert.equal(admin({}), null);
+    assert.equal(admin({ TC_FIREBASE_SERVICE_ACCOUNT: 'not json' }), null);
+    assert.equal(admin({ TC_FIREBASE_SERVICE_ACCOUNT: JSON.stringify({ project_id: 'another-project', private_key: 'x', client_email: 'y' }) }), null);
+    assert.equal(admin({ FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099', VERCEL: '1' }), null);
+  });
+  await check('Login As User: no console errors', () => { const errs = R.errors.filter(e => !/ERR_FAILED|net::|Failed to load resource/.test(e)); assert.deepEqual(errs, []); });
+  await R.context.close();
+})();
+
 // ---------------------------------------------------------------- screenshots: light/dark x desktop/phone
 console.log('\nScreens (light and dark, desktop and 390px phone)');
 await env.withSecurityRulesDisabled(async c => {

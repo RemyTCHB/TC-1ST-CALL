@@ -1,0 +1,8 @@
+{
+  "name": "tc-checklist",
+  "private": true,
+  "description": "TC Checklist. The page is static; the api/ functions run on Vercel. Only /api/login-as needs a package (firebase-admin).",
+  "dependencies": {
+    "firebase-admin": "^12.7.0"
+  }
+}

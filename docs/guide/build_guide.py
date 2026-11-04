@@ -674,6 +674,10 @@ def story() -> list:
         s += [table(["Topic", "How it works"], [
             ["Who can use it", "Anyone with an @totalchb.com Google account. Access ends when the account is closed. The "
                                "database itself only lets verified @totalchb.com accounts in."],
+            ["Login As User (Remy only)", "Like the Team Hub: Remy's photo menu → <b>Login As User</b> → pick a name to see and "
+                                          "work in TC Checklist exactly as they do. An amber bar shows it; <b>Back To Remy</b> "
+                                          "returns. Changes are saved as them, noted \"via Remy\". Needs the Vercel setting "
+                                          "<b>TC_FIREBASE_SERVICE_ACCOUNT</b>; the person must have signed in to TC Checklist once."],
             ["Names", "Names and photos come from the Universal Team Hub's team directory. Which departments come over is "
                       "the Vercel setting <b>HUB_TEAM_DEPTS</b> on the TC Checklist project (default <b>TC,DISPO</b>; "
                       "Managers always come over). Change it, then redeploy. Anyone not included shows a name built "
